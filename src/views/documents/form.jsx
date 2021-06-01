@@ -52,6 +52,8 @@ export const Form = (props) => {
         retorno:'',
         fecha:''
     })
+
+    const [validated, setValidated] = useState(true)
     
     /***** Options Values ****/
     const [ optionsCompanies, setOptionsCompanies] = useState({})
@@ -164,25 +166,38 @@ export const Form = (props) => {
 
     }, [created,updated])
 
+    //Verifica que los campos requeridos del formulario tengan información
+    const formValidate = () => {
+        const { numero, origen, retorno, fecha } = formValues
+        const { importador, cliente, conductor, ayudante, vehiculo } = customInputs
+        
+        if(numero == "" || origen == "" || retorno == "" || fecha == "" || 
+            importador == "" || cliente == "" || conductor == "" || ayudante == "" || vehiculo == "" ){
+            setValidated(false)
+        }
+    }
+
     //Envia los datos del formularioe
     const onSubmit = (e) => { 
         e.preventDefault();
 
-        const { importador, cliente, conductor, ayudante, vehiculo, items } = customInputs
-        const data = { ...formValues, id, importador, cliente, conductor, ayudante, vehiculo, items }
+        formValidate()
 
-        if( id ) {
+        //const { importador, cliente, conductor, ayudante, vehiculo, items } = customInputs
+        //const data = { ...formValues, id, importador, cliente, conductor, ayudante, vehiculo, items }
+
+        /* if( id ) {
             dispatch( startUpdatingDocument( {...data} ) )
         }else{
             dispatch( startCreatingDocument( {...data} ) )
-        }
+        } */
     }
     
     return (
         <Fragment>
             <form onSubmit={onSubmit}>
                 {/**** Datos básicos de la guía ****/}
-                <Basic formState={ formValues } handleInputChange={ handleInputChange }/>
+                <Basic formState={ formValues } validated={validated} handleInputChange={ handleInputChange }/>
 
                 {/**** Datos de importador y cliente receptor*/}
                 <div className="row">
@@ -192,11 +207,11 @@ export const Form = (props) => {
                          * Debido a que este componente se reutiliza se le debe pasar un parametro type
                          * Esto con la finalidad de saber si es un importador o cliente
                          * **/ }
-                        <Company type="importador" selected={customInputs.importador} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
+                        <Company type="importador" validated={validated} selected={customInputs.importador} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
                     </div>
                     { /** Cliente**/ }
                     <div className="col-lg-6">
-                        <Company type="cliente" selected={customInputs.cliente} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
+                        <Company type="cliente" validated={validated} selected={customInputs.cliente} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
                     </div>
                 </div>
                 <div className="card" >
@@ -205,13 +220,13 @@ export const Form = (props) => {
                     </div>
                     <div className="card-body">
                         {/**** Datos del vehículo ****/}
-                        <Vehicle selected={customInputs.vehiculo} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsVehicles={ optionsVehicles }/>
+                        <Vehicle selected={customInputs.vehiculo} validated={validated} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsVehicles={ optionsVehicles }/>
                         
                         {/**** Datos del conductor****/}
-                        <Person selected={customInputs.conductor} type="conductor" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
+                        <Person selected={customInputs.conductor} validated={validated} type="conductor" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
                     
                         {/**** Datos del ayudante****/}
-                        <Person selected={customInputs.ayudante} type="ayudante" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
+                        <Person selected={customInputs.ayudante} validated={validated} type="ayudante" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
                     </div>
                 </div>
                 <div className="card" >
@@ -222,6 +237,11 @@ export const Form = (props) => {
                         {/**** Formulario de carga de productos ****/}
                         <FormItems customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsProducts={optionsProducts} optionsConversions={optionsConversions}/>
                         {/**** Listado de productos en la carga****/}
+                        { customInputs.items.length == 0 && !validated &&
+                            <div className="alert alert-danger text-center mt-4">
+                                Debe registrar al menos un producto en la carga
+                            </div> 
+                        }
                         <DataTable
                             columns={columns}
                             data={ customInputs.items }

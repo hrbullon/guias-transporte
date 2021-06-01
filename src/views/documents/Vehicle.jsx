@@ -65,6 +65,11 @@ export const Vehicle= (props) => {
             color:''
         })
 
+        setIdVehicle({
+            value:'',
+            label:''
+        })
+
         /**** Coloca vacío el campo vehículo ****/
         props.setCustomInputs({
             ...props.customInputs,
@@ -81,6 +86,7 @@ export const Vehicle= (props) => {
                 <div class="form-group">
                     <label class="control-label">Placa</label>
                     <Select name="placa" value={ idVehicle } onChange={ setInfoVehicle } isClearable={true} options={props.optionsVehicles} />
+                    { idVehicle.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
                 </div>
             </div>
             <div class="col-lg-3 col-s-12 col-xs-12">

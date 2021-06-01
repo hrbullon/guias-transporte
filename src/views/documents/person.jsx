@@ -79,6 +79,11 @@ export const Person = (props) => {
             telefono: ''
         })
 
+        setIdPerson({
+            label:'',
+            value:''
+        })
+
         /**** Si el campo personalizado es conductor ****/
         if(props.type === "conductor"){
             props.setCustomInputs({
@@ -105,6 +110,7 @@ export const Person = (props) => {
                     <div class="form-group">
                         <label class="control-label">Cédula</label>
                         <Select name="cedula" value={ idPerson } onChange={ setInfoPerson } isClearable={true} options={props.optionsPeople} />
+                        { idPerson.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
                     </div>
                 </div>
                 <div class="col-lg-4 col-s-12 col-xs-12">

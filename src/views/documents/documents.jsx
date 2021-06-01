@@ -15,7 +15,7 @@ export const Documents = (props) => {
     //Aquí se almacena el listado de guias
     const [documents, setDocuments] = useState({})
     //Capturo los datos de guias registradas
-    const { loaded, updated, created, deleted } = useSelector(state => state.documents)
+    const { loaded, document, updated, created, deleted } = useSelector(state => state.documents)
 
     const columns = [
         {
@@ -73,10 +73,10 @@ export const Documents = (props) => {
     useEffect(() => {
         //Si estos states no están vacío es porque vienen
         //de disparar el evento create o update, así que se deben purgar estos objetos
-        if(created || updated){
+        if(document || created || updated){
             dispatch( startClearDocument() )
         }
-    }, [created, updated])
+    }, [document, created, updated])
 
 
     //Está pendiente si cambia el valor de deleted

@@ -87,6 +87,11 @@ export const Company = (props) => {
             representante_telefono:'',
         })
 
+        setIdEmpresa({
+            value:'',
+            label:''
+        })
+
         /**** Si el campo personalizado es importador ****/
         if(props.type === "importador"){
             props.setCustomInputs({
@@ -117,6 +122,7 @@ export const Company = (props) => {
                             <label class="control-label">Rif</label>
                         <div class="form-group">
                             <Select name="rif" value={ idCompany } onChange={setInfoCompany} isClearable={true} options={props.optionsCompanies} />
+                            { idCompany.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
                         </div>
                         <div class="form-group">
                             <label class="control-label">Nombre/Razón Social</label>
