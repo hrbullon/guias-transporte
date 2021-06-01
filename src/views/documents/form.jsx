@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import DataTable from 'react-data-table-component'
 import { useDispatch, useSelector } from "react-redux" 
+import Swal from 'sweetalert2'
 
 /*** Actions ***/
 import { startLoadingPeople } from '../../actions/drivers'
@@ -51,6 +52,10 @@ export const Form = (props) => {
         origen:'',
         retorno:'',
         fecha:''
+    })
+
+    const [flag, setFlag] = useState({
+        validated: true
     })
 
     const [validated, setValidated] = useState(true)
@@ -168,29 +173,48 @@ export const Form = (props) => {
 
     //Verifica que los campos requeridos del formulario tengan información
     const formValidate = () => {
-        const { numero, origen, retorno, fecha } = formValues
-        const { importador, cliente, conductor, ayudante, vehiculo } = customInputs
+
+        let flagformValues = true
+        let flagCustomInputs = true
+
+        Object.keys(formValues).map( (key) => {
+            if( formValues[key] === ""){
+                flagformValues = false
+            }
+        })
         
-        if(numero == "" || origen == "" || retorno == "" || fecha == "" || 
-            importador == "" || cliente == "" || conductor == "" || ayudante == "" || vehiculo == "" ){
-            setValidated(false)
-        }
+        Object.keys(customInputs).map( (key) => {
+            if( customInputs[key] === "" || customInputs[key].length == 0){
+                flagCustomInputs = false
+            }
+        })
+
+        let flag = (!flagformValues || !flagformValues)? false : true
+        setValidated(flag)
+        return flag
     }
 
     //Envia los datos del formularioe
-    const onSubmit = (e) => { 
+    const onSubmit = (e) => {
+
         e.preventDefault();
 
-        formValidate()
-
-        //const { importador, cliente, conductor, ayudante, vehiculo, items } = customInputs
-        //const data = { ...formValues, id, importador, cliente, conductor, ayudante, vehiculo, items }
-
-        /* if( id ) {
-            dispatch( startUpdatingDocument( {...data} ) )
+        if(formValidate()){
+            const { importador, cliente, conductor, ayudante, vehiculo, items } = customInputs
+            const data = { ...formValues, id, importador, cliente, conductor, ayudante, vehiculo, items }
+    
+            if( id ) {
+                dispatch( startUpdatingDocument( {...data} ) )
+            }else{
+                dispatch( startCreatingDocument( {...data} ) )
+            }
         }else{
-            dispatch( startCreatingDocument( {...data} ) )
-        } */
+            Swal.fire({
+                title: 'Datos inválidos',
+                text: "Complete los datos del formulario",
+                icon: 'warning'
+            })
+        }
     }
     
     return (
