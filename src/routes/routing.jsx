@@ -12,13 +12,15 @@ var ThemeRoutes = [
   { 
     path: '/dashboard', 
     name: 'Dashboard', 
-    icon: 'mdi mdi-gauge', 
+    icon: 'mdi mdi-gauge',
+    menu: true,
     component: Starter 
   },
   {
     path:"/settings",
     name:"Configuración",
     icon: "mdi mdi-settings",
+    menu: true,
     component: Starter
   },
   {
@@ -28,33 +30,52 @@ var ThemeRoutes = [
     component: Users
   },
   {
-    path:"/documents/create",
+    path:"/documents/create/",
+    name:"Gestión de Guías",
+    icon: "",
+    menu: false,
+    component: Form
+  },
+  {
+    path:"/documents/update/:id",
+    name:"Gestión de Guías",
+    icon: "",
+    menu: false,
+    component: Form
+  },
+  {
+    path:"/documents",
     name:"Gestión de Guías",
     icon: "mr-2 mdi mdi-note-multiple-outline",
-    component: Form
+    menu: true,
+    component: Documents
   },
   {
     path:"/customers",
     name:"Clientes",
     icon: "mr-2 mdi mdi-account-card-details",
+    menu: true,
     component: Companies
   },
   {
     path:"/companies",
     name:"Empresas",
     icon: "mr-2 mdi mdi-bank",
+    menu: true,
     component: Companies
   },
   {
     path:"/products",
     name:"Productos",
     icon: "mr-2 mdi mdi-format-list-bulleted",
+    menu: true,
     component: Products
   }, 
   {
     path:"/vehicles",
     name:"Vehiculos",
     icon: "mr-2 mdi mdi-truck-delivery",
+    menu: true,
     component: Vehicles
   },
   

@@ -71,11 +71,22 @@ export const prepareOptionsPlaca = (data) => {
     return items
 }
 
-export const prepareOptionsProduct = (data) => {
+export const prepareOptionsSelect = (data) => {
     let items = []
     
     Object.keys(data).map( (key) => {
         items.push({ value: data[key].id, label: data[key].nombre }) 
+    })
+
+    return items
+}
+
+export const prepareOptionsConversion = (data) => {
+    let items = []
+    
+    Object.keys(data).map( (key) => {
+        const label = `${data[key].presentacion} ${data[key].contenido} ${data[key].unidad_medida_text}`
+        items.push({ value: data[key].id, label }) 
     })
 
     return items

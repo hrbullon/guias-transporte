@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Select from 'react-select'
 import { useSelector } from 'react-redux'
 
@@ -14,17 +14,38 @@ export const Vehicle= (props) => {
         color:''
     })
 
+    const [ idVehicle, setIdVehicle] = useState({
+        value:'',
+        label:''
+    })
+
+    useEffect(() => {
+        
+        const value = props.selected
+        if(value){
+            const info = getItem(items, value)
+            setIdVehicle({ value: info.id, label: info.placa })   
+            setVehicle(info)
+        }
+
+    }, [props.selected])
+
+    /**** Relleno el formulario con los datos del vehículo ****/
+    const setVehicle = (info) => {
+        setInputs({
+            ...inputs,
+            marca: info.marca,
+            modelo: info.modelo,
+            color: info.color
+        })
+    }
+
     /**** Relleno la información correspondiente a la placa seleccionada ****/
     const setInfoVehicle = ( input ) => {
         if(input){
             
             const info = getItem(items, input.value)
-            setInputs({
-                ...inputs,
-                marca: info.marca,
-                modelo: info.modelo,
-                color: info.color
-            })
+            setVehicle(info)
 
             props.setCustomInputs({
                 ...props.customInputs,
@@ -32,18 +53,23 @@ export const Vehicle= (props) => {
             })
 
         }else{
-            
-            setInputs({
-                marca:'',
-                modelo:'',
-                color:''
-            })
-
-            props.setCustomInputs({
-                ...props.customInputs,
-                vehicle: ""  
-            })
+            clearInputs()
         }
+    }
+
+    const clearInputs = () => {
+        /**** Limpia los datos del vehículo ****/
+        setInputs({
+            marca:'',
+            modelo:'',
+            color:''
+        })
+
+        /**** Coloca vacío el campo vehículo ****/
+        props.setCustomInputs({
+            ...props.customInputs,
+            vehicle: ""  
+        })
     }
 
     return (
@@ -54,7 +80,7 @@ export const Vehicle= (props) => {
             <div class="col-lg-3 col-s-12 col-xs-12">
                 <div class="form-group">
                     <label class="control-label">Placa</label>
-                    <Select name="placa" onChange={ setInfoVehicle } isClearable={true} options={props.optionsVehicles} />
+                    <Select name="placa" value={ idVehicle } onChange={ setInfoVehicle } isClearable={true} options={props.optionsVehicles} />
                 </div>
             </div>
             <div class="col-lg-3 col-s-12 col-xs-12">

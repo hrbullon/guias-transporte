@@ -22,4 +22,20 @@ export const types = {
 
     driverLoaded:  '[DRIVER] Loaded',
 
+    document:        '[DOCUMENT] Get',
+    documentClear:   '[DOCUMENT] Clear',
+    documentLoaded:  '[DOCUMENT] Loaded',
+    documentCreated: '[DOCUMENT] Created',
+    documentUpdated: '[DOCUMENT] Updated',
+    documentDeleted: '[DOCUMENT] Deleted',
+
+    globalLoaded:  '[GLOBAL/MAINTENANCE] Loaded',
+    globalCreated: '[GLOBAL/MAINTENANCE] Created',
+    globalUpdated: '[GLOBAL/MAINTENANCE] Updated',
+    globalDeleted: '[GLOBAL/MAINTENANCE] Deleted',
+ 
+    conversionLoaded:  '[CONVERSION] Loaded',
+    conversionCreated: '[CONVERSION] Created',
+    conversionUpdated: '[CONVERSION] Updated',
+    conversionDeleted: '[CONVERSION] Deleted',
 }

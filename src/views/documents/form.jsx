@@ -1,39 +1,64 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from "react-redux" 
+
+import { useParams } from 'react-router'
 import DataTable from 'react-data-table-component'
+import { useDispatch, useSelector } from "react-redux" 
 
 /*** Actions ***/
 import { startLoadingPeople } from '../../actions/drivers'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingVehicles } from '../../actions/vehicles'
 import { startLoadingProducts } from '../../actions/products'
+import { startLoadingConversions } from '../../actions/conversion'
+
+import { 
+    startLoadingSigleDocument,
+    startCreatingDocument, 
+    startUpdatingDocument } from '../../actions/documents'
 
 /*** Custom Hook ***/
 import { useCustomForm } from '../../hooks/useCustomForm'
 
 /*** Helpers Array ****/
-import { prepareOptionsRif, prepareOptionsPlaca, prepareOptionsProduct } from '../../helpers/dataArray'
 import { Basic } from './basic'
 import { Company } from './company'
 import { Vehicle } from './Vehicle'
 import { Person } from './person'
 import { FormItems } from './formItems'
 
-export const Form = () => {
+import { prepareOptionsRif, prepareOptionsPlaca, prepareOptionsSelect, prepareOptionsConversion } from '../../helpers/dataArray'
+
+export const Form = (props) => {
+
+    let { id } = useParams();
 
     const dispatch = useDispatch()
+    /***** Estas variables cambian cuando se cargan los datos de 
+     * vehiculos, empresas, conductores y productos*****/
     const { loaded:companiesLoaded } = useSelector(state => state.companies )
     const { loaded:vehiclesLoaded } = useSelector(state => state.vehicles )
     const { loaded:driversLoaded } = useSelector(state => state.drivers )
     const { loaded:productsLoaded } = useSelector(state => state.products )
+    const { loaded:conversionsLoaded } = useSelector(state => state.conversions )
+    const { document } = useSelector(state => state.documents )
 
-    const [ formValues, handleInputChange, reset ] = useCustomForm()
+    //Estas son las variables del state que se modifican
+    //Cuando se crea, edita o documento
+    const { created, updated } = useSelector(state => state.documents)
+
+    let [ formValues, handleInputChange ] = useCustomForm({
+        numero: '',
+        origen:'',
+        retorno:'',
+        fecha:''
+    })
     
     /***** Options Values ****/
     const [ optionsCompanies, setOptionsCompanies] = useState({})
     const [ optionsVehicles, setOptionsVehicles] = useState({})
     const [ optionsPeople, setOptionsPeople] = useState({})
     const [ optionsProducts, setOptionsProducts] = useState({})
+    const [ optionsConversions, setOptionsConversions] = useState({})
 
     const [ customInputs, setCustomInputs] = useState({
         importador:'',
@@ -47,13 +72,15 @@ export const Form = () => {
     //Inicializo estructura de culumnas de la tabla de productos
     const columns = [
         { name: '#', selector: 'i'},
-        { name: 'Producto', selector: 'producto'},
-        { name: 'Presentación', selector: 'presentacion'},
+        { name: 'Producto', selector: 'producto_text'},
+        { name: 'Presentación', selector: 'presentacion_text'},
         { name: 'Cantidad', selector: 'cantidad'},
-        { name: 'Total', selector: 'total'},
+        { name: 'Subtotal', selector: 'subtotal'},
+        { name: 'Medida', selector: 'medida'},
     ]
 
     useEffect(() => {
+        
         //Obtengo los datos de las empresas
         dispatch( startLoadingCompanies() )
 
@@ -65,6 +92,14 @@ export const Form = () => {
 
         //Obtengo los datos de los conductores y productos
         dispatch( startLoadingProducts() )
+        
+        //Obtengo los datos de las presentaciones de los productos
+        dispatch( startLoadingConversions() )
+
+        if(id && !document){
+            dispatch( startLoadingSigleDocument(id) )
+        }
+
     }, [])
 
     /*****
@@ -89,18 +124,58 @@ export const Form = () => {
     }, [driversLoaded])
 
     useEffect(() => {
-        const options = prepareOptionsProduct( productsLoaded )
+        const options = prepareOptionsSelect( productsLoaded )
         setOptionsProducts( options )
     }, [productsLoaded])
 
+    useEffect(() => {
+        const options = prepareOptionsConversion( conversionsLoaded )
+        setOptionsConversions( options )
+    }, [conversionsLoaded])
 
     useEffect(() => {
-        console.log(customInputs)
-    }, [customInputs])
+        if(document){
+            
+            formValues.numero = document.numero
+            formValues.origen = document.origen
+            formValues.retorno = document.retorno
+            formValues.fecha = document.fecha
+
+            setCustomInputs({
+                ...customInputs,
+                vehiculo: document.vehiculo,
+                importador: document.importador,
+                cliente: document.cliente,
+                conductor: document.conductor,
+                ayudante: document.ayudante,
+                items: [...document.items]
+            })
+        }
+    }, [document])
+
+
+    //Está pendiente si cambia el valor de created o updated
+    //En caso de cambiar es porque se creó o editó correctamente el docuemento
+    useEffect(() => {
+
+        if(created !== null || updated !== null){
+            props.history.push('/documents')
+        }
+
+    }, [created,updated])
 
     //Envia los datos del formularioe
-    const onSubmit = (data) => { 
-        console.log(data);
+    const onSubmit = (e) => { 
+        e.preventDefault();
+
+        const { importador, cliente, conductor, ayudante, vehiculo, items } = customInputs
+        const data = { ...formValues, id, importador, cliente, conductor, ayudante, vehiculo, items }
+
+        if( id ) {
+            dispatch( startUpdatingDocument( {...data} ) )
+        }else{
+            dispatch( startCreatingDocument( {...data} ) )
+        }
     }
     
     return (
@@ -117,11 +192,11 @@ export const Form = () => {
                          * Debido a que este componente se reutiliza se le debe pasar un parametro type
                          * Esto con la finalidad de saber si es un importador o cliente
                          * **/ }
-                        <Company type="importador" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
+                        <Company type="importador" selected={customInputs.importador} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
                     </div>
                     { /** Cliente**/ }
                     <div className="col-lg-6">
-                        <Company type="cliente" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
+                        <Company type="cliente" selected={customInputs.cliente} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsCompanies={ optionsCompanies }/>
                     </div>
                 </div>
                 <div className="card" >
@@ -130,13 +205,13 @@ export const Form = () => {
                     </div>
                     <div className="card-body">
                         {/**** Datos del vehículo ****/}
-                        <Vehicle customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsVehicles={ optionsVehicles }/>
+                        <Vehicle selected={customInputs.vehiculo} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsVehicles={ optionsVehicles }/>
                         
                         {/**** Datos del conductor****/}
-                        <Person type="conductor" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
+                        <Person selected={customInputs.conductor} type="conductor" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
                     
                         {/**** Datos del ayudante****/}
-                        <Person type="ayudante" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
+                        <Person selected={customInputs.ayudante} type="ayudante" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
                     </div>
                 </div>
                 <div className="card" >
@@ -145,7 +220,7 @@ export const Form = () => {
                     </div>
                     <div className="card-body">
                         {/**** Formulario de carga de productos ****/}
-                        <FormItems customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsProducts={optionsProducts}/>
+                        <FormItems customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsProducts={optionsProducts} optionsConversions={optionsConversions}/>
                         {/**** Listado de productos en la carga****/}
                         <DataTable
                             columns={columns}

@@ -6,6 +6,8 @@ import { vehicleReducer } from "../reducers/vehicleReducer";
 import { productReducer } from "../reducers/productReducer";
 import { companyReducer } from "../reducers/companyReducer";
 import { driverReducer } from "../reducers/driverReducer";
+import { documentReducer } from "../reducers/documentReducer";
+import { conversionReducer } from "../reducers/conversionReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -15,7 +17,9 @@ const reducers = combineReducers({
     vehicles: vehicleReducer,
     products: productReducer,
     companies: companyReducer,
-    drivers: driverReducer
+    drivers: driverReducer,
+    documents: documentReducer,
+    conversions: conversionReducer
 })
 
 export const store = createStore(

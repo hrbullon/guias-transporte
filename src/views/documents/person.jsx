@@ -7,23 +7,45 @@ import { getItem } from '../../helpers/dataArray'
 export const Person = (props) => {
 
     const { loaded:items } = useSelector(state => state.drivers)
+    
     const [ inputs, setInputs ] = useState({
         cedula:'',
         nombre:'',
         telefono:''
     })
 
+    const [ idPerson, setIdPerson] = useState({
+        value:'',
+        label:''
+    })
+
+    useEffect(() => {
+        
+        const value = props.selected
+        if(value){
+            const info = getItem(items, value)
+            setIdPerson({ value: info.id, label: info.rif })   
+            setPerson(info)
+        }
+
+    }, [props.selected])
+
+    /**** Lleno el formulario con los datos básicos de la persona */
+    const setPerson = (info) => {
+        setInputs({
+            ...inputs,
+            cedula: info.cedula,
+            nombre: info.nombre + ' '+info.apellido,
+            telefono: info.telefono
+        })
+    }
+
     /**** Relleno la información correspondiente a la cédula seleccionada ****/
     const setInfoPerson = ( input ) => {
         if(input){
             
             const info = getItem(items, input.value)
-            setInputs({
-                ...inputs,
-                cedula: info.cedula,
-                nombre: info.nombre + ' '+info.apellido,
-                telefono: info.telefono
-            })
+            setPerson(info)
             
             if(props.type === "conductor"){
                 props.setCustomInputs({
@@ -40,14 +62,7 @@ export const Person = (props) => {
             }
 
         }else{
-
-            setInputs({
-                cedula: '',
-                nombre: '',
-                telefono: ''
-            })
-
-            clearCustomInputs()
+            clearInputs()
         }
     }
 
@@ -56,7 +71,14 @@ export const Person = (props) => {
      * Estos campos son importador,cliente,conductor,ayudante
      * Dichos campos guardan los id correspondientes a cada item
      * ****/
-     const clearCustomInputs = () => {
+     const clearInputs = () => {
+        /**** Limpia la información básica de la persona ****/
+        setInputs({
+            cedula: '',
+            nombre: '',
+            telefono: ''
+        })
+
         /**** Si el campo personalizado es conductor ****/
         if(props.type === "conductor"){
             props.setCustomInputs({
@@ -82,7 +104,7 @@ export const Person = (props) => {
                 <div class="col-lg-4 col-s-12 col-xs-12">
                     <div class="form-group">
                         <label class="control-label">Cédula</label>
-                        <Select name="cedula" onChange={ setInfoPerson } isClearable={true} options={props.optionsPeople} />
+                        <Select name="cedula" value={ idPerson } onChange={ setInfoPerson } isClearable={true} options={props.optionsPeople} />
                     </div>
                 </div>
                 <div class="col-lg-4 col-s-12 col-xs-12">

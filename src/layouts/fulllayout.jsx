@@ -4,6 +4,7 @@ import Header from '../components/header/header.jsx';
 import Sidebar from '../components/sidebar/sidebar.jsx';
 import Footer from '../components/footer/footer.jsx';
 import ThemeRoutes from '../routes/routing.jsx';
+import { Fragment } from 'react';
 
 const Fulllayout = (props) => {
 
@@ -82,7 +83,7 @@ const Fulllayout = (props) => {
                             }
                             else {
                                 return (
-                                    <Route path={prop.path} component={prop.component} key={key} />
+                                    <Route path={prop.path} component={prop.component} key={key}/>
                                 );
                             }
                         })}

@@ -17,19 +17,40 @@ export const Company = (props) => {
         representante_telefono:'',
     })
 
+    const [ idCompany, setIdEmpresa] = useState({
+        value:'',
+        label:''
+    })
+
+    useEffect(() => {
+        
+        const value = props.selected
+        if(value){
+            const info = getItem(items, value)
+            setIdEmpresa({ value: info.id, label: info.rif })   
+            setCompany(info)
+        }
+
+    }, [props.selected])
+
+    /**** Relleno el formulario con los datos de la empresa ****/
+    const setCompany = (info) => {
+        setInputs({
+            ...inputs,
+            nombre: info.nombre,
+            direccion: info.direccion,
+            representante_rif: info.representante_rif,
+            representante_nombre: info.representante_nombre,
+            representante_telefono: info.representante_telefono
+        })
+    }
+
     /**** Relleno la información correspondiente a la empresa seleccionada ****/
     const setInfoCompany = ( input ) => {
         if(input){
             
             const info = getItem(items, input.value)
-            setInputs({
-                ...inputs,
-                nombre: info.nombre,
-                direccion: info.direccion,
-                representante_rif: info.representante_rif,
-                representante_nombre: info.representante_nombre,
-                representante_telefono: info.representante_telefono
-            })
+            setCompany(info)
 
             if(props.type === "importador"){
                 props.setCustomInputs({
@@ -45,27 +66,27 @@ export const Company = (props) => {
                 })
             }
 
-
         }else{
-
-            setInputs({
-                nombre:'',
-                direccion:'',
-                representante_rif:'',
-                representante_nombre:'',
-                representante_telefono:'',
-            })
-
-            clearCustomInputs()
+            clearInputs()
         }
     }
 
     /**** 
-     * Esta función es utilizada para limpiar los campos personalizados 
-     * Estos campos son importador,cliente,conductor,ayudante
-     * Dichos campos guardan los id correspondientes a cada item
+     * Esta función es utilizada para limpiar los campos del formulario 
      * ****/
-    const clearCustomInputs = () => {
+    const clearInputs = () => {
+
+        /**** Se encarga de vaciar los campos
+         * nombre, direccion, rif, nombre y telefono del representante
+         */
+        setInputs({
+            nombre:'',
+            direccion:'',
+            representante_rif:'',
+            representante_nombre:'',
+            representante_telefono:'',
+        })
+
         /**** Si el campo personalizado es importador ****/
         if(props.type === "importador"){
             props.setCustomInputs({
@@ -95,7 +116,7 @@ export const Company = (props) => {
                         <hr />
                             <label class="control-label">Rif</label>
                         <div class="form-group">
-                            <Select name="rif" onChange={setInfoCompany} isClearable={true} options={props.optionsCompanies} />
+                            <Select name="rif" value={ idCompany } onChange={setInfoCompany} isClearable={true} options={props.optionsCompanies} />
                         </div>
                         <div class="form-group">
                             <label class="control-label">Nombre/Razón Social</label>
