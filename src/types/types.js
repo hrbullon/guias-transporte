@@ -38,4 +38,11 @@ export const types = {
     conversionCreated: '[CONVERSION] Created',
     conversionUpdated: '[CONVERSION] Updated',
     conversionDeleted: '[CONVERSION] Deleted',
+
+    workdays:        '[WORKDAYS] Get',
+    workdaysClear:   '[WORKDAYS] Clear',
+    workdaysLoaded:  '[WORKDAYS] Loaded',
+    workdaysCreated: '[WORKDAYS] Created',
+    workdaysUpdated: '[WORKDAYS] Updated',
+    workdaysDeleted: '[WORKDAYS] Deleted',
 }

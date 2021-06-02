@@ -7,6 +7,7 @@ import { Companies } from '../views/companies/companies.jsx';
 import { Products } from '../views/products/products.jsx';
 import { Documents } from '../views/documents/documents.jsx';
 import { Form } from '../views/documents/form.jsx';
+import { Workdays } from '../views/workdays/workdays.jsx';
 
 var ThemeRoutes = [
   { 
@@ -49,6 +50,13 @@ var ThemeRoutes = [
     icon: "mr-2 mdi mdi-note-multiple-outline",
     menu: true,
     component: Documents
+  },
+  {
+    path:"/workdays",
+    name:"Jornadas",
+    icon: "mr-2 mdi mdi-calendar",
+    menu: true,
+    component: Workdays
   },
   {
     path:"/customers",

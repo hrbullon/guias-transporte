@@ -54,10 +54,7 @@ export const Form = (props) => {
         fecha:''
     })
 
-    const [flag, setFlag] = useState({
-        validated: true
-    })
-
+    /***** Si el formulario está validado este state será true sino será false*****/
     const [validated, setValidated] = useState(true)
     
     /***** Options Values ****/
