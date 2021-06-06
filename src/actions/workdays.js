@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2'
 
-import { db } from '../firebase/firebase-config'
+import { db, firebase } from '../firebase/firebase-config'
 import { types } from '../types/types'
 
 const table = 'workdays'
@@ -52,6 +52,7 @@ export const startCreatingWorkdays = ( data ) => {
     return async (dispatch) => {
         try {
             const doc = await db.collection(table).add(data)
+            const increment = firebase.firestore.FieldValue.increment(1);
             dispatch( workdaysCreated( { id: doc.id, ...data } ) )
             Swal.fire('Correcto', 'Jornada registrada!!','success')
         } catch (error) {

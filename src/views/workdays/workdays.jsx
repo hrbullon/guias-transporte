@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { startUpdatingWorkdays, startCreatingWorkdays, startDeletingWorkdays, startLoadingWorkdays } from '../../actions/workdays'
 
+import Swal from "sweetalert2"
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
@@ -16,16 +17,22 @@ export const Workdays = () => {
     const [workdays, setWorkdays] = useState({})
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    const { created, updated, deleted } = useSelector(state => state.workdays)
+    const { loaded, created, updated, deleted } = useSelector(state => state.workdays)
     const [data, setData] = useState()
     const [entradas, setEntradas] = useState({
-        entradas: []
+        items:[]
     })
 
     /** Obtiene el listado de jornadas **/
     useEffect(() => {
         dispatch( startLoadingWorkdays() )
     }, []) 
+
+    //Está pendiente si cambia el valor de loaded
+    //En caso de cambiar es porque se creó cargaron las jornadas
+    useEffect(() => {
+        setWorkdays(loaded)
+    }, [loaded])
 
     //Está pendiente si cambia el valor de created
     //En caso de cambiar es porque se creó correctamente la jornada
@@ -62,10 +69,22 @@ export const Workdays = () => {
     //Envia los datos del formularioe
     const onSubmit = (data) => {
 
-        if( data.id ) {
-            dispatch( startUpdatingWorkdays( {...data} ) )
+        if(entradas.items.length > 0){
+            
+            const values = { ...data, entradas: entradas.items }
+
+            if( data.id ) {
+                dispatch( startUpdatingWorkdays( {...values} ) )
+            }else{
+                dispatch( startCreatingWorkdays( {...values} ) )
+            }
+
         }else{
-            dispatch( startCreatingWorkdays( {...data} ) )
+            Swal.fire({
+                title: 'Datos requeridos',
+                text: "Registre almenos una fecha de entrada",
+                icon: 'warning'
+            })
         }
     };
     
