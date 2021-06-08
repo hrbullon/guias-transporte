@@ -1,49 +1,69 @@
 import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
-import { startCreatingVehicle ,startUpdatingVehicle, startDeletingVehicle } from '../../actions/vehicles'
+
+import { startLoadingCategories } from '../../actions/categories'
+
+import { startCreatingVehicle,
+         startUpdatingVehicle, 
+         startDeletingVehicle, 
+         startLoadingVehicles} from '../../actions/vehicles'
 
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
-import { addItem, updateItem, deleteItem, } from "../../helpers/dataArray"
-import { db } from "../../firebase/firebase-config"
+import { addItem, updateItem, deleteItem, prepareOptionsSelect, } from "../../helpers/dataArray"
 
 export const Vehicles = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de vehículos
     const [vehicles, setVehicles] = useState({})
+    //Aquí se almacena el listado de marcas de vehículos
+    const [brands, setBrands] = useState({})
+    //Aquí se almacena el listado de modelos de vehículos
+    const [models, setModels] = useState({})
+
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    const { created, updated, deleted } = useSelector(state => state.vehicles)
+    const { loaded, created, updated, deleted } = useSelector(state => state.vehicles)
+    const { loaded: categories } = useSelector(state => state.categories)
     const [data, setData] = useState()
 
     /** Obtiene el listado de vehiculos **/
     useEffect( async () => {
+        dispatch( startLoadingVehicles() )
+        
+        dispatch( startLoadingCategories() )
 
-        const vehiclesSnap = await db.collection(`vehicles`).get()
-        const vehicles = []
-
-        vehiclesSnap.forEach( snap => {
-            vehicles.push({
-                id: snap.id,
-                ...snap.data()
-            })
-        })
-
-        setVehicles(vehicles)
     },[]) 
+
+    //Está pendiente si cambia el valor de created
+    //En caso de cambiar es porque se cargaron correctamente las categorias
+    useEffect(() => {
+        //Actualizo el listado de vehículos
+        if(loaded){
+            setVehicles(loaded)
+        }
+        
+        if(categories){
+            let brandsItems = categories.filter(category => category.tipo == "Marcas");
+            brandsItems = prepareOptionsSelect(brandsItems)
+            setBrands(brandsItems)
+            
+            let modelsItems = categories.filter(category => category.tipo == "Modelos");
+            modelsItems = prepareOptionsSelect(modelsItems)
+            setModels(modelsItems)
+        }
+    }, [loaded, categories])
 
     //Está pendiente si cambia el valor de created
     //En caso de cambiar es porque se creó correctamente el vehículo
     useEffect(() => {
-
         const list = addItem(vehicles, created)
         //Actualizo el listado de vehículos
         setVehicles(list)
-
     }, [created])
 
     //Está pendiente si cambia el valor de updated
@@ -106,6 +126,11 @@ export const Vehicles = () => {
             sortable: true,
         },
         {
+            name: 'Estado',
+            selector: 'estado',
+            sortable: true,
+        },
+        {
             name: 'Acciones',
             sortable: false,
             right: true,
@@ -125,7 +150,7 @@ export const Vehicles = () => {
                 <div className="col-lg-5 col-xs-12 col-s-12">
                     <div className="card">
                         <div className="card-body">
-                            <Form data={data} onSubmit={onSubmit}/>
+                            <Form data={data} brands={brands} models={models} onSubmit={onSubmit}/>
                         </div>
                     </div>
                 </div>

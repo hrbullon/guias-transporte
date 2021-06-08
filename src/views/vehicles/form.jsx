@@ -1,24 +1,33 @@
 import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
-import { useDispatch } from "react-redux" 
+
+import Swal from 'sweetalert2'
+import Select from 'react-select'
 
 import { validatePlaca } from "../../helpers/checking"
 
 
 export const Form = (props) => {
 
-    const dispatch = useDispatch()
-
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
-
-    const handleCheckingPlaca = (placa) => {
-        //const validated = validatePlaca(placa)
-        //console.log(validated);
-    }
 
     useEffect(() => {
         reset({...props.data})
     }, [props.data])
+
+    const handleCheckingPlaca = async (placa) => {
+        const validated = await validatePlaca(placa)
+        
+        if(!validated){
+            reset({...props.data, placa:""})
+            
+            Swal.fire({
+                title: 'Datos inválidos',
+                html: `La placa <b>${placa}</b>, ya se encuentra registrada`,
+                icon: 'warning'
+            })
+        }
+    }
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
@@ -29,12 +38,12 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Marca *</label>
-                <input type="text" name="marca" autoComplete="off" className="form-control" {...register("marca", { required: true } )} placeholder="Ingrese una marca"/>
+                <Select name="marca" isClearable={true} options={props.brands} />
                 { errors?.marca?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
                 <label className="control-label">Modelo *</label>
-                <input type="text" name="modelo" autoComplete="off" className="form-control" {...register("modelo", { required: true } )} placeholder="Ingrese un modelo"/>
+                <Select name="modelo" isClearable={true} options={props.models} />
                 { errors?.modelo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
