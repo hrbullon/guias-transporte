@@ -17,27 +17,31 @@ export const Form = (props) => {
                 <span>Los campos con el símbolo "*" son requeridos</span>
             </div>
             <div class="form-group">
+                <label class="control-label">Categoría *</label>
+                <select name="categoria" {...register("categoria", { required: true } )} class="form-control custom-select">
+                    <option value="">Seleccione una categoría</option>
+                    { Object.keys(props.categories).map( (index, value) => {
+                        let selected = (props.data.categoria == props.categories[index].nombre)? "selected" : "";
+                        return <option selected={selected} key={index} value={props.categories[index].nombre}>{ props.categories[index].nombre }</option>    
+                    })}
+                </select>
+                { errors?.categoria?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
+            </div>
+            <div class="form-group">
                 <label class="control-label">Nombre *</label>
                 <input type="text" name="nombre" autoComplete="off" class="form-control" {...register("nombre", { required: true } )} placeholder="Ingrese Nombre/Razón Social"/>
                 { errors?.nombre?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div class="form-group">
-                <label class="control-label">Categoría *</label>
-                <select name="categoria" {...register("categoria", { required: true } )} class="form-control custom-select">
-                    <option value="">Seleccione una categoría</option>
-                    <option value="VIVERES">VIVERES</option>
-                    <option value="PANADERIA">PANADERIA</option>
-                    <option value="BEBIDAS">BEBIDAS</option>
-                </select>
-                { errors?.categoria?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
-            </div>
-            <div class="form-group">
                 <label class="control-label">Presentación *</label>
                 <select name="presentacion" {...register("presentacion", { required: true } )} class="form-control custom-select">
                     <option value="">Seleccione una presentación</option>
-                    <option value="SACO">SACO</option>
-                    <option value="BULTO">BULTO</option>
-                    <option value="CAJA">CAJA</option>
+                    { Object.keys(props.conversions).map( (index, value) => {
+                        let selected = (props.data.presentacion == props.conversions[index].id)? "selected" : "";
+                        return <option selected={selected} key={index} value={props.conversions[index].id}>
+                            { `${props.conversions[index].presentacion} - ${props.conversions[index].contenido} ${props.conversions[index].unidad_medida}` }
+                            </option>    
+                    })}
                 </select>
                 { errors?.presentacion?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>

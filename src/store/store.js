@@ -9,6 +9,7 @@ import { driverReducer } from "../reducers/driverReducer";
 import { documentReducer } from "../reducers/documentReducer";
 import { conversionReducer } from "../reducers/conversionReducer";
 import { workdaysReducer } from "../reducers/workdaysReducer";
+import { categoryReducer } from "../reducers/categoryReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -21,7 +22,8 @@ const reducers = combineReducers({
     drivers: driverReducer,
     documents: documentReducer,
     conversions: conversionReducer,
-    workdays: workdaysReducer
+    workdays: workdaysReducer,
+    categories: categoryReducer
 })
 
 export const store = createStore(
