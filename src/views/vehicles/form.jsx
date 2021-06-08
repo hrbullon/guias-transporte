@@ -1,9 +1,20 @@
 import React, { useEffect } from 'react'
 import { useForm } from "react-hook-form"
+import { useDispatch } from "react-redux" 
+
+import { validatePlaca } from "../../helpers/checking"
+
 
 export const Form = (props) => {
 
+    const dispatch = useDispatch()
+
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
+
+    const handleCheckingPlaca = (placa) => {
+        //const validated = validatePlaca(placa)
+        //console.log(validated);
+    }
 
     useEffect(() => {
         reset({...props.data})
@@ -28,7 +39,7 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Placa *</label>
-                <input type="text" name="placa" autoComplete="off" className="form-control" {...register("placa", { required: true } )} placeholder="Ingrese una placa"/>
+                <input type="text" name="placa" onBlurCapture={ (e) => handleCheckingPlaca(e.target.value) } autoComplete="off" className="form-control" {...register("placa", { required: true } )} placeholder="Ingrese una placa"/>
                 { errors?.placa?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">

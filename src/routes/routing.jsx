@@ -8,6 +8,9 @@ import { Products } from '../views/products/products.jsx';
 import { Documents } from '../views/documents/documents.jsx';
 import { Form } from '../views/documents/form.jsx';
 import { Workdays } from '../views/workdays/workdays.jsx';
+import { People } from '../views/people/people';
+import { Categories } from '../views/categories/categories.jsx';
+import { Forms } from '../views/products/forms/forms.jsx';
 
 var ThemeRoutes = [
   { 
@@ -23,6 +26,13 @@ var ThemeRoutes = [
     icon: "mdi mdi-settings",
     menu: true,
     component: Starter
+  },
+  {
+    path:"/users",
+    name:"Usuarios",
+    icon: "mr-2 mdi mdi-account-circle",
+    menu: true,
+    component: Users
   },
   {
     path:"/users",
@@ -80,11 +90,32 @@ var ThemeRoutes = [
     component: Products
   }, 
   {
+    path:"/forms",
+    name:"Presentación productos",
+    icon: "mr-2 mdi mdi-bookmark",
+    menu: true,
+    component: Forms
+  }, 
+  {
     path:"/vehicles",
     name:"Vehiculos",
     icon: "mr-2 mdi mdi-truck-delivery",
     menu: true,
     component: Vehicles
+  },
+  {
+    path:"/people",
+    name:"Personas",
+    icon: "mr-2 mdi mdi-account-multiple",
+    menu: true,
+    component: People
+  },
+  {
+    path:"/categories",
+    name:"Categorías",
+    icon: "mr-2 mdi mdi-tag-multiple",
+    menu: true,
+    component: Categories
   },
   
   { path: '/', pathTo: '/dashboard', name: 'Dashboard', redirect: true }
