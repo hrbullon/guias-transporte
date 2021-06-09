@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import Select from 'react-select'
 
 import { validatePlaca } from "../../helpers/checking"
-import { getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
+import { getItem, getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
 
 
 export const Form = (props) => {
@@ -25,6 +25,25 @@ export const Form = (props) => {
     useEffect(() => {
         reset({...props.data})
     }, [props.data])
+    
+    useEffect(() => {
+        
+        if(props.customSelect.marca){
+            let marca = getItemSelect(props.brands,props.customSelect.marca)
+            setIdMarca(marca)
+
+            let modelItems = props.categories.filter(category => category.tipo == marca.label);
+            modelItems = prepareOptionsSelect( modelItems )
+            props.setModels(modelItems)
+
+        }
+        
+        if(props.customSelect.modelo !== ""){
+            const modelo = getItemSelect(props.models,props.customSelect.modelo)
+            setIdModelo(modelo)
+        } 
+
+    }, [props.customSelect])
 
     /***** 
      * Activa la llamada para filtrar los modelos

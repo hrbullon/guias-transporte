@@ -115,6 +115,10 @@ export const Vehicles = () => {
     //Llena el state data con los datos del vehículo a editar
     const handleEdit = (item) => {
         setData(item)
+        setCustomSelect({
+            marca: item.marca,
+            modelo: item.modelo 
+        })
     }
     
     //Dispara el evento que elimina un vehículo determinado
