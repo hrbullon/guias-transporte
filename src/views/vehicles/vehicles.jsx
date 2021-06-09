@@ -13,7 +13,7 @@ import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
-import { addItem, updateItem, deleteItem, prepareOptionsSelect, } from "../../helpers/dataArray"
+import { addItem, updateItem, deleteItem, prepareOptionsSelect, getItem, getItemSelect, } from "../../helpers/dataArray"
 
 export const Vehicles = () => {
 
@@ -32,12 +32,13 @@ export const Vehicles = () => {
     const [data, setData] = useState()
     
     const [customSelect, setCustomSelect] = useState({
-        marca:'',
-        modelo:''
+        marca:  { value:'', label:'' },
+        modelo: { value:'', label:'' }
     })
 
     /** Obtiene el listado de vehiculos **/
     useEffect( async () => {
+        
         dispatch( startLoadingVehicles() )
         
         dispatch( startLoadingCategories() )
@@ -94,22 +95,23 @@ export const Vehicles = () => {
     const clearForm = () => {
         setData({})
         setCustomSelect({
-            marca:'',
-            modelo:''
+            marca:  { value:'', label:'' },
+            modelo: { value:'', label:'' }
         })
     }
 
     //Envia los datos del formularioe
     const onSubmit = (data) => {
-
-        const { marca, modelo } = customSelect
-        const values = { ...data, marca, modelo }
-
+        const values = { ...data, ...customSelect }
+        console.log(values);
+        clearForm()
+        /* const values = { ...data, ...customSelect }
+        
         if( data.id ) {
             dispatch( startUpdatingVehicle( {...values} ) )
         }else{
             dispatch( startCreatingVehicle( {...values} ) )
-        }
+        } */
     };
     
     //Llena el state data con los datos del vehículo a editar
@@ -135,13 +137,23 @@ export const Vehicles = () => {
         },
         {
             name: 'Marca',
-            selector: 'marca',
+            selector: 'marca.nombre',
             sortable: true,
+            cell: row => (
+                <div>
+                    { row.marca.nombre }
+                </div>
+            )         
         },
         {
             name: 'Modelo',
-            selector: 'modelo',
+            selector: 'modelo.nombre',
             sortable: true,
+            cell: row => (
+                <div>
+                    { row.modelo.nombre }
+                </div>
+            ) 
         },
         {
             name: 'Estado',
@@ -168,7 +180,16 @@ export const Vehicles = () => {
                 <div className="col-lg-5 col-xs-12 col-s-12">
                     <div className="card">
                         <div className="card-body">
-                            <Form data={data} brands={brands} categories={categories} models={models} setCustomSelect={setCustomSelect} customSelect={customSelect} setModels={setModels} onSubmit={onSubmit}/>
+                            <Form 
+                                data={data} 
+                                brands={brands} 
+                                categories={categories} 
+                                models={models} 
+                                setModels={setModels} 
+                                onSubmit={onSubmit}
+                                customSelect={customSelect} 
+                                setCustomSelect={setCustomSelect}
+                            /> 
                         </div>
                     </div>
                 </div>
