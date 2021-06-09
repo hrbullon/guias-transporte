@@ -1,20 +1,62 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 
 import Swal from 'sweetalert2'
 import Select from 'react-select'
 
 import { validatePlaca } from "../../helpers/checking"
+import { getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
 
 
 export const Form = (props) => {
 
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
 
+    const [ idMarca, setIdMarca] = useState({
+        value:'',
+        label:''
+    })
+    
+    const [ idModelo, setIdModelo] = useState({
+        value:'',
+        label:''
+    })
+
     useEffect(() => {
         reset({...props.data})
     }, [props.data])
 
+    /***** 
+     * Activa la llamada para filtrar los modelos
+     * Dependiendo de la marca seleccionada
+     * Es decir captura el evento onChange en el campo marca
+     * *****/
+    const handleChangingMarca = ( input ) => {
+        setIdMarca(input)
+
+        props.setCustomSelect({...props.customSelect, marca: input.value })
+
+        let modelItems = props.categories.filter(category => category.tipo == input.label);
+        modelItems = prepareOptionsSelect( modelItems )
+        props.setModels(modelItems)
+
+        setIdModelo({value:'', label: ''})
+    }
+
+    /***** 
+     * Activa la llamada para establecer un modelo
+     * *****/
+     const handleChangingModelo = ( input ) => {
+        const modelo = getItemSelect(props.models, input.value)
+        setIdModelo(modelo)
+        props.setCustomSelect({...props.customSelect, modelo: input.value })
+    } 
+
+    /***** 
+     * Activa la llamada para verificar que la placa sea única
+     * Se activa cuando el usuario saca el cursor del campo placa
+     * Es decir captura el evento onBlur en placa
+     * *****/
     const handleCheckingPlaca = async (placa) => {
         const validated = await validatePlaca(placa)
         
@@ -38,12 +80,12 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Marca *</label>
-                <Select name="marca" isClearable={true} options={props.brands} />
+                <Select name="marca" isClearable={true} value={idMarca} onChange={ handleChangingMarca } options={props.brands} />
                 { errors?.marca?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
                 <label className="control-label">Modelo *</label>
-                <Select name="modelo" isClearable={true} options={props.models} />
+                <Select name="modelo" isClearable={true} value={idModelo} onChange={ handleChangingModelo } options={props.models} />
                 { errors?.modelo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">

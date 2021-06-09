@@ -81,6 +81,17 @@ export const prepareOptionsSelect = (data) => {
     return items
 }
 
+export const getItemSelect = (data, id) => {
+    
+    let item = ""
+    Object.keys(data).map( (key) => {
+        if(data[key].value === id){
+            item = { ...data[key] }
+        }
+    })
+    return item
+}
+
 export const prepareOptionsConversion = (data) => {
     let items = []
     

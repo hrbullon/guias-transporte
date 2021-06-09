@@ -30,6 +30,11 @@ export const Vehicles = () => {
     const { loaded, created, updated, deleted } = useSelector(state => state.vehicles)
     const { loaded: categories } = useSelector(state => state.categories)
     const [data, setData] = useState()
+    
+    const [customSelect, setCustomSelect] = useState({
+        marca:'',
+        modelo:''
+    })
 
     /** Obtiene el listado de vehiculos **/
     useEffect( async () => {
@@ -51,10 +56,6 @@ export const Vehicles = () => {
             let brandsItems = categories.filter(category => category.tipo == "Marcas");
             brandsItems = prepareOptionsSelect(brandsItems)
             setBrands(brandsItems)
-            
-            let modelsItems = categories.filter(category => category.tipo == "Modelos");
-            modelsItems = prepareOptionsSelect(modelsItems)
-            setModels(modelsItems)
         }
     }, [loaded, categories])
 
@@ -62,6 +63,7 @@ export const Vehicles = () => {
     //En caso de cambiar es porque se creó correctamente el vehículo
     useEffect(() => {
         const list = addItem(vehicles, created)
+        clearForm()
         //Actualizo el listado de vehículos
         setVehicles(list)
     }, [created])
@@ -74,7 +76,7 @@ export const Vehicles = () => {
         //Actualizo el listado de vehículos
         setVehicles(list)
         //Limpio el formulario
-        setData({})
+        clearForm()
 
     }, [updated])
 
@@ -88,13 +90,25 @@ export const Vehicles = () => {
 
     }, [deleted])
     
+    //Limpia el formualrio
+    const clearForm = () => {
+        setData({})
+        setCustomSelect({
+            marca:'',
+            modelo:''
+        })
+    }
+
     //Envia los datos del formularioe
     const onSubmit = (data) => {
 
+        const { marca, modelo } = customSelect
+        const values = { ...data, marca, modelo }
+
         if( data.id ) {
-            dispatch( startUpdatingVehicle( {...data} ) )
+            dispatch( startUpdatingVehicle( {...values} ) )
         }else{
-            dispatch( startCreatingVehicle( {...data} ) )
+            dispatch( startCreatingVehicle( {...values} ) )
         }
     };
     
@@ -150,7 +164,7 @@ export const Vehicles = () => {
                 <div className="col-lg-5 col-xs-12 col-s-12">
                     <div className="card">
                         <div className="card-body">
-                            <Form data={data} brands={brands} models={models} onSubmit={onSubmit}/>
+                            <Form data={data} brands={brands} categories={categories} models={models} setCustomSelect={setCustomSelect} customSelect={customSelect} setModels={setModels} onSubmit={onSubmit}/>
                         </div>
                     </div>
                 </div>
