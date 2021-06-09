@@ -9,6 +9,7 @@ export const types = {
     vehicleLoaded:  '[VEHICLE] Loaded',
     vehicleCreated: '[VEHICLE] Created',
     vehicleUpdated: '[VEHICLE] Updated',
+    vehicleDeleted: '[VEHICLE] Deleted',
 
     productLoaded:  '[PRODUCT] Loaded',
     productCreated: '[PRODUCT] Created',

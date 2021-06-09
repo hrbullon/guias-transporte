@@ -73,7 +73,6 @@ export const prepareOptionsPlaca = (data) => {
 
 export const prepareOptionsSelect = (data) => {
     let items = []
-    
     Object.keys(data).map( (key) => {
         items.push({ value: data[key].id, label: data[key].nombre }) 
     })

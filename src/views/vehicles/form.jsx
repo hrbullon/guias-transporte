@@ -7,7 +7,6 @@ import Select from 'react-select'
 import { validatePlaca } from "../../helpers/checking"
 import { getItem, getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
 
-
 export const Form = (props) => {
 
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
@@ -35,12 +34,16 @@ export const Form = (props) => {
             let modelItems = props.categories.filter(category => category.tipo == marca.label);
             modelItems = prepareOptionsSelect( modelItems )
             props.setModels(modelItems)
-
         }
         
-        if(props.customSelect.modelo !== ""){
-            const modelo = getItemSelect(props.models,props.customSelect.modelo)
-            setIdModelo(modelo)
+        if(props.customSelect.modelo){
+            
+            const modelo = getItem(props.categories, props.customSelect.modelo)
+
+            setIdModelo({
+                value: modelo.id,
+                label: modelo.nombre
+            })
         } 
 
     }, [props.customSelect])
@@ -51,24 +54,37 @@ export const Form = (props) => {
      * Es decir captura el evento onChange en el campo marca
      * *****/
     const handleChangingMarca = ( input ) => {
-        setIdMarca(input)
+        
+        if(input){
 
-        props.setCustomSelect({...props.customSelect, marca: input.value })
+            setIdMarca(input)
 
-        let modelItems = props.categories.filter(category => category.tipo == input.label);
-        modelItems = prepareOptionsSelect( modelItems )
-        props.setModels(modelItems)
+            props.setCustomSelect({...props.customSelect, marca: input.value })
+    
+            let modelItems = props.categories.filter(category => category.tipo == input.label);
+            modelItems = prepareOptionsSelect( modelItems )
+            props.setModels(modelItems)
+    
+            setIdModelo({value:'', label: ''})
 
-        setIdModelo({value:'', label: ''})
+        }else{
+            setIdMarca({value:"",label:""})
+        }
+        
     }
 
     /***** 
      * Activa la llamada para establecer un modelo
      * *****/
      const handleChangingModelo = ( input ) => {
-        const modelo = getItemSelect(props.models, input.value)
-        setIdModelo(modelo)
-        props.setCustomSelect({...props.customSelect, modelo: input.value })
+        
+        if(input){
+            const modelo = getItemSelect(props.models, input.value)
+            setIdModelo(modelo)
+            props.setCustomSelect({...props.customSelect, modelo: input.value })
+        }else{
+            setIdModelo({value:'', label: ''})
+        }
     } 
 
     /***** 
