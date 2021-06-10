@@ -1,0 +1,42 @@
+[
+        {
+            "municipio":{
+                "id":"1",
+                "nombre":"Municipio uno",
+                "parroquias":[
+                    {
+                        "id":"1",
+                        "nombre":"Parroquia uno"
+                    },
+                    {
+                        "id":"2",
+                        "nombre":"Parroquia dos"
+                    },
+                    {
+                        "id":"3",
+                        "nombre":"Parroquia tres"
+                    }
+                ]
+            }
+        },
+        {
+            "municipio":{
+                "id":"2",
+                "nombre":"Municipio dos",
+                "parroquias":[
+                    {
+                        "id":"3",
+                        "nombre":"Parroquia tres"
+                    },
+                    {
+                        "id":"4",
+                        "nombre":"Parroquia cuatro"
+                    },
+                    {
+                        "id":"5",
+                        "nombre":"Parroquia cinco"
+                    }
+                ]
+            }
+        }
+]
