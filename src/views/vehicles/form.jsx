@@ -22,33 +22,40 @@ export const Form = (props) => {
     })
 
     useEffect(() => {
+        
+        setIdMarca({value:'',label:'Seleccione una marca'})
+        setIdModelo({value:'',label:'Seleccione un modelo'})
+        
         reset({...props.data})
     }, [props.data])
     
     useEffect(() => {
-        
+
         if(props.customSelect.marca.id){
+            
             const marca = getItemSelect(props.brands, props.customSelect.marca.id)
             setIdMarca(marca)
 
             let modelItems = props.categories.filter(category => category.tipo == marca.label);
             modelItems = prepareOptionsSelect( modelItems )
             props.setModels(modelItems)
-        }
-        
-        if(props.customSelect.modelo.id !== ""){
-            const modelo = getItem(props.categories, props.customSelect.modelo.id)
-            
-            if(modelo.id !== ""){
-                console.log(modelo);
-                /* setIdModelo({
-                    value: modelo.id,
-                    label: modelo.nombre
-                }) */
-            }
+
         }
 
-    }, [props.customSelect])
+    }, [props.customSelect.marca])
+
+    useEffect(() => {
+
+        const modelo = getItem(props.categories, props.customSelect.modelo.id)
+            
+        if(modelo){
+            setIdModelo({
+                value: modelo.id,
+                label: modelo.nombre
+            })
+        }
+
+    }, [props.customSelect.modelo])
 
     /***** 
      * Activa la llamada para filtrar los modelos
@@ -58,29 +65,47 @@ export const Form = (props) => {
     const handleChangingMarca = ( input ) => {
         
         if(input){
-
+            
             setIdMarca(input)
 
-            let modelItems = props.categories.filter(category => category.tipo == input.label);
-            
-            modelItems = prepareOptionsSelect( modelItems )
-            props.setModels(modelItems)
+            setIdModelo({value:'', label: 'Seleccione un modelo'})
+
+            props.setCustomSelect(
+                {...props.customSelect, 
+                    marca: { 
+                        id: input.value, 
+                        nombre: input.label 
+                    }
+                }
+            )
+ 
+        }else{
+
+            setIdMarca({value:'', label: 'Seleccione una marca'}) 
             
             props.setCustomSelect(
                 {...props.customSelect, 
                     marca: { 
-                        value: input.value, 
-                        label: input.label 
+                        id: "", 
+                        nombre: "" 
                     }
                 }
-            ) 
+            )
 
-            setIdModelo({value:"",label:"Seleccione un modelo"})
- 
-        }else{
-            setIdMarca({value:"",label:"Seleccione una marca"})
-            setIdModelo({value:"",label:"Seleccione un modelo"})
-        } 
+            setIdModelo({value:'', label: 'Seleccione un modelo'})
+
+            props.setCustomSelect(
+                {...props.customSelect, 
+                    modelo: { 
+                        id: "", 
+                        nombre: "" 
+                    }
+                }
+            )
+            
+            props.setModels([])
+
+        }
         
     }
 
@@ -92,22 +117,46 @@ export const Form = (props) => {
         if(input){
             
             const modelo = getItemSelect(props.models, input.value)
-            console.log(modelo);
             setIdModelo(modelo)
 
             props.setCustomSelect(
                 {...props.customSelect, 
                     modelo: { 
-                        value: input.value, 
-                        label: input.label 
+                        id: input.value, 
+                        nombre: input.label 
                     }
                 }
             )
 
         }else{
-            setIdModelo({value:'', label: 'Seleccione un modelo'})
+            resetModelo()
         }
     } 
+
+    const resetModelo = () => {
+
+        props.setCustomSelect(
+            {...props.customSelect, 
+                modelo: { 
+                    id: "", 
+                    nombre: "" 
+                }
+            }
+        )
+    }
+
+    const resetMarca = () => {
+
+        setIdMarca({value:'', label: 'Seleccione una marca'})
+        props.setCustomSelect(
+            {...props.customSelect, 
+                marca: { 
+                    id: "", 
+                    nombre: "" 
+                }
+            }
+        ) 
+    }
 
     /***** 
      * Activa la llamada para verificar que la placa sea única
@@ -137,13 +186,13 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Marca *</label>
-                <Select name="marca" isClearable={true} value={idMarca} onChange={ handleChangingMarca } options={props.brands} />
-                { errors?.marca?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
+                <Select name="marca" isClearable={true} value={idMarca} onChange={handleChangingMarca} options={props.brands} />
+                { idMarca.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
             </div>
             <div className="form-group">
                 <label className="control-label">Modelo *</label>
                 <Select name="modelo" isClearable={true} value={idModelo} onChange={ handleChangingModelo } options={props.models} />
-                { errors?.modelo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
+                { idModelo.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
             </div>
             <div className="form-group">
                 <label className="control-label">Placa *</label>
