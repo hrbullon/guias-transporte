@@ -10,6 +10,7 @@ import { documentReducer } from "../reducers/documentReducer";
 import { conversionReducer } from "../reducers/conversionReducer";
 import { workdaysReducer } from "../reducers/workdaysReducer";
 import { categoryReducer } from "../reducers/categoryReducer";
+import { peopleReducer } from "../reducers/peopleReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -23,7 +24,8 @@ const reducers = combineReducers({
     documents: documentReducer,
     conversions: conversionReducer,
     workdays: workdaysReducer,
-    categories: categoryReducer
+    categories: categoryReducer,
+    people: peopleReducer
 })
 
 export const store = createStore(

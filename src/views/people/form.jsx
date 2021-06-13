@@ -45,9 +45,9 @@ export const Form = (props) => {
                 <label class="control-label">Tipo *</label>
                 <select name="tipo" {...register("tipo", { required: true } )} class="form-control custom-select">
                     <option value="">Seleccione un tipo</option>
-                    <option value="">Acompañante</option>
-                    <option value="">Ayudante</option>
-                    <option value="">Conductor</option>
+                    <option value="1">Acompañante</option>
+                    <option value="2">Ayudante</option>
+                    <option value="3">Conductor</option>
                 </select>
                 { errors?.tipo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>

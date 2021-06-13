@@ -1,37 +1,92 @@
 import { Fragment, useState, useEffect } from "react"
 
+import { useSelector, useDispatch } from "react-redux"
+
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
+import { startCreatingPeople, startDeletingPeople, startLoadingPeople, startUpdatingPeople } from "../../actions/people"
+import { addItem, deleteItem, updateItem } from "../../helpers/dataArray"
+
 import { Form } from "./form"
+
+const tipos = ["","Acompañante","Ayudante","Conductor"]
 
 export const People = () => {
 
-    //Aquí se almacena el listado de productos
-    const [products, setProducts] = useState([])
+    const dispatch = useDispatch()
+    //Aquí se almacena el listado de personas
+    const [people, setPeople] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    //const { created, updated, deleted } = useSelector(state => state.products)
+    const { loaded, created, updated, deleted } = useSelector(state => state.people)
     const [data, setData] = useState()
+
+    /** Obtiene el listado de personas **/
+    useEffect( async () => {
+        
+        dispatch( startLoadingPeople() )
+        
+    },[]) 
+
+    //Está pendiente si cambia el valor de loaded
+    //En caso de cambiar es porque se cargaron correctamente las personas
+    useEffect(() => {
+        //Actualizo el listado de personas
+        setPeople(loaded)
+    }, [loaded])
+
+        //Está pendiente si cambia el valor de created
+    //En caso de cambiar es porque se creó correctamente el persona
+    useEffect(() => {
+        const list = addItem(people, created)
+        //Limpio el formulario        
+        setData({})
+        //Actualizo el listado de personas
+        setPeople(list)
+    }, [created])
+
+    //Está pendiente si cambia el valor de updated
+    //En caso de cambiar es porque se editó correctamente el persona
+    useEffect(() => {
+        
+        const list = updateItem(people, updated)
+        //Actualizo el listado de personas
+        setPeople(list)
+        //Limpio el formulario
+        setData({})
+
+    }, [updated])
+
+    //Está pendiente si cambia el valor de deleted
+    //En caso de cambiar es porque se eliminó correctamente la persona
+    useEffect(() => {
+        
+        const list = deleteItem(people, deleted)
+        //Actualizo el listado de personas
+        setPeople(list)
+
+    }, [deleted])
+    
 
     //Envia los datos del formularioe
     const onSubmit = (data) => {
         if( data.id ) {
-            //dispatch( startUpdatingProduct( {...data} ) )
+            dispatch( startUpdatingPeople( {...data} ) )
         }else{
-            //dispatch( startCreatingProduct( {...data} ) )
+            dispatch( startCreatingPeople( {...data} ) )
         }
     };
     
-    //Llena el state data con los datos del vehículo a editar
+    //Llena el state data con los datos del persona a editar
     const handleEdit = (item) => {
         setData(item)
     }
     
-    //Dispara el evento que elimina un vehículo determinado
+    //Dispara el evento que elimina una persona determinado
     const handleRemove = (item) => {
-        //dispatch( startDeletingProduct( item ) )
+        dispatch( startDeletingPeople( item ) )
     }
 
     //Inicializo estructura de culumnas de la tabla
@@ -54,8 +109,10 @@ export const People = () => {
         
         {
             name: 'Tipo',
-            selector: 'type',
+            selector: 'tipo',
             sortable: true,
+            cell: row => ( tipos[(row.tipo)] )
+           
         },
         {
             name: 'Acciones',
@@ -88,7 +145,7 @@ export const People = () => {
                             <hr/>
                             <DataTableExtensions
                                 columns={columns}
-                                data={ products }>
+                                data={ people }>
                                 <DataTable
                                     noHeader
                                     pagination={ true }

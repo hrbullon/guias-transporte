@@ -13,7 +13,7 @@ import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
-import { addItem, updateItem, deleteItem, prepareOptionsSelect, getItem, getItemSelect, } from "../../helpers/dataArray"
+import { addItem, updateItem, deleteItem, prepareOptionsSelect } from "../../helpers/dataArray"
 
 export const Vehicles = () => {
 
