@@ -5,9 +5,11 @@ import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
+
 import { Form } from "./form"
+
+import { startCreatingConversion, startDeletingConversion, startLoadingConversions, startUpdatingConversion } from '../../../actions/conversion'
 import { addItem, updateItem, deleteItem, } from "../../../helpers/dataArray"
-import { db } from "../../../firebase/firebase-config"
 
 export const Forms = () => {
 
@@ -16,42 +18,38 @@ export const Forms = () => {
     const [items, setItems] = useState({})
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    const { created, updated, deleted } = useSelector(state => state.products)
+    const { loaded, created, updated, deleted } = useSelector(state => state.conversions)
     const [data, setData] = useState()
 
-    /** Obtiene el listado de productos **/
-    /* useEffect( async () => {
-
-        const productsSnap = await db.collection(`products`).get()
-        const products = []
-
-        productsSnap.forEach( snap => {
-            products.push({
-                id: snap.id,
-                ...snap.data()
-            })
-        })
-
-        setProducts(products)
+    /** Obtiene el listado de presentación de productos **/
+    useEffect( async () => {
+        dispatch( startLoadingConversions() )
     },[]) 
 
+    useEffect(() => { 
+        setItems(loaded)
+    }, [loaded])
+
+    
     //Está pendiente si cambia el valor de created
-    //En caso de cambiar es porque se creó correctamente el producto
+    //En caso de cambiar es porque se creó correctamente a la presentación
     useEffect(() => {
 
-        const list = addItem(products, created)
-        //Actualizo el listado de productos
-        setProducts(list)
+        const list = addItem(items, created)
+        //Actualizo el listado de presentación de productos
+        setItems(list)
+        //Limpio el formulario
+        setData({})
 
     }, [created])
 
     //Está pendiente si cambia el valor de updated
-    //En caso de cambiar es porque se editó correctamente el vehículo
+    //En caso de cambiar es porque se editó correctamente la presentación de productos
     useEffect(() => {
         
-        const list = updateItem(products, updated)
-        //Actualizo el listado de productos
-        setProducts(list)
+        const list = updateItem(items, updated)
+        //Actualizo el listado de presentación de productos
+        setItems(list)
         //Limpio el formulario
         setData({})
 
@@ -61,21 +59,25 @@ export const Forms = () => {
     //En caso de cambiar es porque se eliminó correctamente el vehículo
     useEffect(() => {
         
-        const list = deleteItem(products, deleted)
-        //Actualizo el listado de productos
-        setProducts(list)
+        const list = deleteItem(items, deleted)
+        //Actualizo el listado de presentación de productos
+        setItems(list)
 
     }, [deleted])
-     */
+    
     //Envia los datos del formularioe
     const onSubmit = (data) => {
+        
+        let values = { ...data }
+        values.unidad_medida = data.unidad_medida.label
+        
         if( data.id ) {
-            //dispatch( startUpdatingProduct( {...data} ) )
+            dispatch( startUpdatingConversion( {...values} ) )
         }else{
-            //dispatch( startCreatingProduct( {...data} ) )
+            dispatch( startCreatingConversion( {...values} ) )
         }
     };
-    
+
     //Llena el state data con los datos del vehículo a editar
     const handleEdit = (item) => {
         setData(item)
@@ -83,19 +85,24 @@ export const Forms = () => {
     
     //Dispara el evento que elimina un vehículo determinado
     const handleRemove = (item) => {
-        dispatch( startDeletingProduct( item ) )
+        dispatch( startDeletingConversion( item ) )
     }
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
         {
-            name: 'Nombre',
-            selector: 'nombre',
+            name: 'Presentación',
+            selector: 'presentacion',
             sortable: true,
         },
         {
-            name: 'Categoría',
-            selector: 'categoria',
+            name: 'Contenidp',
+            selector: 'contenido',
+            sortable: true,
+        },
+        {
+            name: 'Unidad Medida',
+            selector: 'unidad_medida',
             sortable: true,
         },
         {

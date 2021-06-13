@@ -5,6 +5,28 @@ import { types } from '../types/types'
 
 const table = "categories"
 
+export const startLoadingCategoriesFilter = (tipo) => {
+    return async (dispatch) => {
+        
+        try {
+            const categoriesSnap = await db.collection(table).where("tipo","==",tipo).get()
+            const categories = []
+
+            categoriesSnap.forEach( snap => {
+                categories.push({
+                    id: snap.id,
+                    ...snap.data()
+                })
+            })
+            //Notifico al reducer, para que me almacene los datos en el state
+            dispatch( categoriesLoaded( categories ) )
+
+        } catch (error) {
+            console.log('Error al cargar los datos de categorias')
+        }
+    }
+}
+
 export const startLoadingCategories = () => {
     return async (dispatch) => {
         

@@ -18,6 +18,7 @@ export const startLoadingConversions = () => {
                     ...snap.data()
                 })
             })
+
             //Notifico al reducer, para que me almacene los datos en el state
             dispatch( conversionsLoaded( conversions ) )
 
@@ -45,10 +46,12 @@ export const startUpdatingConversion = ( data ) => {
         
         try {
             const doc = await db.doc(`${ table }/${ data.id }`).get()
-            
+            const copy = { ...data }
+            delete copy.id
+
             const updateConversion = { 
                 ...doc.data(),
-                ...data
+                ...copy
             }
 
             await db.doc(`${ table }/${ doc.id }`).update( updateConversion )
