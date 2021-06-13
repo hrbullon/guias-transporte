@@ -168,7 +168,17 @@ export const Form = (props) => {
      * Es decir captura el evento onBlur en placa
      * *****/
     const handleCheckingPlaca = async (placa) => {
+        const validated = await validatePlaca(placa)
         
+        if(!validated){
+            reset({...props.data, placa:""})
+            
+            Swal.fire({
+                title: 'Datos inválidos',
+                html: `La placa <b>${placa}</b>, ya se encuentra registrada`,
+                icon: 'warning'
+            })
+        }
     }
 
     return (
