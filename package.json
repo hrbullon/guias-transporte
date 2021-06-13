@@ -15,6 +15,7 @@
         "react-data-table-component-extensions": "^1.5.2",
         "react-dom": "^17.0.2",
         "react-hook-form": "^7.6.2",
+        "react-input-mask": "^2.0.4",
         "react-perfect-scrollbar": "1.2.0",
         "react-redux": "^7.2.4",
         "react-router-dom": "^5.2.0",

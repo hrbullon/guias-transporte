@@ -91,6 +91,17 @@ export const getItemSelect = (data, id) => {
     return item
 }
 
+export const getItemMunicipio = (data, id) => {
+    
+    let item = ""
+    Object.keys(data).map( (key) => {
+        if(data[key].municipio.id === id){
+            item = { ...data[key] }
+        }
+    })
+    return item
+}
+
 export const prepareOptionsConversion = (data) => {
     let items = []
     

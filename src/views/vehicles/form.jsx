@@ -145,19 +145,6 @@ export const Form = (props) => {
         )
     }
 
-    const resetMarca = () => {
-
-        setIdMarca({value:'', label: 'Seleccione una marca'})
-        props.setCustomSelect(
-            {...props.customSelect, 
-                marca: { 
-                    id: "", 
-                    nombre: "" 
-                }
-            }
-        ) 
-    }
-
     /***** 
      * Activa la llamada para verificar que la placa sea única
      * Se activa cuando el usuario saca el cursor del campo placa

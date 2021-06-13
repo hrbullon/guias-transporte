@@ -107,7 +107,7 @@ export const Vehicles = () => {
     const onSubmit = (data) => {
         
         const values = { ...data, ...customSelect }
-        console.log(values);
+        
         if(values.marca.id !== "" && values.modelo.id !== ""){
 
             setValidated(true)

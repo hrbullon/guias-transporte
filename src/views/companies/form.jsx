@@ -1,23 +1,168 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import Select from 'react-select'
+import InputMask from 'react-input-mask';
 
 import data from '../../data/municipios.json'
-import { prepareOptionsSelect } from '../../helpers/dataArray'
+import { getItemSelect, prepareOptionsSelect, getItemMunicipio } from '../../helpers/dataArray'
 
 export const Form = (props) => {
     
-    const { register, formState: { errors }, handleSubmit, reset } = useForm();
-
-    let parroquias = []
-
+    const { register, formState: { errors }, handleSubmit, setError, setValue, reset } = useForm();
+    
     let municipioItems = data.map(item => item.municipio);
     const municipios = prepareOptionsSelect(municipioItems)
 
+    const [parroquias, setParroquias] = useState({})
+
+    const [ idParroquia, setIdParroquia] = useState({
+        value:'',
+        label:'Seleccione una parroquia'
+    })
+    
+    const [ idMunicipio, setIdMunicipio] = useState({
+        value:'',
+        label:'Seleccione un municipio'
+    })
+
     useEffect(() => {
+
+        setIdMunicipio({value:'',label:'Seleccione una municipio'})
+        setIdParroquia({value:'',label:'Seleccione una parroquia'})
 
         reset({...props.data})
     }, [props.data])
+
+    /*****
+     * Cuando el usuario hace click en el botón
+     * para editar del listado, entonces se 
+     * deben cargar los datos en el formulario
+     * 
+     * Con este parámetro se establece el municipio
+     * ================================
+     * props.customSelect.municipio.id
+     * 
+     * Con este parámetro se establece la parroquia
+     * ================================
+     * props.customSelect.parroquia.id
+     *****/
+    useEffect(() => {
+        
+        if(props.data?.municipio?.id){
+        
+            const item = getItemSelect(municipios, props.data.municipio.id)
+            setIdMunicipio(item)
+            const { municipio } = getItemMunicipio(data, item.value)
+            let itemsParroquias = prepareOptionsSelect(municipio.parroquias)
+            setParroquias(itemsParroquias)
+            
+        } 
+
+    }, [props.data?.municipio?.id])
+
+    /*****
+     * Se activa cuando el usuario 
+     * selecciona un municipio o limpia el campo
+     *****/
+    useEffect(() => {
+        
+        let municipio = {}
+
+        //Si ha se
+        if(idMunicipio.value !== ""){
+            municipio = {
+                id: idMunicipio.value, 
+                    nombre: idMunicipio.label 
+            }
+
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado un municipio
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("municipio", idMunicipio)
+            setError("municipio", "")
+        
+        }else{
+            municipio = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+        props.setCustomSelect(
+            {   ...props.customSelect, 
+                municipio: { ...municipio }
+            }
+        )
+        
+        if(props.data?.parroquia?.id){
+            setIdParroquia({
+                value: props.data?.parroquia?.id,
+                label: props.data?.parroquia?.nombre
+            })
+        }
+
+    }, [idMunicipio])
+
+    /*****
+     * Se activa cuando el usuario 
+     * selecciona una parroquia o limpia el campo
+     *****/
+    useEffect(() => {
+
+        let parroquia = {}
+
+        if(idParroquia.value !== ""){
+            parroquia = {
+                id: idParroquia.value, 
+                nombre: idParroquia.label 
+            }
+        }else{
+            parroquia = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+        props.setCustomSelect(
+            {   ...props.customSelect, 
+                parroquia: { ...parroquia }
+            }
+        )
+
+    }, [idParroquia])
+
+    /*****
+     * Evento que se dispara al cambiar
+     * el campo municipio
+     *****/
+    const handleChangingMunicipio = (input) => {
+        
+        if(input){
+            setIdMunicipio(input)
+           
+            const { municipio } = getItemMunicipio(data, input.value)
+            let itemsParroquias = prepareOptionsSelect(municipio.parroquias)
+            setParroquias(itemsParroquias)
+        }else{
+
+            setIdMunicipio({value:'', label: 'Seleccione un municipio'}) 
+            setIdParroquia({value:'', label: 'Seleccione una parroquia'})
+            setParroquias([])
+
+        }
+    }
+
+    /***** 
+     * Activa la llamada para establecer una parroquia
+     * *****/
+    const handleChangingParroquia = (input) => {
+        if(input){
+            setIdParroquia(input)
+        }else{
+            setIdParroquia({value:"",label:"Seleccione una parroquia"})
+        }
+    }
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
@@ -33,16 +178,19 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">RIF/Cédula *</label>
-                <input type="text" name="rif" autoComplete="off" className="form-control" {...register("rif", { required: true } )} placeholder="Ingrese el RIF/Cédula"/>
+                <input type="text" name="rif" autoComplete="off" className="form-control" {...register("rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
                 {errors.rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
+                {errors.rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
+
             </div>
             <div className="form-group">
                 <label className="control-label">Municipio *</label>
-                <Select name="municipio" isClearable={true} options={municipios} />
+                <Select name="municipio" isClearable={true} value={idMunicipio} {...register("municipio", { required: true } )} onChange={handleChangingMunicipio} options={municipios} />
+                { errors.municipio?.type === 'required' && <span className="text-danger"> Este campo es obligatorio</span>}
             </div>
             <div className="form-group">
                 <label className="control-label">Parroquia</label>
-                <Select name="parroquia" isClearable={true} options={parroquias} />
+                <Select name="parroquia" isClearable={true} value={idParroquia} onChange={handleChangingParroquia} options={parroquias} />
             </div>
             <div className="form-group">
                 <label className="control-label">Dirección *</label>
@@ -67,12 +215,13 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">RIF/Cédula *</label>
-                <input type="text" name="representante_rif" autoComplete="off" className="form-control" {...register("representante_rif", { required: true } )} placeholder="Ingrese RIF/Cédula"/>
+                <input type="text" name="representante_rif" autoComplete="off" className="form-control" {...register("representante_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
                 {errors.representante_rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
+                {errors.representante_rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
             </div>
             <div className="form-group">
                 <label className="control-label">Teléfono *</label>
-                <input type="text" name="representante_telefono" autoComplete="off" className="form-control" {...register("representante_telefono", { required: true } )} placeholder="Ingrese la dirección"/>
+                <InputMask mask="9999-9999999" name="representante_telefono" autoComplete="off" className="form-control" {...register("representante_telefono", { required: true } )} placeholder="9999-9999999"/>
                 {errors.representante_telefono?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
             </div>
             { props.title == "Empresa" &&
@@ -82,17 +231,18 @@ export const Form = (props) => {
                     <hr/>
                     <div className="form-group">
                         <label className="control-label">Nombre / Razón Social *</label>
-                        <input type="text" name="responsable_nombre" autoComplete="off" className="form-control" {...register("representante_nombre", { required: true } )} placeholder="Ingrese Nombre Representante"/>
+                        <input type="text" name="responsable_nombre" autoComplete="off" className="form-control" {...register("responsable_nombre", { required: true } )} placeholder="Ingrese Nombre Representante"/>
                         {errors.responsable_nombre?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                     </div>
                     <div className="form-group">
                         <label className="control-label">RIF/Cédula *</label>
-                        <input type="text" name="responsable_rif" autoComplete="off" className="form-control" {...register("representante_rif", { required: true } )} placeholder="Ingrese RIF/Cédula"/>
+                        <input type="text" name="responsable_rif" autoComplete="off" className="form-control" {...register("responsable_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
                         {errors.responsable_rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
+                        {errors.responsable_rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
                     </div>
                     <div className="form-group">
                         <label className="control-label">Teléfono *</label>
-                        <input type="text" name="responsable_telefono" autoComplete="off" className="form-control" {...register("representante_telefono", { required: true } )} placeholder="Ingrese la dirección"/>
+                        <InputMask mask="9999-9999999" name="representante_telefono" autoComplete="off" className="form-control" {...register("representante_telefono", { required: true } )} placeholder="9999-9999999"/>
                         {errors.responsable_telefono?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                     </div>
 
