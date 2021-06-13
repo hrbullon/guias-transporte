@@ -68,7 +68,6 @@ export const Form = (props) => {
         
         let municipio = {}
 
-        //Si ha se
         if(idMunicipio.value !== ""){
             municipio = {
                 id: idMunicipio.value, 

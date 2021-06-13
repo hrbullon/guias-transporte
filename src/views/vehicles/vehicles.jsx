@@ -24,8 +24,6 @@ export const Vehicles = () => {
     const [brands, setBrands] = useState({})
     //Aquí se almacena el listado de modelos de vehículos
     const [models, setModels] = useState({})
-    //Aquií se almacena el estado de validación del formulario
-    const [validated, setValidated] = useState(true)
 
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
@@ -107,21 +105,12 @@ export const Vehicles = () => {
     const onSubmit = (data) => {
         
         const values = { ...data, ...customSelect }
-        
-        if(values.marca.id !== "" && values.modelo.id !== ""){
 
-            setValidated(true)
-
-            if( data.id ) {
-                dispatch( startUpdatingVehicle( {...values} ) )
-            }else{
-                dispatch( startCreatingVehicle( {...values} ) )
-            }
-
+        if( data.id ) {
+            dispatch( startUpdatingVehicle( {...values} ) )
         }else{
-            setValidated(false)
+            dispatch( startCreatingVehicle( {...values} ) )
         }
-
     };
     
     //Llena el state data con los datos del vehículo a editar
@@ -191,7 +180,6 @@ export const Vehicles = () => {
                     <div className="card">
                         <div className="card-body">
                             <Form 
-                                validated={validated}
                                 data={data} 
                                 brands={brands} 
                                 categories={categories} 

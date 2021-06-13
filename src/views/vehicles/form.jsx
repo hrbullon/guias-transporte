@@ -5,11 +5,11 @@ import Swal from 'sweetalert2'
 import Select from 'react-select'
 
 import { validatePlaca } from "../../helpers/checking"
-import { getItem, getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
+import { getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
 
 export const Form = (props) => {
 
-    const { register, formState: { errors }, handleSubmit, reset } = useForm();
+    const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
 
     const [ idMarca, setIdMarca] = useState({
         value:'',
@@ -25,37 +25,106 @@ export const Form = (props) => {
         
         setIdMarca({value:'',label:'Seleccione una marca'})
         setIdModelo({value:'',label:'Seleccione un modelo'})
-        
+
         reset({...props.data})
     }, [props.data])
     
+    /*****
+     * Cuando el usuario hace click en el botón
+     * para editar del listado, entonces se 
+     * deben cargar los datos en el formulario
+     * 
+     * Con este parámetro se establece la marca
+     * ================================
+     * props.customSelect.marca.id
+     * 
+     * Con este parámetro se establece el modelo
+     * ================================
+     * props.customSelect.modelo.id
+     *****/
+    useEffect(() => {
+        
+        if(props.data?.marca?.id){
+            const item = getItemSelect(props.brands, props.data.marca.id)
+            setIdMarca(item)
+            
+            let modeloItems = props.categories.filter( modelo => modelo.tipo == item.label )
+            modeloItems = prepareOptionsSelect(modeloItems)
+            props.setModels(modeloItems)
+        } 
+
+    }, [props.data?.marca?.id])
+
     useEffect(() => {
 
-        if(props.customSelect.marca.id){
-            
-            const marca = getItemSelect(props.brands, props.customSelect.marca.id)
-            setIdMarca(marca)
+        let marca = {}
 
-            let modelItems = props.categories.filter(category => category.tipo == marca.label);
-            modelItems = prepareOptionsSelect( modelItems )
-            props.setModels(modelItems)
+        if(idMarca.value !== ""){
+            marca = {
+                id: idMarca.value, 
+                nombre: idMarca.label 
+            }
 
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado una marca
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("marca", idMarca)
+            setError("marca", "")
+        
+        }else{
+            marca = {
+                id: "", 
+                nombre: "" 
+            }
         }
 
-    }, [props.customSelect.marca])
-
-    useEffect(() => {
-
-        const modelo = getItem(props.categories, props.customSelect.modelo.id)
-            
-        if(modelo){
+        props.setCustomSelect(
+            {   ...props.customSelect, 
+                marca: { ...marca }
+            }
+        )
+        
+        if(props.data?.modelo?.id){
             setIdModelo({
-                value: modelo.id,
-                label: modelo.nombre
+                value: props.data?.modelo?.id,
+                label: props.data?.modelo?.nombre
             })
         }
 
-    }, [props.customSelect.modelo])
+    }, [idMarca])
+
+    useEffect(() => {
+
+        let modelo = {}
+
+        if(idModelo.value !== ""){
+            modelo = {
+                id: idModelo.value, 
+                nombre: idModelo.label 
+            }
+
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado un modelo
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("modelo", idModelo)
+            setError("modelo", "")
+
+        }else{
+            modelo = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+        props.setCustomSelect(
+            {   ...props.customSelect, 
+                modelo: { ...modelo }
+            }
+        )
+
+    }, [idModelo])
 
     /***** 
      * Activa la llamada para filtrar los modelos
@@ -67,42 +136,15 @@ export const Form = (props) => {
         if(input){
             
             setIdMarca(input)
+            
+            let modeloItems = props.categories.filter( item => item.tipo == input.label )
+            modeloItems = prepareOptionsSelect(modeloItems)
+            props.setModels(modeloItems)
 
-            setIdModelo({value:'', label: 'Seleccione un modelo'})
-
-            props.setCustomSelect(
-                {...props.customSelect, 
-                    marca: { 
-                        id: input.value, 
-                        nombre: input.label 
-                    }
-                }
-            )
- 
         }else{
 
             setIdMarca({value:'', label: 'Seleccione una marca'}) 
-            
-            props.setCustomSelect(
-                {...props.customSelect, 
-                    marca: { 
-                        id: "", 
-                        nombre: "" 
-                    }
-                }
-            )
-
             setIdModelo({value:'', label: 'Seleccione un modelo'})
-
-            props.setCustomSelect(
-                {...props.customSelect, 
-                    modelo: { 
-                        id: "", 
-                        nombre: "" 
-                    }
-                }
-            )
-            
             props.setModels([])
 
         }
@@ -113,37 +155,12 @@ export const Form = (props) => {
      * Activa la llamada para establecer un modelo
      * *****/
      const handleChangingModelo = ( input ) => {
-        
         if(input){
-            
-            const modelo = getItemSelect(props.models, input.value)
-            setIdModelo(modelo)
-
-            props.setCustomSelect(
-                {...props.customSelect, 
-                    modelo: { 
-                        id: input.value, 
-                        nombre: input.label 
-                    }
-                }
-            )
-
+            setIdModelo(input)
         }else{
-            resetModelo()
+            setIdModelo({value:'',label:'Seleccione un modelo'})
         }
     } 
-
-    const resetModelo = () => {
-
-        props.setCustomSelect(
-            {...props.customSelect, 
-                modelo: { 
-                    id: "", 
-                    nombre: "" 
-                }
-            }
-        )
-    }
 
     /***** 
      * Activa la llamada para verificar que la placa sea única
@@ -151,17 +168,7 @@ export const Form = (props) => {
      * Es decir captura el evento onBlur en placa
      * *****/
     const handleCheckingPlaca = async (placa) => {
-        const validated = await validatePlaca(placa)
         
-        if(!validated){
-            reset({...props.data, placa:""})
-            
-            Swal.fire({
-                title: 'Datos inválidos',
-                html: `La placa <b>${placa}</b>, ya se encuentra registrada`,
-                icon: 'warning'
-            })
-        }
     }
 
     return (
@@ -173,13 +180,13 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Marca *</label>
-                <Select name="marca" isClearable={true} value={idMarca} onChange={handleChangingMarca} options={props.brands} />
-                { idMarca.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
+                <Select name="marca" isClearable={true} value={idMarca} {...register("marca", { required: true } )}  onChange={handleChangingMarca} options={props.brands} />
+                { errors?.marca?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
                 <label className="control-label">Modelo *</label>
-                <Select name="modelo" isClearable={true} value={idModelo} onChange={ handleChangingModelo } options={props.models} />
-                { idModelo.value == "" && !props.validated && <span className="text-danger">Este campo es requerido</span>}
+                <Select name="modelo" isClearable={true} value={idModelo} {...register("modelo", { required: true } )}  onChange={ handleChangingModelo } options={props.models} />
+                { errors?.modelo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
                 <label className="control-label">Placa *</label>
