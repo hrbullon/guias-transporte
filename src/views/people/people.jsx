@@ -43,6 +43,9 @@ export const People = () => {
         const list = addItem(people, created)
         //Limpio el formulario        
         setData({})
+        setData({
+            telefono:""
+        })  
         //Actualizo el listado de personas
         setPeople(list)
     }, [created])
@@ -56,7 +59,9 @@ export const People = () => {
         setPeople(list)
         //Limpio el formulario
         setData({})
-
+        setData({
+            telefono:""
+        })        
     }, [updated])
 
     //Está pendiente si cambia el valor de deleted
@@ -72,6 +77,7 @@ export const People = () => {
 
     //Envia los datos del formularioe
     const onSubmit = (data) => {
+
         if( data.id ) {
             dispatch( startUpdatingPeople( {...data} ) )
         }else{
@@ -110,9 +116,7 @@ export const People = () => {
         {
             name: 'Tipo',
             selector: 'tipo',
-            sortable: true,
-            cell: row => ( tipos[(row.tipo)] )
-           
+            sortable: true
         },
         {
             name: 'Acciones',

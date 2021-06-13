@@ -20,13 +20,13 @@ var ThemeRoutes = [
     menu: true,
     component: Starter 
   },
-  {
+  /* {
     path:"/settings",
     name:"Configuración",
     icon: "mdi mdi-settings",
     menu: true,
     component: Starter
-  },
+  }, */
   {
     path:"/users",
     name:"Usuarios",

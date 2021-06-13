@@ -177,7 +177,7 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">RIF/Cédula *</label>
-                <input type="text" name="rif" autoComplete="off" className="form-control" {...register("rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
+                <input type="text" name="rif" autoComplete="off" className="form-control" {...register("rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="Ej:. J12345678"/>
                 {errors.rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                 {errors.rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
 
@@ -214,7 +214,7 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">RIF/Cédula *</label>
-                <input type="text" name="representante_rif" autoComplete="off" className="form-control" {...register("representante_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
+                <input type="text" name="representante_rif" autoComplete="off" className="form-control" {...register("representante_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="Ej:. J12345678"/>
                 {errors.representante_rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                 {errors.representante_rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
             </div>
@@ -235,7 +235,7 @@ export const Form = (props) => {
                     </div>
                     <div className="form-group">
                         <label className="control-label">RIF/Cédula *</label>
-                        <input type="text" name="responsable_rif" autoComplete="off" className="form-control" {...register("responsable_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="J12345678"/>
+                        <input type="text" name="responsable_rif" autoComplete="off" className="form-control" {...register("responsable_rif", { required: true, pattern: /([V|J|G|E])\d{8,11}/g } )} placeholder="Ej:. J12345678"/>
                         {errors.responsable_rif?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                         {errors.responsable_rif?.type === 'pattern' && <span className="text-danger">El formato de RIF/Cédula no es válido</span>}
                     </div>
