@@ -37,7 +37,7 @@ export const People = () => {
         setPeople(loaded)
     }, [loaded])
 
-        //Está pendiente si cambia el valor de created
+    //Está pendiente si cambia el valor de created
     //En caso de cambiar es porque se creó correctamente el persona
     useEffect(() => {
         const list = addItem(people, created)

@@ -22,7 +22,7 @@ export const startLoadingCategories = () => {
             dispatch( categoriesLoaded( categories ) )
 
         } catch (error) {
-            console.log('Error al cargar los datos de empresas')
+            console.log('Error al cargar los datos de categorias')
         }
     }
 }
@@ -79,7 +79,7 @@ export const startDeletingCategory = (data) => {
         }).then( async (result) => {
             if (result.isConfirmed) {
                 let { id } = data
-                await db.doc(`categories/${ id }`).delete()
+                await db.doc(`${table}/${ id }`).delete()
                 dispatch( categoryDeleted( data ) )
                 Swal.fire('Correcto', 'Categoría eliminada!!','success')
             }

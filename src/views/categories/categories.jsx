@@ -1,26 +1,79 @@
 import { Fragment, useState, useEffect } from "react"
 
+import { useSelector, useDispatch } from "react-redux"
+
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+
+import { startCreatingCategory, startDeletingCategory, startLoadingCategories, startUpdatingCategory } from "../../actions/categories"
+import { addItem, deleteItem, updateItem } from "../../helpers/dataArray"
 
 import { Form } from "./form"
 
 export const Categories = () => {
 
+    const dispatch = useDispatch()
+
     //Aquí se almacena el listado de productos
     const [items, setItems] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    //const { created, updated, deleted } = useSelector(state => state.products)
+    const { loaded, created, updated, deleted } = useSelector(state => state.categories)
     const [data, setData] = useState()
+
+    /** Obtiene el listado de categorias **/
+    useEffect( async () => {
+        
+        dispatch( startLoadingCategories() )
+        
+    },[]) 
+
+    //Está pendiente si cambia el valor de loaded
+    //En caso de cambiar es porque se cargaron correctamente las categorias
+    useEffect(() => {
+        //Actualizo el listado de categorias
+        setItems(loaded)
+    }, [loaded])
+
+    //Está pendiente si cambia el valor de created
+    //En caso de cambiar es porque se creó correctamente la categoría
+    useEffect(() => {
+        const list = addItem(items, created)
+        //Actualizo el listado de categorias
+        setItems(list)
+        //Limpio el formulario        
+        setData({nombre:""})
+    }, [created])
+
+    //Está pendiente si cambia el valor de updated
+    //En caso de cambiar es porque se editó correctamente la categoría
+    useEffect(() => {
+        
+        const list = updateItem(items, updated)
+        //Actualizo el listado de categorias
+        setItems(list)
+        //Limpio el formulario
+        setData({nombre:""})
+
+    }, [updated])
+
+    //Está pendiente si cambia el valor de deleted
+    //En caso de cambiar es porque se eliminó correctamente la categoría
+    useEffect(() => {
+        
+        const list = deleteItem(items, deleted)
+        //Actualizo el listado de categorías
+        setItems(list)
+
+    }, [deleted])
 
     //Envia los datos del formularioe
     const onSubmit = (data) => {
         if( data.id ) {
-            //dispatch( startUpdatingProduct( {...data} ) )
+            dispatch( startUpdatingCategory( {...data} ) )
         }else{
-            //dispatch( startCreatingProduct( {...data} ) )
+            dispatch( startCreatingCategory( {...data} ) )
         }
     };
     
@@ -31,14 +84,14 @@ export const Categories = () => {
     
     //Dispara el evento que elimina un vehículo determinado
     const handleRemove = (item) => {
-        //dispatch( startDeletingProduct( item ) )
+        dispatch( startDeletingCategory( item ) )
     }
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
         {
             name: 'Tipo',
-            selector: 'type',
+            selector: 'tipo',
             sortable: true,
         },
         {

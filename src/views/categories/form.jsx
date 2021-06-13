@@ -1,13 +1,56 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from "react-redux"
 import { useForm } from "react-hook-form"
+import Select from 'react-select';
 
 export const Form = (props) => {
 
-    const { register, formState: { errors }, handleSubmit, reset } = useForm();
+    const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
+
+    const { loaded } = useSelector(state => state.categories)
+    
+    let options = []
+    
+    let items   = loaded.filter( item => item.tipo == "Principal" )
+    let modelos = loaded.filter( item => item.tipo == "Marcas" )
+    
+    items.forEach( item => {
+        options.push( { value: item.nombre, label: item.nombre } )
+    })
+    
+    modelos.forEach( item => {
+        options.push( { value: item.nombre, label: item.nombre } )
+    })
+
+    const [ idTipo, setIdTipo] = useState({
+        value:'',
+        label:'Seleccione una opción'
+    })
 
     useEffect(() => {
+        setIdTipo({value:'',label:'Seleccione una opción'})
         reset({...props.data})
     }, [props.data])
+
+    useEffect(() => {
+        
+        if(props.data?.tipo){
+            setIdTipo({ value: props.data.tipo, label: props.data.tipo })
+        } 
+
+    }, [props.data?.tipo])
+
+    useEffect(() => {
+        setValue("tipo",idTipo)
+        setError("tipo","")
+        reset({...props.data, tipo: idTipo.value})
+    }, [idTipo])
+
+    const handleChangingTipo = (input) => {
+        if(input){
+            setIdTipo(input)
+        }
+    }
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
@@ -18,10 +61,7 @@ export const Form = (props) => {
             </div>
             <div class="form-group">
                 <label class="control-label">Tipo *</label>
-                <select name="tipo" {...register("tipo", { required: true } )} class="form-control custom-select">
-                    <option value="">Seleccione un tipo</option>
-                    <option value="">Categoría principal</option>
-                </select>
+                <Select name="tipo" value={idTipo} {...register("tipo", { required: true } )}   onChange={handleChangingTipo}  options={options}/>
                 { errors?.tipo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div class="form-group">
