@@ -22,11 +22,6 @@ export const Companies = () => {
     const [type, setType] = useState("")
     const [title, setTitle] = useState("")
 
-    const [customSelect, setCustomSelect] = useState({
-        municipio:  { id:'', nombre:'' },
-        parroquia: { id:'', nombre:'' }
-    })
-
     /** Obtiene el listado de empresas **/
     useEffect( async () => {
 
@@ -91,22 +86,16 @@ export const Companies = () => {
     //Envia los datos del formularioe
     const onSubmit = (data) => {
         
-        const values = { ...data, ...customSelect }
-
         if( data.id ) {
-            dispatch( startUpdatingCompany( {type: type,...values} ) )
+            dispatch( startUpdatingCompany( {type: type,...data} ) )
         }else{
-            dispatch( startCreatingCompany( {type: type,...values} ) )
+            dispatch( startCreatingCompany( {type: type,...data} ) )
         }
     };
     
     //Llena el state data con los datos del empresa a editar
     const handleEdit = (item) => {
         setData(item)
-        setCustomSelect({
-            municipio: item.municipio,
-            parroquia: item.parroquia 
-        })
     }
     
     //Dispara el evento que elimina un empresa determinado
@@ -154,9 +143,7 @@ export const Companies = () => {
                         <div className="card-body">
                             <Form 
                                 title={title} 
-                                data={data} 
-                                customSelect={customSelect}
-                                setCustomSelect={setCustomSelect}
+                                data={data}
                                 onSubmit={onSubmit}/>
                         </div>
                     </div>

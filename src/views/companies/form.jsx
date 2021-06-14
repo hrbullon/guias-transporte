@@ -4,14 +4,14 @@ import Select from 'react-select'
 import InputMask from 'react-input-mask';
 
 import data from '../../data/municipios.json'
-import { getItemSelect, prepareOptionsSelect, getItemMunicipio } from '../../helpers/dataArray'
+import { getItemSelect, prepareOptionsItems, getItemMunicipio } from '../../helpers/dataArray'
 
 export const Form = (props) => {
     
     const { register, formState: { errors }, handleSubmit, setError, setValue, reset } = useForm();
     
-    let municipioItems = data.map(item => item.municipio);
-    const municipios = prepareOptionsSelect(municipioItems)
+    let municipioItems = data.municipios.map(item => item.municipio);
+    const municipios = prepareOptionsItems(municipioItems)
 
     const [parroquias, setParroquias] = useState({})
 
@@ -48,17 +48,16 @@ export const Form = (props) => {
      *****/
     useEffect(() => {
         
-        if(props.data?.municipio?.id){
+        if(props.data?.municipio){
         
-            const item = getItemSelect(municipios, props.data.municipio.id)
+            const item = getItemSelect(municipios, props.data.municipio)
             setIdMunicipio(item)
-            const { municipio } = getItemMunicipio(data, item.value)
-            let itemsParroquias = prepareOptionsSelect(municipio.parroquias)
+            const parroquias = getItemMunicipio(data.municipios, item.value)
+            let itemsParroquias = prepareOptionsItems(parroquias)
             setParroquias(itemsParroquias)
-            
         } 
 
-    }, [props.data?.municipio?.id])
+    }, [props.data?.municipio])
 
     /*****
      * Se activa cuando el usuario 
@@ -66,38 +65,25 @@ export const Form = (props) => {
      *****/
     useEffect(() => {
         
-        let municipio = {}
+        let municipio = ""
 
         if(idMunicipio.value !== ""){
-            municipio = {
-                id: idMunicipio.value, 
-                    nombre: idMunicipio.label 
-            }
+            
+            municipio = idMunicipio.value
 
             //Para que no me muestre error 
             //aún cuando haya seleccionado un municipio
             //este problema es debido al paquete que se está 
             //usando para generar los campos de tipo select 
-            setValue("municipio", idMunicipio)
+            setValue("municipio", idMunicipio.label)
             setError("municipio", "")
         
-        }else{
-            municipio = {
-                id: "", 
-                nombre: "" 
-            }
         }
-
-        props.setCustomSelect(
-            {   ...props.customSelect, 
-                municipio: { ...municipio }
-            }
-        )
         
-        if(props.data?.parroquia?.id){
+        if(props.data?.parroquia){
             setIdParroquia({
-                value: props.data?.parroquia?.id,
-                label: props.data?.parroquia?.nombre
+                value: props.data?.parroquia,
+                label: props.data?.parroquia
             })
         }
 
@@ -109,25 +95,8 @@ export const Form = (props) => {
      *****/
     useEffect(() => {
 
-        let parroquia = {}
-
-        if(idParroquia.value !== ""){
-            parroquia = {
-                id: idParroquia.value, 
-                nombre: idParroquia.label 
-            }
-        }else{
-            parroquia = {
-                id: "", 
-                nombre: "" 
-            }
-        }
-
-        props.setCustomSelect(
-            {   ...props.customSelect, 
-                parroquia: { ...parroquia }
-            }
-        )
+        let parroquia = (idParroquia.value !== "")? idParroquia.value : ""
+        setValue("parroquia", parroquia)
 
     }, [idParroquia])
 
@@ -139,9 +108,8 @@ export const Form = (props) => {
         
         if(input){
             setIdMunicipio(input)
-           
-            const { municipio } = getItemMunicipio(data, input.value)
-            let itemsParroquias = prepareOptionsSelect(municipio.parroquias)
+            const parroquias = getItemMunicipio(data.municipios, input.value)
+            let itemsParroquias = prepareOptionsItems(parroquias)
             setParroquias(itemsParroquias)
         }else{
 
