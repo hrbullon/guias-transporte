@@ -58,7 +58,10 @@ export const Companies = () => {
         //Actualizo el listado de empresas
         setCompanies(list)
         setData({})
-
+        setData({
+            representante_telefono:'',
+            responsable_telefono:''
+        })
     }, [created])
 
     //Está pendiente si cambia el valor de updated
@@ -70,6 +73,10 @@ export const Companies = () => {
         setCompanies(list)
         //Limpio el formulario
         setData({})
+        setData({
+            representante_telefono:'',
+            responsable_telefono:''
+        })
 
     }, [updated])
 

@@ -209,7 +209,7 @@ export const Form = (props) => {
                     </div>
                     <div className="form-group">
                         <label className="control-label">Teléfono *</label>
-                        <InputMask mask="9999-9999999" name="representante_telefono" autoComplete="off" className="form-control" {...register("representante_telefono", { required: true } )} placeholder="9999-9999999"/>
+                        <InputMask mask="9999-9999999" name="responsable_telefono" autoComplete="off" className="form-control" {...register("responsable_telefono", { required: true } )} placeholder="9999-9999999"/>
                         {errors.responsable_telefono?.type === 'required' && <span className="text-danger">Este campo es obligatorio</span>}
                     </div>
 
