@@ -11,6 +11,7 @@ import { Workdays } from '../views/workdays/workdays.jsx';
 import { People } from '../views/people/people';
 import { Categories } from '../views/categories/categories.jsx';
 import { Forms } from '../views/products/forms/forms.jsx';
+import { Outputs } from '../views/outputs/outputs.jsx';
 
 var ThemeRoutes = [
   { 
@@ -20,13 +21,7 @@ var ThemeRoutes = [
     menu: true,
     component: Starter 
   },
-  /* {
-    path:"/settings",
-    name:"Configuración",
-    icon: "mdi mdi-settings",
-    menu: true,
-    component: Starter
-  }, */
+  
   {
     path:"/users",
     name:"Usuarios",
@@ -55,11 +50,18 @@ var ThemeRoutes = [
     component: Form
   },
   {
-    path:"/documents",
-    name:"Gestión de Guías",
-    icon: "mr-2 mdi mdi-note-multiple-outline",
+    path:"/outputs",
+    name:"Salidas",
+    icon: "mr-2 mdi mdi-arrow-right",
     menu: true,
-    component: Documents
+    component: Outputs
+  },
+  {
+    path:"/inputs",
+    name:"Entradas",
+    icon: "mr-2 mdi mdi-arrow-left",
+    menu: true,
+    component: Outputs
   },
   {
     path:"/workdays",

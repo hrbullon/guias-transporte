@@ -240,14 +240,6 @@ export const Form = (props) => {
                         Datos Vehículo/Conductor/Ayudante
                     </div>
                     <div className="card-body">
-                        {/**** Datos del vehículo ****/}
-                        <Vehicle selected={customInputs.vehiculo} validated={validated} customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsVehicles={ optionsVehicles }/>
-                        
-                        {/**** Datos del conductor****/}
-                        <Person selected={customInputs.conductor} validated={validated} type="conductor" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
-                    
-                        {/**** Datos del ayudante****/}
-                        <Person selected={customInputs.ayudante} validated={validated} type="ayudante" customInputs={ customInputs } setCustomInputs={ setCustomInputs } optionsPeople={ optionsPeople }/>
                     </div>
                 </div>
                 <div className="card" >

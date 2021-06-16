@@ -9102,3 +9102,7 @@ User Profile
 .btn-100 {
   width: 100%;
 }
+
+.border-right {
+  border-right: 1px solid #dee2e6
+}
