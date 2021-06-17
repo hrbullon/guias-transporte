@@ -12,6 +12,7 @@ import { People } from '../views/people/people';
 import { Categories } from '../views/categories/categories.jsx';
 import { Forms } from '../views/products/forms/forms.jsx';
 import { Outputs } from '../views/outputs/outputs.jsx';
+import { Inputs } from '../views/inputs/inputs.jsx';
 
 var ThemeRoutes = [
   { 
@@ -61,7 +62,7 @@ var ThemeRoutes = [
     name:"Entradas",
     icon: "mr-2 mdi mdi-arrow-left",
     menu: true,
-    component: Outputs
+    component: Inputs
   },
   {
     path:"/workdays",

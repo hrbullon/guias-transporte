@@ -7,9 +7,9 @@ export const Outputs = () => {
 
     return (
         <>
-                <div className="card">
-                    <div className="card-body">
-            <div className="row">
+            <div className="card">
+                <div className="card-body">
+                    <div className="row">
                         <div className="col-lg-4">
                             <div class="form-group">
                                 <label class="control-label">Jornada</label>
