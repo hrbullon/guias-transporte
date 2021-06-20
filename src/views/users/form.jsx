@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
 import Select from 'react-select'
 import { startLoadingActivesCompanies } from "../../actions/companies"
-import { getItem } from '../../helpers/dataArray'
+import { getItem, prepareOptionsSelect } from '../../helpers/dataArray'
 
 export const Form = (props) => {
 
@@ -37,11 +37,10 @@ export const Form = (props) => {
     }, [idEmpresa])
     
     useEffect(() => {
-        let items = activesLoaded.map( item => {
-            return { value: item.id,
-            label: item.nombre }
-        })
-        setCompanies(items )
+        
+        let items = activesLoaded.filter( item => item.type == "TYPE_COMPANY")
+        items = prepareOptionsSelect( items )
+        setCompanies( items )
     }, [activesLoaded])
 
     
