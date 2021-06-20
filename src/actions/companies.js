@@ -50,8 +50,16 @@ export const startLoadingCompanies = () => {
 export const startCreatingCompany = ( data ) => {
     return async (dispatch) => {
         try {
-            const doc = await db.collection(`companies`).add(data)
-            dispatch( companyCreated( { id: doc.id, ...data } ) )
+            let copy = { ...data }
+            delete copy.id
+
+            if(data.type == "TYPE_CUSTOMER"){
+                delete copy.limite_vehiculos
+                delete copy.responsable
+            }
+
+            const doc = await db.collection(`companies`).add(copy)
+            dispatch( companyCreated( { id: doc.id, ...copy } ) )
             Swal.fire('Correcto', `Datos registrados!!`,'success')
         } catch (error) {
             Swal.fire('Error', error.message,'error')
@@ -67,6 +75,11 @@ export const startUpdatingCompany = ( data ) => {
             const doc = await db.doc(`companies/${ data.id }`).get()
             let copy = { ...data }
             delete copy.id
+            
+            if(data.type == "TYPE_CUSTOMER"){
+                delete copy.limite_vehiculos
+                delete copy.responsable
+            }
 
             await db.doc(`companies/${ doc.id }`).update( copy )
             dispatch( companyUpdated( { id: data.id, ...copy } ) )

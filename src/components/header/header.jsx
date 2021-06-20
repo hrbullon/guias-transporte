@@ -31,7 +31,6 @@ const Header = () => {
     const uid = useSelector(state => state.auth)
 
     useEffect(() => {
-        console.log("cargado header")
         dispatch( startLoadingCompany( uid ) )
     }, [])
 

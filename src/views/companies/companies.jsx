@@ -14,7 +14,7 @@ export const Companies = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de empresas
-    const [companies, setCompanies] = useState({})
+    const [companies, setCompanies] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
     const { created, updated, deleted } = useSelector(state => state.companies)
@@ -92,17 +92,49 @@ export const Companies = () => {
     
     //Envia los datos del formularioe
     const onSubmit = (data) => {
-        
+        let { id, rif, nombre, direccion, estado, limite_vehiculos, municipio, parroquia } = data
+
+        let values = { 
+            id, rif, nombre, direccion, estado, limite_vehiculos, municipio, parroquia, type, 
+            representante: { 
+                rif: data.representante_rif,
+                nombre: data.representante_nombre,
+                telefono: data.representante_telefono
+            },
+            responsable: {
+                rif: data.responsable_rif,
+                nombre: data.responsable_nombre,
+                telefono: data.responsable_telefono
+            } 
+        }
+
         if( data.id ) {
-            dispatch( startUpdatingCompany( {type: type,...data} ) )
+            dispatch( startUpdatingCompany( {type: type,...values} ) )
         }else{
-            dispatch( startCreatingCompany( {type: type,...data} ) )
+            dispatch( startCreatingCompany( {type: type,...values} ) )
         }
     };
     
     //Llena el state data con los datos del empresa a editar
     const handleEdit = (item) => {
-        setData(item)
+        //setData(item)
+        let responsable = {}
+
+        if(item.type == "TYPE_COMPANY"){
+            responsable = {
+                responsable_rif: item.responsable.rif,
+                responsable_nombre: item.responsable.nombre,
+                responsable_telefono: item.responsable.telefono
+            }
+        }
+        
+        setData({
+            ...item,
+            representante_rif: item.representante.rif,
+            representante_nombre: item.representante.nombre,
+            representante_telefono: item.representante.telefono,
+            ...responsable
+        })
     }
     
     //Dispara el evento que elimina un empresa determinado
@@ -125,7 +157,7 @@ export const Companies = () => {
         },
         {
             name: 'Teléfono',
-            selector: 'representante_telefono',
+            selector: 'representante.telefono',
             sortable: true,
         },
         {
