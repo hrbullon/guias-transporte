@@ -3,6 +3,28 @@ import Swal from 'sweetalert2'
 import { db } from '../firebase/firebase-config'
 import { types } from '../types/types'
 
+export const startLoadingActivesCompanies = () => {
+    return async (dispatch) => {
+        
+        try {
+            const companiesSnap = await db.collection(`companies`).where("estado","==","Activo").get()
+            const companies = []
+
+            companiesSnap.forEach( snap => {
+                companies.push({
+                    id: snap.id,
+                    ...snap.data()
+                })
+            })
+            //Notifico al reducer, para que me almacene los datos en el state
+            dispatch( activeCompaniesLoaded( companies ) )
+
+        } catch (error) {
+            console.log('Error al cargar los datos de empresas')
+        }
+    }
+}
+
 export const startLoadingCompanies = () => {
     return async (dispatch) => {
         
@@ -79,6 +101,11 @@ export const startDeletingCompany = (data) => {
         })
     }
 }
+
+export const activeCompaniesLoaded = ( data ) => ({
+    type: types.activeCompaniesLoaded,
+    payload: data
+})
 
 export const companiesLoaded = ( data ) => ({
     type: types.companyLoaded,

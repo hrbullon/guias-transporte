@@ -1,14 +1,49 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
+import Select from 'react-select'
+import { startLoadingActivesCompanies } from "../../actions/companies"
+import { getItem } from '../../helpers/dataArray'
 
 export const Form = (props) => {
 
-    const { register, formState: { errors }, handleSubmit, reset } = useForm();
+    const dispatch = useDispatch()
+    const { activesLoaded } = useSelector(state => state.companies)
+    const { register, formState: { value,errors }, handleSubmit, setValue, setError, reset } = useForm();
     
+    const [companies, setCompanies] = useState([])
+
     const [validate, setValidate] = useState({
         required: props.password,
         minLength: 6
     })
+    
+    const [ idEmpresa, setIdEmpresa] = useState({
+        value:'',
+        label:'Seleccione una empresa'
+    })
+
+    useEffect(() => {
+        dispatch( startLoadingActivesCompanies() )
+    }, [])
+
+    useEffect(() => {
+
+        if(idEmpresa.value !== ""){
+            const item = getItem(activesLoaded, idEmpresa.value)
+            setValue("empresa",{ ...item })
+            setError("empresa","")
+        }
+    }, [idEmpresa])
+    
+    useEffect(() => {
+        let items = activesLoaded.map( item => {
+            return { value: item.id,
+            label: item.nombre }
+        })
+        setCompanies(items )
+    }, [activesLoaded])
+
     
     /** Está pendiente si el fomulario se está usando para 
      * editar datos de un usuario, en ese caso quita las validaciones
@@ -26,8 +61,21 @@ export const Form = (props) => {
     }, [props.password])
 
     useEffect(() => {
+        setIdEmpresa({value:"",label:"Seleccione una empresa"})
         reset({...props.data})
+
+        if(props.data?.empresa){
+            setIdEmpresa({ value: props.data.empresa.id, label: props.data.empresa.nombre })
+        }
     }, [props.data])
+
+    const handleChangingEmpresa = (input) => {
+        if(input){
+            setIdEmpresa(input)
+        }else{
+            setIdEmpresa({ value:"",label:"Seleccione una empresa" })
+        }
+    }
 
     return (
 
@@ -61,11 +109,15 @@ export const Form = (props) => {
                 <label className="control-label">Rol *</label>
                 <select name="rol" {...register("rol")} className="form-control custom-select">
                     <option value="">Seleccione una opción</option>
-                    <option value="Admin_Role">Admin</option>
-                    <option value="Comprador_Role">Comprador</option>
-                    <option value="Supervisor_Role">Supervisor</option>
+                    <option value="Administrador_Role">Administrador</option>
+                    <option value="Usuario_Role">Usuario de Empresa</option>
+                    <option value="Super_Role">Super Usuario</option>
                 </select>
                 { errors?.rol?.type &&  (<span className="text-danger">Seleccione un rol</span>) }
+            </div>
+            <div className="form-group">
+                <label className="control-label">Empresa </label>
+                <Select name="empresa" value={idEmpresa} {...register("empresa", { required: true } )} onChange={handleChangingEmpresa} options={companies}/>
             </div>
             <div className="form-group">
                 <label className="control-label">Estado</label>

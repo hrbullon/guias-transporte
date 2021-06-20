@@ -6,7 +6,7 @@ import { types } from '../types/types'
 export const startCreatingUser = ( data ) => {
     return async (dispatch) => {
         
-        const { nombre, apellido, rol, estado, email, password } = data
+        const { nombre, apellido, rol, empresa, estado, email, password } = data
         
         await firebase.auth().createUserWithEmailAndPassword( email, password )
         .then( async ({ user }) => {
@@ -17,6 +17,7 @@ export const startCreatingUser = ( data ) => {
                 apellido,
                 email,
                 rol,
+                empresa,
                 estado
             }
 
@@ -43,6 +44,7 @@ export const startUpdatingUser = ( data ) => {
             apellido: data.apellido,
             rol: data.rol,
             estado: data.estado,
+            empresa: data.empresa
         }
         
         await db.doc(`users/${ doc.id }`).update( updateUser )

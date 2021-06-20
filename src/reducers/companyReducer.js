@@ -1,6 +1,7 @@
 import { types } from "../types/types"
 
 const initialState = {
+    activesLoaded: [],
     loaded: [],
     created: null,
     updated: null,
@@ -9,6 +10,11 @@ const initialState = {
 
 export const companyReducer = (state = initialState, action ) => {
     switch (action.type) {
+        case types.activeCompaniesLoaded:
+            return {
+                ...state,
+                activesLoaded: action.payload 
+            }
         case types.companyLoaded:
             return {
                 ...state,

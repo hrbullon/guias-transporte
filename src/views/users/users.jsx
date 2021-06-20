@@ -44,6 +44,7 @@ export const Users = () => {
         const list = addItem(users, created)
         //Actualizo el listado de usuarios
         setUsers(list)
+        setData({})
 
     }, [created])
 
@@ -56,6 +57,7 @@ export const Users = () => {
         setUsers(list)
         //Limpio el formulario
         setData({})
+        setData({ empresa: "" })
         setPassword(true)
 
     }, [updated])
@@ -72,7 +74,7 @@ export const Users = () => {
     
     //Envia los datos del formularioe
     const onSubmit = (data) => {
-
+       
         if( data.id ) {
             dispatch( startUpdatingUser( {...data} ) )
         }else{

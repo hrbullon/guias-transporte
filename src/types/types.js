@@ -20,6 +20,7 @@ export const types = {
     companyCreated: '[COMPANY/CUSTOMER] Created',
     companyUpdated: '[COMPANY/CUSTOMER] Updated',
     companyDeleted: '[COMPANY/CUSTOMER] Deleted',
+    activeCompaniesLoaded:  '[COMPANY/CUSTOMER] Active Loaded',
 
     driverLoaded:  '[DRIVER] Loaded',
 
