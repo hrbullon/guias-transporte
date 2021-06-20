@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useDispatch } from 'react-redux';
 import { useForm } from "react-hook-form";
+import './login.css';
 
 import { startLoginEmailPassword } from '../../actions/auth';
 
@@ -17,14 +18,18 @@ const Login = () => {
 
     return (
         <section id="wrapper">
-        <div className="row">
-            <div className="col-4">
-                <div className="card">
-                    <div className="card-body">
-                        <form onSubmit={ handleSubmit(onSubmit) } className="form-horizontal form-material" id="loginform">
-                            <h3 className="box-title m-b-20">Iniciar Sesión</h3>
-                            <div className="form-group ">
-                                <div className="col-xs-12">
+            <div class="login-register" >
+                <div class="login-box card">
+                    <div class="card-body">
+                        <form onSubmit={ handleSubmit(onSubmit) } class="form-horizontal form-material" id="loginform" action="index.html">
+                            <div class="form-group text-center mb-3">
+                               <i class="fa fa-user fa-4x"></i>
+                            </div>
+                            <h3 class="box-title mb-3 text-center">
+                                Iniciar Sesión
+                            </h3>
+                            <div class="form-group ">
+                                <div class="col-xs-12">
                                     <input 
                                         className="form-control" 
                                         name="email" 
@@ -36,11 +41,11 @@ const Login = () => {
                                     {
                                         (errors?.email?.type === 'required') && 
                                         (<span className="text-danger">Correo electrónico es obligatorio</span>)
-                                    }
+                                    }    
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <div className="col-xs-12">
+                            <div class="form-group">
+                                <div class="col-xs-12">
                                     <input 
                                         className="form-control" 
                                         name="password" 
@@ -52,20 +57,19 @@ const Login = () => {
                                     {
                                         (errors?.password?.type === 'required') && 
                                         (<span className="text-danger">Contraseña es obligatoria</span>)
-                                    }
+                                    }    
                                 </div>
                             </div>
-                            <div className="form-group text-center">
-                                <div className="col-xs-12 p-b-20">
-                                    <button className="btn btn-block btn-lg btn-info btn-rounded" type="submit">Entrar</button>
+                            <div class="form-group text-center">
+                                <div class="col-xs-12 p-b-20">
+                                    <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Entrar</button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
     )
 }
 
