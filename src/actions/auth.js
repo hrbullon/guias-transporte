@@ -4,34 +4,28 @@ import { db, firebase } from '../firebase/firebase-config'
 import { types } from "../types/types";
 
 export const startLoginEmailPassword = (email, password) => {
-    return (dispatch) => {
-        firebase.auth().signInWithEmailAndPassword( email, password )
-        .then( ({ user }) => {
-            let company = {
-                id:"aoacqwz4VY7uakWbBdLT",
-                rif:"J298192922",
-                nombre:"Cooperativa Wayuu",
-                municipio:"Mara",
-                parroquia:"San Rafael",
-                direccion:"DIRECCION",
-                limite_vehiculos: "6",
-                representante: {
-                    nombre:"REPRESENTANTE",
-                    rif:"V98988998",
-                    telefono:"1231-2361276"
-                },
-                responsable: {
-                    nombre:"RESPONSABLE",
-                    rif:"V1232122",
-                    telefono:"1231-2361276"
-                } 
-            }
-            //console.log(company)
-            dispatch( login( user.uid, user.displayName, company) )
+    return async (dispatch) => {
+        
+        await firebase.auth().signInWithEmailAndPassword( email, password )
+        .then( async ({ user }) => {
+            dispatch( login( user.uid, user.displayName) )
         })
         .catch( e => {
             Swal.fire('Error', e.message,'error')
         })
+    }
+}
+
+export const startLoadingCompany = (user) => {
+    return async (dispatch) => { 
+        let data = {}
+        
+        const snapshot = await db.collection(`users`).where("login","==", user.uid).get()
+        snapshot.forEach(doc => {
+            data = { rol: doc.data().rol , empresa : { ...doc.data().empresa } }
+        });
+
+        dispatch( sesionCompany( data ) )
     }
 }
 
@@ -53,4 +47,9 @@ export const startLogout = () => {
 
 export const logout = () => ({
     type: types.logout,
+})
+
+export const sesionCompany = ( company ) => ({
+    type: types.sesionCompany,
+    payload: company
 })

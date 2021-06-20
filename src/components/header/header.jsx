@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Nav,
     NavItem,
@@ -12,7 +12,7 @@ import {
     DropdownMenu
 } from 'reactstrap';
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import profilephoto from '../../assets/images/users/1.jpg';
 
@@ -23,11 +23,17 @@ import logodarkicon from '../../assets/images/logo-icon.png';
 import logolighticon from '../../assets/images/logo-light-icon.png';
 import logodarktext from '../../assets/images/logo-text.png';
 import logolighttext from '../../assets/images/logo-light-text.png';
-import { startLogout } from '../../actions/auth';
+import { startLogout, startLoadingCompany } from '../../actions/auth';
 
 const Header = () => {
 
     const dispatch = useDispatch()
+    const uid = useSelector(state => state.auth)
+
+    useEffect(() => {
+        console.log("cargado header")
+        dispatch( startLoadingCompany( uid ) )
+    }, [])
 
     const handleLogout = () => {
         dispatch( startLogout() )

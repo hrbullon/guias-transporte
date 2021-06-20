@@ -30,7 +30,8 @@ export const startLoadingCategoriesFilter = (tipo) => {
 export const startLoadingCategories = () => {
     return async (dispatch) => {
         
-        try {
+        try {            
+
             const categoriesSnap = await db.collection(table).get()
             const categories = []
 

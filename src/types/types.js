@@ -1,6 +1,7 @@
 export const types = {
     login: '[Auth] Login',
     logout: '[Auth] Logout',
+    sesionCompany: '[Auth] Company',
 
     userCreated: '[USER] Created',
     userUpdated: '[USER] Updated',
@@ -21,7 +22,7 @@ export const types = {
     companyUpdated: '[COMPANY/CUSTOMER] Updated',
     companyDeleted: '[COMPANY/CUSTOMER] Deleted',
     activeCompaniesLoaded:  '[COMPANY/CUSTOMER] Active Loaded',
-
+    
     driverLoaded:  '[DRIVER] Loaded',
 
     document:        '[DOCUMENT] Get',
