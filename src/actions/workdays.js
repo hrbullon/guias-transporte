@@ -14,12 +14,17 @@ export const startClearWorkdays = () => {
 }
 
 /***** Función para consultar el API y devolver una jornada específica *****/
-export const startLoadingSigleWorkdays = ( id ) => {
+export const startLoadingSigleWorkdays = () => {
     return async (dispatch) => {
         try {
-            const workdaysnap = await db.collection(`${ table }`).doc( id ).get()
+            const snapshot = await db.collection(`${ table }`).where("estado","==","Abierta").get()
+            let data = {}
+            snapshot.forEach(doc => {
+                data = { ...doc.data() }
+            });
+            
             //Notifico al reducer, para que me almacene los datos en el state
-            dispatch( workdays(workdaysnap.data()) )
+            dispatch( workdays( data ) )
         } catch (error) {
             console.log('Error al cargar los datos de la jornada')
         }
