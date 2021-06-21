@@ -6,11 +6,6 @@ import { useSelector } from 'react-redux';
 const Sidebar = (props) => {
 
     const { role } = useSelector(state => state.auth)
-    const [ roleString , setRoleString ] = useState()
-
-    useEffect(() => {
-        setRoleString(role)
-    }, [role])
 
     /*--------------------------------------------------------------------------------*/
     /*To Expand SITE_LOGO With Sidebar-Menu on Hover                                  */
@@ -25,7 +20,7 @@ const Sidebar = (props) => {
     const activeRoute = (routeName) => {
         return props.location.pathname.indexOf(routeName) > -1 ? 'selected' : '';
     }
-
+    
     return (
         <aside className="left-sidebar" id="sidebarbg" data-sidebarbg="skin6" onMouseEnter={expandLogo.bind(null)} onMouseLeave={expandLogo.bind(null)}>
             <div className="scroll-sidebar">
@@ -38,13 +33,13 @@ const Sidebar = (props) => {
                             <i className=""></i>
                             <span className="hide-menu">MENÚ PRINCIPAL</span>
                         </li>
-                        {props.routes.map((prop, key) => {
+                        { role !== undefined &&
+                        props.routes.map((prop, key) => {
                             if (prop.redirect) {
                                 return null;
                             }
                             else {
-                                console.log(prop.role?.indexOf( roleString ))
-                                if(prop.menu && prop.role?.indexOf( roleString ) >= 0){
+                                if(role !== undefined && prop.menu && prop.role?.indexOf( role ) >= 0){
                                     return (
                                         /*--------------------------------------------------------------------------------*/
                                         /* Adding Sidebar Item                                                            */
