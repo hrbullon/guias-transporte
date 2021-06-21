@@ -20,20 +20,15 @@ var ThemeRoutes = [
     name: 'Dashboard', 
     icon: 'mdi mdi-gauge',
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Starter 
   },
-  
   {
     path:"/users",
     name:"Usuarios",
     icon: "mr-2 mdi mdi-account-circle",
     menu: true,
-    component: Users
-  },
-  {
-    path:"/users",
-    name:"Usuarios",
-    icon: "mr-2 mdi mdi-account-box-outline",
+    role: ["Administrador_Role","Super_Role"],
     component: Users
   },
   {
@@ -55,6 +50,7 @@ var ThemeRoutes = [
     name:"Salidas",
     icon: "mr-2 mdi mdi-arrow-right",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Outputs
   },
   {
@@ -62,6 +58,7 @@ var ThemeRoutes = [
     name:"Entradas",
     icon: "mr-2 mdi mdi-arrow-left",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Inputs
   },
   {
@@ -69,6 +66,7 @@ var ThemeRoutes = [
     name:"Jornadas",
     icon: "mr-2 mdi mdi-calendar",
     menu: true,
+    role: ["Administrador_Role","Super_Role"],
     component: Workdays
   },
   {
@@ -76,6 +74,7 @@ var ThemeRoutes = [
     name:"Clientes",
     icon: "mr-2 mdi mdi-account-card-details",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Companies
   },
   {
@@ -83,6 +82,7 @@ var ThemeRoutes = [
     name:"Empresas",
     icon: "mr-2 mdi mdi-bank",
     menu: true,
+    role: ["Administrador_Role","Super_Role"],
     component: Companies
   },
   {
@@ -90,6 +90,7 @@ var ThemeRoutes = [
     name:"Productos",
     icon: "mr-2 mdi mdi-format-list-bulleted",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Products
   }, 
   {
@@ -97,6 +98,7 @@ var ThemeRoutes = [
     name:"Presentación productos",
     icon: "mr-2 mdi mdi-bookmark",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Forms
   }, 
   {
@@ -104,6 +106,7 @@ var ThemeRoutes = [
     name:"Vehiculos",
     icon: "mr-2 mdi mdi-truck-delivery",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Vehicles
   },
   {
@@ -111,6 +114,7 @@ var ThemeRoutes = [
     name:"Personas",
     icon: "mr-2 mdi mdi-account-multiple",
     menu: true,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: People
   },
   {
@@ -118,6 +122,7 @@ var ThemeRoutes = [
     name:"Categorías",
     icon: "mr-2 mdi mdi-tag-multiple",
     menu: true,
+    role: ["Administrador_Role","Super_Role"],
     component: Categories
   },
   

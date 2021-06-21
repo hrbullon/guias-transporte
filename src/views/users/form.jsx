@@ -116,7 +116,7 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Empresa </label>
-                <Select name="empresa" value={idEmpresa} {...register("empresa", { required: true } )} onChange={handleChangingEmpresa} options={companies}/>
+                <Select name="empresa" value={idEmpresa} {...register("empresa" )} onChange={handleChangingEmpresa} options={companies}/>
             </div>
             <div className="form-group">
                 <label className="control-label">Estado</label>

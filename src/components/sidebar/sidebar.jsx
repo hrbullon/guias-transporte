@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Nav } from 'reactstrap';
 import PerfectScrollbar from 'react-perfect-scrollbar'
-
+import { useSelector } from 'react-redux';
 const Sidebar = (props) => {
+
+    const { role } = useSelector(state => state.auth)
+    const [ roleString , setRoleString ] = useState()
+
+    useEffect(() => {
+        setRoleString(role)
+    }, [role])
 
     /*--------------------------------------------------------------------------------*/
     /*To Expand SITE_LOGO With Sidebar-Menu on Hover                                  */
@@ -36,7 +43,8 @@ const Sidebar = (props) => {
                                 return null;
                             }
                             else {
-                                if(prop.menu){
+                                console.log(prop.role?.indexOf( roleString ))
+                                if(prop.menu && prop.role?.indexOf( roleString ) >= 0){
                                     return (
                                         /*--------------------------------------------------------------------------------*/
                                         /* Adding Sidebar Item                                                            */
