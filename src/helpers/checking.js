@@ -26,7 +26,7 @@ export const validatedVehiculo = async (jornadaId, placa) => {
 export const validateLimit = ( outputs, company ) => {
     const items = outputs.filter( item => item.estado == "Verificada" )
     const limit = parseInt(company.limite_vehiculos)
-    return ( items.length <= limit )? true : false
+    return ( items.length < limit )? true : false
 }
 
 export const validateDuplicated = ( outputs, data ) => {
@@ -50,5 +50,13 @@ export const validateDuplicated = ( outputs, data ) => {
 }
 
 export const validateOutputs = ( outputs, company, data) => {
-    return (validateLimit( outputs, company ) && validateDuplicated( outputs, data ))
+    if(!validateLimit( outputs, company )){
+        return "Err 001"
+    } 
+    
+    if(!validateDuplicated( outputs, data )){
+        return "Err 002"
+    }
+
+    return "Success"
 }

@@ -28,7 +28,8 @@ import { startLogout, startLoadingCompany } from '../../actions/auth';
 const Header = () => {
 
     const dispatch = useDispatch()
-    const uid = useSelector(state => state.auth)
+    const uid  = useSelector(state => state.auth)
+    const { sesionCompany, displayName }  = useSelector(state => state.auth)
 
     useEffect(() => {
         dispatch( startLoadingCompany( uid ) )
@@ -93,19 +94,12 @@ const Header = () => {
                             </DropdownToggle>
                             <DropdownMenu right className="user-dd">
                                 <DropdownItem>
-                                    <i className="ti-user mr-1 ml-1" /> My Account
+                                    <i className="ti-user mr-1 ml-1" /> { displayName }
                                 </DropdownItem>
                                 <DropdownItem>
-                                    <i className="ti-wallet mr-1 ml-1" /> My Balance
-                                </DropdownItem>
-                                <DropdownItem>
-                                    <i className="ti-email mr-1 ml-1" /> Inbox
+                                    <i className="ti-wallet mr-1 ml-1" /> { sesionCompany?.nombre }
                                 </DropdownItem>
                                 <DropdownItem divider />
-                                <DropdownItem>
-                                    <i className="ti-settings mr-1 ml-1" /> Account Settings
-                                </DropdownItem>
-                                
                                 <DropdownItem divider />
                                 <DropdownItem onClick={ handleLogout }>
                                     <i className="fa fa-power-off mr-1 ml-1" /> Salir

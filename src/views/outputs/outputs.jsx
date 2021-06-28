@@ -313,7 +313,7 @@ export const Outputs = () => {
             if(data.conductor.id !== data.ayudante.id){
                 const validated = validateOutputs( outputs,sesionCompany,data )
                 
-                if(validated){
+                if(validated == "Success"){
         
                     let values = { 
                         jornadaId: workday.id, 
@@ -326,9 +326,19 @@ export const Outputs = () => {
         
                     dispatch( startCreatingOutput( {...values} ) )
                 }else{
+
+                    let msg = ""
+                    if(validated == "Err 001"){
+                        msg = "Su empresa ha alcanzado el limite de vehiculos permitidos"
+                    }
+
+                    if(validated == "Err 002"){
+                        msg = `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`
+                    }
+
                     Swal.fire({
-                        title: 'Datos duplicados',
-                        html: `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`,
+                        title: 'Error',
+                        html: msg,
                         icon: 'warning'
                     })
                 }    
