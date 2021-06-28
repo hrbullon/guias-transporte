@@ -58,4 +58,9 @@ export const types = {
     peopleCreated: '[PEOPLE] Created',
     peopleUpdated: '[PEOPLE] Updated',
     peopleDeleted: '[PEOPLE] Deleted',
+    
+    outputsLoaded: '[OUTPUTS] Loaded',
+    outputCreated: '[OUTPUTS] Created',
+    outputUpdated: '[OUTPUTS] Updated',
+    outputDeleted: '[OUTPUTS] Deleted',
 }

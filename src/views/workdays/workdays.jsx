@@ -37,10 +37,13 @@ export const Workdays = () => {
     //Está pendiente si cambia el valor de created
     //En caso de cambiar es porque se creó correctamente la jornada
     useEffect(() => {
-
+        
         const list = addItem(workdays, created)
         //Actualizo el listado de jornadas
         setWorkdays(list)
+        //Limpio el formulario
+        setData({})
+        setEntradas({ items:[]})
 
     }, [created])
 
@@ -71,7 +74,7 @@ export const Workdays = () => {
 
         if(entradas.items.length > 0){
             
-            const values = { ...data, entradas: entradas.items }
+            const values = { ...data, fecha_entradas: entradas.items }
 
             if( data.id ) {
                 dispatch( startUpdatingWorkdays( {...values} ) )

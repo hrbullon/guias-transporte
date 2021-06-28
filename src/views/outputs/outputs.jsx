@@ -4,17 +4,20 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
 import Select from 'react-select'
 import moment from 'moment';
+import Swal from 'sweetalert2'
 
 import data from '../../data/municipios.json'
 
 import { startLoadingVehicles } from '../../actions/vehicles'
 import { startLoadingPeople } from '../../actions/people'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
+import { startCreatingOutput, startLoadingOutputs, startCancelingOutput } from '../../actions/outputs'
 import { 
-    getItem, 
+    getItem,
     prepareOptionsItems, 
     prepareOptionsPlaca, 
     prepareOptionsRif } from '../../helpers/dataArray'
+import { validatedVehiculo, validateOutputs } from '../../helpers/checking';
 
 let municipioItems = data.municipios.map(item => item.municipio);
 
@@ -29,10 +32,11 @@ export const Outputs = () => {
       });
     const dispatch = useDispatch()
 
-    const { company } = useSelector(state => state.auth)
+    const { sesionCompany } = useSelector(state => state.auth)
     const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { loaded: people } = useSelector(state => state.people)
     const { model: workday } = useSelector(state => state.workdays)
+    const { loaded: outputs, created, updated } = useSelector(state => state.outputs)
 
     const [ itemsVehicles, setItemsVehicles] = useState([])
     const [ itemsPeople, setItemsPeople] = useState([])
@@ -40,8 +44,6 @@ export const Outputs = () => {
     const municipios = prepareOptionsItems(municipioItems)
 
     /**** States ****/
-    const [data, setData] = useState()
-
     const [ inputs, setInputs ] = useState({
         marca:'',
         modelo:'',
@@ -83,8 +85,11 @@ export const Outputs = () => {
 
     /***** Effects *****/
     useEffect(() => {
-        console.log(workday)
-    }, [workday])
+        /****Dispara la función para obtener las salidas ****/
+        if(sesionCompany && workday){
+            dispatch( startLoadingOutputs( sesionCompany.id, workday.id ) )
+        }
+    }, [sesionCompany,workday])
 
     useEffect(() => {
         
@@ -202,6 +207,26 @@ export const Outputs = () => {
 
     }, [idAyudante])
 
+    useEffect(() => {
+        
+        if(created){
+            //Limpio el formulario        
+            clearForm()
+            //Actualizo el listado de vehículos
+            dispatch( startLoadingOutputs(sesionCompany.id, workday.id) )
+        }
+
+    }, [created])
+    
+    useEffect(() => {
+        
+        //Actualizo el listado de vehículos
+        if(updated){
+            dispatch( startLoadingOutputs(sesionCompany.id, workday.id) )
+        }
+
+    }, [updated])
+
     /***** Fin Effects *****/
 
     /***** Eventos *****/
@@ -241,240 +266,301 @@ export const Outputs = () => {
         }
     }
 
+    const handleCancel = (output) => {
+        dispatch( startCancelingOutput( output ) )
+    }   
+
+    /*****Funcion para limpiar el  formulario *****/
+    const clearForm = () => {
+        /****Limipa los campos de tipo select */
+        setIdMunicipio({ value:"", label:"Seleccione un origen" })
+        setIdVehicle({ value:"", label:"Seleccione un vehiculo" })
+        setIdConductor({ value:"", label:"Seleccione un conductor" })
+        setIdAyudante({ value:"", label:"Seleccione un ayudante" })
+        
+        /****Limpia los campos de tipo text */
+        setInputs({ 
+            marca: "",
+            modelo: "",
+            color: ""
+        })
+        
+        setConductor({ 
+            nombre: "",
+            apellido: "",
+            telefono: ""
+        })
+        
+        setAyudante({ 
+            nombre: "",
+            apellido: "",
+            telefono: ""
+        })
+    }
+    
     /***** Fin Eventos *****/
 
     const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
 
     //Envia los datos del formularioe
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
 
-        let values = { 
-                //jornada: { fecha_inicio: "", fecha_fin: "" }, 
-                ...data, importador: company }
-
-        console.log(values)
-
-        /* if( data.id ) {
-            dispatch( startUpdatingPeople( {...data} ) )
+        //Validar que el  vehiculo no haya sido registrado
+        //mas de 2 veces en esta jornada
+        const validated = await validatedVehiculo(workday.id, data.vehiculo.placa)
+        console.log(validated);
+        /* if(data.conductor.id !== data.ayudante.id){
+            const validated = validateOutputs( outputs,sesionCompany,data )
+            
+            if(validated){
+    
+                let values = { 
+                    jornadaId: workday.id, 
+                    jornada: workday, 
+                    importadorId: sesionCompany.id, 
+                    importador: sesionCompany,
+                    estado: "Verificada", 
+                    ...data
+                }
+    
+                dispatch( startCreatingOutput( {...values} ) )
+            }else{
+                Swal.fire({
+                    title: 'Datos duplicados',
+                    html: `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`,
+                    icon: 'warning'
+                })
+            }    
         }else{
-            dispatch( startCreatingPeople( {...data} ) )
+            Swal.fire({
+                title: 'Datos duplicados',
+                html: `El conductor y ayudante no pueden ser los mismos`,
+                icon: 'warning'
+            })
         } */
+
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             { workday !== null && workday.estado == "Abierta" &&
-                    <>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <legend>Datos de Jornada</legend>
-                                    <div className="table-responsive">
-                                        <table className="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td> Inicio </td>
-                                                    <td>  { moment(workday.fecha_inicio).format("DD-MM-YYYY") }</td>
-                                                </tr> 
-                                                <tr>
-                                                    <td> Fin </td>
-                                                    <td> { moment(workday.fecha_fin).format("DD-MM-YYYY") } </td>
-                                                </tr>
-                                                <tr>
-                                                    <td> Días de salida</td>
-                                                    <td>
-                                                        Lunes
-                                                    </td>
-                                                </tr>                            
-                                                <tr>
-                                                    <td> Días de entrada</td>
-                                                    <td>
-                                                        { workday.entradas.map( item => {
-                                                            return moment(item.entrada).format("dddd") +","
-                                                        }) }
-                                                    </td>
-                                                </tr>                            
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>    
-                            </div>    
-                        </div>
-                    </div>
-                    <div className="card">
-                        <div className="card-body">
-                            <div className="row">
-                                <div className="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Fecha</label>
-                                        <input name="fecha" type="date" {...register("fecha", { required: true } )}  className="form-control"/>
-                                        { errors?.fecha?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
-                                    </div>
+                <>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="card">
+                            <div className="card-body">
+                                <legend>Datos de Jornada</legend>
+                                <div className="table-responsive">
+                                    <table className="table">
+                                        <tbody>
+                                            <tr>
+                                                <td> Inicio </td>
+                                                <td>  { moment(workday.fecha_inicio).format("DD-MM-YYYY") }</td>
+                                            </tr> 
+                                            <tr>
+                                                <td> Fin </td>
+                                                <td> { moment(workday.fecha_fin).format("DD-MM-YYYY") } </td>
+                                            </tr>
+                                            <tr>
+                                                <td> Días de salida</td>
+                                                <td>
+                                                    Lunes
+                                                </td>
+                                            </tr>                            
+                                            <tr>
+                                                <td> Días de entrada</td>
+                                                <td>
+                                                    { workday.fecha_entradas.map( item => {
+                                                        return moment(item.entrada).format("dddd") +","
+                                                    }) }
+                                                </td>
+                                            </tr>                            
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div className="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Origen</label>
-                                        <Select name="origen" value={idMunicipio} {...register("origen", { required: true } )} onChange={handleChangingMunicipio} options={municipios} />
-                                        { errors.origen?.type === 'required' && <span className="text-danger"> Este campo es obligatorio</span>}
-                                    </div>
+                            </div>    
+                        </div>    
+                    </div>
+                </div>
+                <div className="card">
+                    <div className="card-body">
+                        <div className="row">
+                            <div className="col-lg-4">
+                                <div class="form-group">
+                                    <label class="control-label">Origen</label>
+                                    <Select name="origen" value={idMunicipio} {...register("origen", { required: true } )} onChange={handleChangingMunicipio} options={municipios} />
+                                    { errors.origen?.type === 'required' && <span className="text-danger"> Este campo es obligatorio</span>}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        {/***** Div Vehiculo*****/}
-                        <div className="col-lg-4">
-                            <div className="card">
-                                <div className="card-body">
-                                <legend>Datos de Vehículo</legend>
+                </div>
+                <div className="row">
+                    {/***** Div Vehiculo*****/}
+                    <div className="col-lg-4">
+                        <div className="card">
+                            <div className="card-body">
+                            <legend>Datos de Vehículo</legend>
+                            <hr />
+                                <div class="form-group">
+                                    <label class="control-label">Placa</label>
+                                    <Select name="vehiculo" value={ idVehicle } {...register("vehiculo", { required: true } )} onChange={ handleChangingPlaca } options={itemsVehicles} />
+                                    { errors?.vehiculo?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Marca</label>
+                                    <input type="text" value={ inputs.marca } disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Modelo</label>
+                                    <input value={ inputs.modelo } type="text" disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Color</label>
+                                    <input value={ inputs.color } type="text" disabled className="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/***** Fin Div Vehiculo*****/}
+                    {/***** Div Conductor*****/}
+                    <div className="col-lg-4">
+                        <div className="card">
+                            <div className="card-body">
+                            <legend>Datos de conductor</legend>
                                 <hr />
-                                    <div class="form-group">
-                                        <label class="control-label">Placa</label>
-                                        <Select name="vehiculo" value={ idVehicle } {...register("vehiculo", { required: true } )} onChange={ handleChangingPlaca } options={itemsVehicles} />
-                                        { errors?.vehiculo?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Marca</label>
-                                        <input type="text" value={ inputs.marca } disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Modelo</label>
-                                        <input value={ inputs.modelo } type="text" disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Color</label>
-                                        <input value={ inputs.color } type="text" disabled className="form-control"/>
-                                    </div>
+                                <div class="form-group">
+                                    <label class="control-label">Cédula</label>
+                                    <Select name="conductor" value={ idConductor } {...register("conductor", { required: true } )} onChange={ handleChangingConductor } options={ itemsPeople } />
+                                    { errors?.conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nombre</label>
+                                    <input value={ conductor.nombre } type="text" disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Apellido</label>
+                                    <input value={ conductor.apellido } type="text" disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Teléfono</label>
+                                    <input value={ conductor.telefono } type="text" disabled className="form-control"/>
                                 </div>
                             </div>
                         </div>
-                        {/***** Fin Div Vehiculo*****/}
-                        {/***** Div Conductor*****/}
-                        <div className="col-lg-4">
-                            <div className="card">
-                                <div className="card-body">
-                                <legend>Datos de conductor</legend>
-                                    <hr />
-                                    <div class="form-group">
-                                        <label class="control-label">Cédula</label>
-                                        <Select name="conductor" value={ idConductor } {...register("conductor", { required: true } )} onChange={ handleChangingConductor } options={ itemsPeople } />
-                                        { errors?.conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Nombre</label>
-                                        <input value={ conductor.nombre } type="text" disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Apellido</label>
-                                        <input value={ conductor.apellido } type="text" disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Teléfono</label>
-                                        <input value={ conductor.telefono } type="text" disabled className="form-control"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/***** Fin Div Conductor*****/}
-                        {/***** Div Ayudante*****/}
-                        <div className="col-lg-4">
-                            <div className="card">
-                                <div className="card-body">
-                                <legend>Datos de Ayudante</legend>
-                                    <hr />
-                                    <div class="form-group">
-                                        <label class="control-label">Cédula</label>
-                                        <Select name="ayudante" value={ idAyudante } {...register("ayudante", { required: true } )} onChange={ handleChangingAyudante } options={ itemsPeople } />
-                                        { errors?.ayudante?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Nombre</label>
-                                        <input value={ ayudante.nombre } type="text" disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Apellido</label>
-                                        <input value={ ayudante.apellido } type="text" disabled className="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Teléfono</label>
-                                        <input value={ ayudante.telefono } type="text" disabled className="form-control"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/***** Fin Div Ayudante*****/}
                     </div>
-                    <div className="row">
-                        <div className="col-lg-12 mb-4">
-                            <div className="card">
-                                <div className="card-body">
-                                    <button className="btn btn-default pull-right">Cancelar</button>
-                                    <button type="submit" className="btn btn-primary pull-right">Guardar</button>
-                                </div>   
+                    {/***** Fin Div Conductor*****/}
+                    {/***** Div Ayudante*****/}
+                    <div className="col-lg-4">
+                        <div className="card">
+                            <div className="card-body">
+                            <legend>Datos de Ayudante</legend>
+                                <hr />
+                                <div class="form-group">
+                                    <label class="control-label">Cédula</label>
+                                    <Select name="ayudante" value={ idAyudante } {...register("ayudante", { required: true } )} onChange={ handleChangingAyudante } options={ itemsPeople } />
+                                    { errors?.ayudante?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Nombre</label>
+                                    <input value={ ayudante.nombre } type="text" disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Apellido</label>
+                                    <input value={ ayudante.apellido } type="text" disabled className="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Teléfono</label>
+                                    <input value={ ayudante.telefono } type="text" disabled className="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/***** Fin Div Ayudante*****/}
+                </div>
+                <div className="row">
+                    <div className="col-lg-12 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <button className="btn btn-default pull-right">Cancelar</button>
+                                <button type="submit" className="btn btn-primary pull-right">Guardar</button>
                             </div>   
-                        </div>
+                        </div>   
                     </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <legend>Listado de salidas</legend>
-                                    <div className="table-responsive">
-                                        <table className="table table-striped table-hover table-">
-                                            <thead>
-                                                <tr>
-                                                    <th colSpan="3" className="text-center">Vehículo</th>
-                                                    <th colSpan="3" className="text-center">Conductor</th>
-                                                    <th colSpan="3" className="text-center">Ayudante</th>
+                </div>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="card">
+                            <div className="card-body">
+                                <legend>Listado de salidas</legend>
+                                <div className="table-responsive">
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th colSpan="3" className="text-center">Vehículo</th>
+                                                <th colSpan="3" className="text-center">Conductor</th>
+                                                <th colSpan="3" className="text-center">Ayudante</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Placa</th>
+                                                <th>Marca</th>
+                                                <th className="border-right">Modelo</th>
+                                                
+                                                <th>Cedula</th>
+                                                <th>Nombre</th>
+                                                <th className="border-right">Apellido</th>
+                                                
+                                                <th>Cedula</th>
+                                                <th>Nombre</th>
+                                                <th>Apellido</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        { outputs.length == 0 && 
+                                            (
+                                                <tr className="table-warning text-center">
+                                                    <td colSpan="10">No hay salidas registradas</td>
                                                 </tr>
-                                                <tr>
-                                                    <th>Placa</th>
-                                                    <th>Marca</th>
-                                                    <th className="border-right">Modelo</th>
-                                                    
-                                                    <th>Cedula</th>
-                                                    <th>Nombre</th>
-                                                    <th className="border-right">Apellido</th>
-                                                    
-                                                    <th>Cedula</th>
-                                                    <th>Nombre</th>
-                                                    <th>Apellido</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>VX32652</td>    
-                                                    <td>Ford</td>    
-                                                    <td className="border-right">750</td>
-
-                                                    <td>V2190389</td>    
-                                                    <td>José </td>    
-                                                    <td className="border-right">Ruiz</td>    
-                                                    
-                                                    <td>V1232122</td>    
-                                                    <td>Carlos</td>    
-                                                    <td>Gonzalez</td>    
-                                                </tr>                            
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>    
+                                            )
+                                        }
+                                        { outputs.map( output => {
+                                            return (
+                                            <tr class={ (output.estado == "Verificada")? "table-success" : "table-danger" } key={output.id}>
+                                                <td>{ output.vehiculo.placa }</td>
+                                                <td>{ output.vehiculo.marca.nombre }</td>
+                                                <td className="border-right">{ output.vehiculo.modelo.nombre }</td>
+                                                
+                                                <td>{ output.conductor.rif }</td>
+                                                <td>{ output.conductor.nombre }</td>
+                                                <td className="border-right">{ output.conductor.apellido }</td>
+                                                
+                                                <td>{ output.ayudante.rif }</td>
+                                                <td>{ output.ayudante.nombre }</td>
+                                                <td>{ output.ayudante.apellido }</td>
+                                                <td> 
+                                                    <button type="button" className="btn btn-sm btn-danger">
+                                                        <i title="Cancelar" onClick={ (e) => handleCancel(output)  } className="mdi mdi-alert-circle pointer"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>)    
+                                        })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>    
-                        </div>
+                        </div>    
                     </div>
-                    </>
-                }
-                { !workday || workday.estado !== "Abierta" && 
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="alert alert-warning text-center"> Todavía no está disponible la jornada para el registro de salídas</div>
-                        </div>
+                </div>
+                </>
+            }
+            { !workday || workday.estado !== "Abierta" && 
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="alert alert-warning text-center"> Todavía no está disponible la jornada para el registro de salídas</div>
                     </div>
-                }
-            </form>
-        </>
+                </div>
+            }
+        </form>
     )
 }

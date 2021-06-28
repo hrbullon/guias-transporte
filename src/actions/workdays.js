@@ -20,7 +20,7 @@ export const startLoadingSigleWorkdays = () => {
             const snapshot = await db.collection(`${ table }`).where("estado","==","Abierta").get()
             let data = {}
             snapshot.forEach(doc => {
-                data = { ...doc.data() }
+                data = { id: doc.id, ...doc.data() }
             });
             
             //Notifico al reducer, para que me almacene los datos en el state
@@ -56,9 +56,11 @@ export const startLoadingWorkdays = () => {
 export const startCreatingWorkdays = ( data ) => {
     return async (dispatch) => {
         try {
-            const doc = await db.collection(table).add(data)
+            let copy = { ...data }
+            copy.estado = "Abierta"
+            const doc = await db.collection(table).add(copy)
             const increment = firebase.firestore.FieldValue.increment(1);
-            dispatch( workdaysCreated( { id: doc.id, ...data } ) )
+            dispatch( workdaysCreated( { id: doc.id, ...copy } ) )
             Swal.fire('Correcto', 'Jornada registrada!!','success')
         } catch (error) {
             Swal.fire('Error', error.message,'error')

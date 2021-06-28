@@ -10,6 +10,7 @@ export const Form = (props) => {
 
     useEffect(() => {
         reset({...props.data})
+        setFechaEntrada("")
     }, [props.data])
     
     const [fechaEntrada, setFechaEntrada] = useState()
@@ -82,6 +83,11 @@ export const Form = (props) => {
                 <label className="control-label">Fecha Fin *</label>
                 <input type="date" name="fecha_fin" autoComplete="off" {...register("fecha_fin", { required: true } )} className="form-control"/>
                 { errors?.fecha_fin?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
+            </div>
+            <div class="form-group">
+                <label className="control-label">Fecha Salida *</label>
+                <input type="date" name="fecha_salida" autoComplete="off" {...register("fecha_salida", { required: true } )} className="form-control"/>
+                { errors?.fecha_salida?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="alert alert-info">
                 Los días que agregue en este listado serán los dias en que pueden entrar los vehículos
