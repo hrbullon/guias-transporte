@@ -31,6 +31,13 @@ export const Inputs = () => {
     const { loaded: conversionsLoaded } = useSelector(state => state.conversions);
     
     /*****States */
+    const [ inputsItems, setInputsItems ] = useState({
+        producto:"",
+        presentacion:"",
+        cantidad:"",
+        subtotal:""
+    })
+
     const [ infoCliente, setInfoCliente] = useState({
         nombre:"",
         municipio:"",
@@ -134,6 +141,45 @@ export const Inputs = () => {
         const options = prepareOptionsConversion( conversionsLoaded )
         setOptionsConversions( options )
     }, [conversionsLoaded])
+    
+    useEffect(() => {
+        //Si el usuario seleccionó una presentación
+        //Realiza el cálculo del subtotal
+        if(inputsItems.presentacion !== ""){
+
+            const presentation = getItem(conversionsLoaded, inputsItems.presentacion)
+            const subtotal = inputsItems.cantidad * parseFloat(presentation.contenido)
+            setInputsItems({
+                ...inputsItems,
+                subtotal
+            })
+        }
+
+    }, [inputsItems.cantidad])
+
+
+    const handleAddItem = () => {
+
+        //Obtengo el  objeto con la información del productp
+        const product = getItem(productsLoaded, inputsItems.producto)
+        const presentation = getItem(conversionsLoaded, inputsItems.presentacion)
+        
+        let rows = [ ...items ]
+        
+        const item = {
+            i: ( items.length + 1),
+            producto: inputsItems.producto,
+            producto_text: product.nombre,
+            presentacion: inputsItems.presentacion,
+            presentacion_text: presentation.presentacion,
+            cantidad: inputsItems.cantidad,
+            subtotal: inputsItems.subtotal,
+            medida: presentation.unidad_medida
+        }
+
+        rows.push(item)
+        setItems(rows)
+    }
 
     /*****End Effects *****/
     const handleChangingCliente = (input) => {
@@ -173,6 +219,24 @@ export const Inputs = () => {
                     nombre: item[0].ayudante.nombre + " " + item[0].ayudante.apellido,
                     telefono: item[0].ayudante.telefono,
                 }
+            })
+        }
+    }
+
+    const handleChangingProducto = (input) => {
+        if(input){
+            setInputsItems({
+                ...inputsItems,
+                producto: input.value
+            })
+        }
+    }
+
+    const handleChangingPre = (input) => {
+        if(input){
+            setInputsItems({
+                ...inputsItems,
+                presentacion: input.value
             })
         }
     }
@@ -352,29 +416,29 @@ export const Inputs = () => {
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Producto</label>
-                                <Select name="producto" options={optionsProducts} />
+                                <Select name="producto" onChange={handleChangingProducto} options={optionsProducts} />
                             </div>
                         </div>
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Presentación</label>
-                                <Select name="presentacion" options={optionsConversions} />
+                                <Select name="presentacion" onChange={handleChangingPre} options={optionsConversions} />
                             </div>
                         </div>
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Cantidad</label>
-                                <input type="number" name="cantidad" class="form-control"/>
+                                <input type="number" name="cantidad" value={ inputsItems.cantidad } onChange={ (e) => setInputsItems({...inputsItems, cantidad: e.target.value }) } class="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Subtotal</label>
-                                <input type="number" name="subtotal" disabled class="form-control"/>
+                                <input type="number" name="subtotal" value={ inputsItems.subtotal } disabled class="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-12 pt-4">
-                            <button type="button" className="btn btn-primary pull-right">AGREGAR AL LISTADO</button>
+                            <button type="button" onClick={ handleAddItem } className="btn btn-primary pull-right">AGREGAR AL LISTADO</button>
                         </div>
                     </div>   
                     <div className="row">
