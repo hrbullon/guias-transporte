@@ -25,11 +25,11 @@ export const startLoadingActivesCompanies = () => {
     }
 }
 
-export const startLoadingCompanies = () => {
+export const startLoadingCompanies = (filter) => {
     return async (dispatch) => {
         
         try {
-            const companiesSnap = await db.collection(`companies`).get()
+            const companiesSnap = await db.collection(`companies`).where("type","==",filter).get()
             const companies = []
 
             companiesSnap.forEach( snap => {
@@ -38,6 +38,7 @@ export const startLoadingCompanies = () => {
                     ...snap.data()
                 })
             })
+
             //Notifico al reducer, para que me almacene los datos en el state
             dispatch( companiesLoaded( companies ) )
 

@@ -123,6 +123,8 @@ export const prepareOptionsConversion = (data) => {
     return items
 }
 
-
+export const getInfoVehiculo = (outputs, placa) => {
+    return outputs.filter( item => item.vehiculo.placa == placa )
+}
 
 

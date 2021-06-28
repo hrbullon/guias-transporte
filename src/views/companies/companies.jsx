@@ -1,23 +1,19 @@
 import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
-import { startCreatingCompany ,startUpdatingCompany, startDeletingCompany } from '../../actions/companies'
+import { startCreatingCompany ,startUpdatingCompany, startDeletingCompany, startLoadingCompanies } from '../../actions/companies'
 
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
-import { addItem, updateItem, deleteItem, } from "../../helpers/dataArray"
-import { db } from "../../firebase/firebase-config"
 
 export const Companies = () => {
 
     const dispatch = useDispatch()
-    //Aquí se almacena el listado de empresas
-    const [companies, setCompanies] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
-    const { created, updated, deleted } = useSelector(state => state.companies)
+    const { loaded: companies, created, updated, deleted } = useSelector(state => state.companies)
     const [data, setData] = useState()
     const [type, setType] = useState("")
     const [title, setTitle] = useState("")
@@ -37,57 +33,50 @@ export const Companies = () => {
             filter = "TYPE_CUSTOMER"
         }
 
-        const companiesSnap = await db.collection(`companies`).where("type","==",filter).get()
-        const companies = []
+        dispatch( startLoadingCompanies(filter) )
 
-        companiesSnap.forEach( snap => {
-            companies.push({
-                id: snap.id,
-                ...snap.data()
-            })
-        })
-
-        setCompanies(companies)
     },[]) 
 
     //Está pendiente si cambia el valor de created
     //En caso de cambiar es porque se creó correctamente el empresa
     useEffect(() => {
 
-        const list = addItem(companies, created)
-        //Actualizo el listado de empresas
-        setCompanies(list)
-        setData({})
-        setData({
-            representante_telefono:'',
-            responsable_telefono:''
-        })
+        if(created){
+            //Actualizo el listado de empresas
+            setData({})
+            setData({
+                representante_telefono:'',
+                responsable_telefono:''
+            })
+    
+            dispatch( startLoadingCompanies(type) )
+        }
+
     }, [created])
 
     //Está pendiente si cambia el valor de updated
     //En caso de cambiar es porque se editó correctamente el empresa
     useEffect(() => {
-        
-        const list = updateItem(companies, updated)
-        //Actualizo el listado de empresas
-        setCompanies(list)
-        //Limpio el formulario
-        setData({})
-        setData({
-            representante_telefono:'',
-            responsable_telefono:''
-        })
+
+        if(updated){
+            //Limpio el formulario
+            setData({})
+            setData({
+                representante_telefono:'',
+                responsable_telefono:''
+            })
+    
+            dispatch( startLoadingCompanies(type) )
+        }
 
     }, [updated])
 
     //Está pendiente si cambia el valor de deleted
     //En caso de cambiar es porque se eliminó correctamente el empresa
     useEffect(() => {
-        
-        const list = deleteItem(companies, deleted)
-        //Actualizo el listado de empresas
-        setCompanies(list)
-
+        if(deleted){
+            dispatch( startLoadingCompanies(type) )
+        }
     }, [deleted])
     
     //Envia los datos del formularioe
