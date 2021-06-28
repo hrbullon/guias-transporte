@@ -308,36 +308,44 @@ export const Outputs = () => {
         //Validar que el  vehiculo no haya sido registrado
         //mas de 2 veces en esta jornada
         const validated = await validatedVehiculo(workday.id, data.vehiculo.placa)
-        console.log(validated);
-        /* if(data.conductor.id !== data.ayudante.id){
-            const validated = validateOutputs( outputs,sesionCompany,data )
-            
-            if(validated){
-    
-                let values = { 
-                    jornadaId: workday.id, 
-                    jornada: workday, 
-                    importadorId: sesionCompany.id, 
-                    importador: sesionCompany,
-                    estado: "Verificada", 
-                    ...data
-                }
-    
-                dispatch( startCreatingOutput( {...values} ) )
+        
+        if(validated){
+            if(data.conductor.id !== data.ayudante.id){
+                const validated = validateOutputs( outputs,sesionCompany,data )
+                
+                if(validated){
+        
+                    let values = { 
+                        jornadaId: workday.id, 
+                        jornada: workday, 
+                        importadorId: sesionCompany.id, 
+                        importador: sesionCompany,
+                        estado: "Verificada", 
+                        ...data
+                    }
+        
+                    dispatch( startCreatingOutput( {...values} ) )
+                }else{
+                    Swal.fire({
+                        title: 'Datos duplicados',
+                        html: `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`,
+                        icon: 'warning'
+                    })
+                }    
             }else{
                 Swal.fire({
                     title: 'Datos duplicados',
-                    html: `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`,
+                    html: `El conductor y ayudante no pueden ser los mismos`,
                     icon: 'warning'
                 })
-            }    
+            }
         }else{
             Swal.fire({
-                title: 'Datos duplicados',
-                html: `El conductor y ayudante no pueden ser los mismos`,
+                title: 'Error vehículo',
+                html: `El vehículo con placa: <b>${ data.vehiculo.placa }</b> fue registrados dos veces con otras empresas, elija otro vehículo`,
                 icon: 'warning'
             })
-        } */
+        }
 
     };
 

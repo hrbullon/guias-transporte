@@ -32,7 +32,6 @@ export const Form = (props) => {
         if(idEmpresa.value !== ""){
             const item = getItem(activesLoaded, idEmpresa.value)
             setValue("empresa",{ ...item })
-            setError("empresa","")
         }
     }, [idEmpresa])
     
@@ -41,6 +40,7 @@ export const Form = (props) => {
         let items = activesLoaded.filter( item => item.type == "TYPE_COMPANY")
         items = prepareOptionsSelect( items )
         setCompanies( items )
+
     }, [activesLoaded])
 
     

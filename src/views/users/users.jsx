@@ -14,7 +14,7 @@ export const Users = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de usuarios
-    const [users, setUsers] = useState({})
+    const [users, setUsers] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un usuario
     const { created, updated, deleted } = useSelector(state => state.users)
