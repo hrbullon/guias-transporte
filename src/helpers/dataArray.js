@@ -116,7 +116,7 @@ export const prepareOptionsConversion = (data) => {
     let items = []
     
     Object.keys(data).map( (key) => {
-        const label = `${data[key].presentacion} ${data[key].contenido} ${data[key].unidad_medida_text}`
+        const label = `${data[key].presentacion} ${data[key].contenido} ${data[key].unidad_medida}`
         items.push({ value: data[key].id, label }) 
     })
 

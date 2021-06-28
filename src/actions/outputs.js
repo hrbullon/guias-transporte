@@ -9,6 +9,7 @@ export const startLoadingOutputs = ( company, workday) => {
     return async (dispatch) => {
         
         try {
+            
             const outputsSnap = await db.collection(table)
             .where("jornadaId","==",workday)
             .where("importadorId","==",company)
