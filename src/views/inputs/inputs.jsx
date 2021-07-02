@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useForm } from "react-hook-form"
+
 import DataTable from 'react-data-table-component'
 import Select from 'react-select'
 
@@ -20,6 +22,8 @@ import {
 export const Inputs = () => {
 
     const dispatch = useDispatch()
+
+    const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
 
     const [items, setItems] = useState([])
 
@@ -157,6 +161,135 @@ export const Inputs = () => {
 
     }, [inputsItems.cantidad])
 
+    useEffect(() => {
+
+        let cliente = {}
+
+        if(idCustomer.value !== ""){
+            
+            const item = getItem( companies, idCustomer.value )
+            
+            setInfoCliente({
+                ...infoCliente,
+                nombre: item.nombre,
+                municipio: item.municipio,
+                parroquia: item.parroquia,
+                direccion: item.direccion,
+                representante_comercio_nombre: item.representante.nombre,
+                representante_comercio_rif: item.representante.rif,
+                representante_comercio_telefono: item.representante.telefono
+            })
+
+            cliente = {
+                id: idCustomer.value, 
+                nombre: idCustomer.label 
+            }
+
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado un cliente
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("cliente", cliente)
+            setError("cliente", "")
+
+        }else{
+            cliente = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+    }, [idCustomer])
+
+    useEffect(() => {
+        
+        let vehiculo = {}
+
+        if(idVehiculo.value !== ""){
+            
+            const item = getInfoVehiculo( outputs, idVehiculo.label )
+            setInfoVehiculo({
+                ...infoVehiculo,
+                marca: item[0].vehiculo.marca.nombre,
+                modelo: item[0].vehiculo.modelo.nombre, 
+                color: item[0].vehiculo.color,
+                conductor: {
+                    rif: item[0].conductor.rif,
+                    nombre: item[0].conductor.nombre + " " + item[0].conductor.apellido,
+                    telefono: item[0].conductor.telefono,
+                },
+                ayudante: {
+                    rif: item[0].ayudante.rif,
+                    nombre: item[0].ayudante.nombre + " " + item[0].ayudante.apellido,
+                    telefono: item[0].ayudante.telefono,
+                }
+            }) 
+
+            vehiculo = {
+                id: item[0].vehiculo.id,
+                placa: item[0].vehiculo.placa
+            } 
+
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado un vehiculo
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("vehiculo", vehiculo)
+            setError("vehiculo", "")
+
+        }else{
+            vehiculo = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+    }, [idVehiculo])
+
+    /*useState(() => {
+        
+        let vehiculo = {}
+
+        if(idVehiculo.value !== ""){
+            console.log(idVehiculo);
+            /* const item = getInfoVehiculo( outputs, idVehiculo.label )
+            setInfoVehiculo({
+                ...infoVehiculo,
+                marca: item[0].vehiculo.marca.nombre,
+                modelo: item[0].vehiculo.modelo.nombre, 
+                color: item[0].vehiculo.color,
+                conductor: {
+                    rif: item[0].conductor.rif,
+                    nombre: item[0].conductor.nombre + " " + item[0].conductor.apellido,
+                    telefono: item[0].conductor.telefono,
+                },
+                ayudante: {
+                    rif: item[0].ayudante.rif,
+                    nombre: item[0].ayudante.nombre + " " + item[0].ayudante.apellido,
+                    telefono: item[0].ayudante.telefono,
+                }
+            }) 
+
+             vehiculo = {
+                id: item[0].vehiculo.id,
+                placa: item[0].vehiculo.placa
+            } 
+
+            //Para que no me muestre error 
+            //aún cuando haya seleccionado un vehículo
+            //este problema es debido al paquete que se está 
+            //usando para generar los campos de tipo select 
+            setValue("vehiculo", idVehiculo)
+            setError("vehiculo", "")
+
+        }else{
+            vehiculo = {
+                id: "",
+                placa: ""
+            }
+        }
+
+    }, [idVehiculo])*/
 
     const handleAddItem = () => {
 
@@ -184,42 +317,17 @@ export const Inputs = () => {
     /*****End Effects *****/
     const handleChangingCliente = (input) => {
         if(input){
-            const item = getItem( companies, input.value )
             setIdCustomer(input)
-            setInfoCliente({
-                ...infoCliente,
-                nombre: item.nombre,
-                municipio: item.municipio,
-                parroquia: item.parroquia,
-                direccion: item.direccion,
-                representante_comercio_nombre: item.representante.nombre,
-                representante_comercio_rif: item.representante.rif,
-                representante_comercio_telefono: item.representante.telefono
-            })
+        }else{
+            setIdCustomer({value:'',label:'Seleccione un cliente'})
         }
     }
 
     const handleChangingPlaca = (input) => {
         if(input){
-            const item = getInfoVehiculo( outputs, input.label )
             setIdVehiculo(input)
-
-            setInfoVehiculo({
-                ...infoVehiculo,
-                marca: item[0].vehiculo.marca.nombre,
-                modelo: item[0].vehiculo.modelo.nombre, 
-                color: item[0].vehiculo.color,
-                conductor: {
-                    rif: item[0].conductor.rif,
-                    nombre: item[0].conductor.nombre + " " + item[0].conductor.apellido,
-                    telefono: item[0].conductor.telefono,
-                },
-                ayudante: {
-                    rif: item[0].ayudante.rif,
-                    nombre: item[0].ayudante.nombre + " " + item[0].ayudante.apellido,
-                    telefono: item[0].ayudante.telefono,
-                }
-            })
+        }else{
+            setIdVehiculo({ value:"", label:"Seleccione un vehículo"})
         }
     }
 
@@ -241,27 +349,33 @@ export const Inputs = () => {
         }
     }
 
+    const onSubmit = (data) => {
+        console.log(data);
+    }
+
     return (
-        <>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="card">
                 <div className="card-body">
                     <div className="row">
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Número</label>
-                                <input name="numero" type="text" className="form-control"/>
+                                <input type="text" disabled className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Fecha</label>
-                                <input name="fecha" type="date" className="form-control"/>
+                                <input name="fecha" type="date" {...register("fecha", { required: true } )} className="form-control"/>
+                                { errors?.fecha?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Retorno</label>
-                                <input name="retorno" type="text" className="form-control" />
+                                <input name="retorno" type="text" {...register("retorno", { required: true } )} className="form-control" />
+                                { errors?.retorno?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
                     </div>
@@ -280,7 +394,8 @@ export const Inputs = () => {
                         <div className="col-lg-4">
                             <div class="form-group">
                                 <label class="control-label">RIF</label>
-                                <Select name="cliente" value={ idCustomer } onChange={handleChangingCliente} options={ optionsCustomers } />
+                                <Select name="cliente" value={ idCustomer } {...register("cliente", { required: true } )} onChange={handleChangingCliente} options={ optionsCustomers } />
+                                { errors?.cliente?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
                         <div className="col-lg-8">
@@ -345,7 +460,8 @@ export const Inputs = () => {
                         <div className="col-lg-3">
                             <div class="form-group">
                                 <label class="control-label">Placa</label>
-                                <Select name="vehiculo" onChange={handleChangingPlaca} value={ idVehiculo } options={ optionsVehicles } />
+                                <Select name="cliente" value={ idVehiculo } {...register("vehiculo", { required: true } )} onChange={handleChangingPlaca} options={ optionsVehicles } />
+                                { errors?.vehiculo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>    
                         <div className="col-lg-3">
@@ -450,6 +566,16 @@ export const Inputs = () => {
                     </div>
                 </div>
             </div>
-        </>
+            <div className="card" >
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <button type="button" className="btn btn-inverse pull-right">Cancelar</button>
+                            <button type="submit" className="btn btn-success pull-right mr-2"> <i className="fa fa-check"></i> Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     )
 }
