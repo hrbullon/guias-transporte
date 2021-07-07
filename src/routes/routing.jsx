@@ -11,7 +11,11 @@ import { Workdays } from '../views/workdays/workdays.jsx';
 import { People } from '../views/people/people';
 import { Categories } from '../views/categories/categories.jsx';
 import { Forms } from '../views/products/forms/forms.jsx';
+
+import { Form as FormOutput } from '../views/outputs/form.jsx';
 import { Outputs } from '../views/outputs/outputs.jsx';
+
+import { Form as FormInput } from '../views/inputs/form.jsx';
 import { Inputs } from '../views/inputs/inputs.jsx';
 
 var ThemeRoutes = [
@@ -46,12 +50,28 @@ var ThemeRoutes = [
     component: Form
   },
   {
+    path:"/outputs/create",
+    name:"Registrar salida",
+    icon: "mr-2 mdi mdi-arrow-right",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: FormOutput
+  },
+  {
     path:"/outputs",
     name:"Salidas",
     icon: "mr-2 mdi mdi-arrow-right",
     menu: true,
     role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: Outputs
+  },
+  {
+    path:"/inputs/create",
+    name:"Registrar entrada",
+    icon: "mr-2 mdi mdi-arrow-left",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: FormInput
   },
   {
     path:"/inputs",
