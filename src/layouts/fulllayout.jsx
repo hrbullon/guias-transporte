@@ -62,7 +62,7 @@ const Fulllayout = (props) => {
             {/*--------------------------------------------------------------------------------*/}
             <div className="page-wrapper d-block">
                 <div className="page-content container-fluid">
-                    <div className="row page-titles">
+                    {/* <div className="row page-titles">
                         <div className="col-md-9 align-self-center">
                             <h3 className="text-themecolor">Blank Page</h3>
                         </div>
@@ -75,7 +75,7 @@ const Fulllayout = (props) => {
                                 <li className="breadcrumb-item active">Blank Page</li>
                             </ol>
                         </div>
-                    </div>
+                    </div> */}
                     <Switch>
                         {ThemeRoutes.map((prop, key) => {
                             if (prop.redirect) {

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
 
@@ -20,13 +22,13 @@ import {
     prepareOptionsConversion 
     } from '../../helpers/dataArray'
 
-export const Form = () => {
+export const Form = (props) => {
 
     const dispatch = useDispatch()
-
     const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
-
+    
     const [items, setItems] = useState([])
+    const { created, updated } = useSelector(state => state.inputs)
 
     const { sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
@@ -44,6 +46,7 @@ export const Form = () => {
     })
 
     const [ infoCliente, setInfoCliente] = useState({
+        rif:"",
         nombre:"",
         municipio:"",
         parroquia:"",
@@ -129,6 +132,16 @@ export const Form = () => {
         }
     }, [outputs])
     
+    //Está pendiente si cambia el valor de created o updated
+    //En caso de cambiar es porque se creó o editó correctamente la entrada
+    useEffect(() => {
+
+        if(created !== null || updated !== null){
+            props.history.push('/inputs')
+        }
+
+    }, [created,updated])
+
     useEffect(() => {
         if(companies){
             let items = []
@@ -171,9 +184,10 @@ export const Form = () => {
         if(idCustomer.value !== ""){
             
             const item = getItem( companies, idCustomer.value )
-            
+
             setInfoCliente({
                 ...infoCliente,
+                rif: item.rif,
                 nombre: item.nombre,
                 municipio: item.municipio,
                 parroquia: item.parroquia,
@@ -327,7 +341,8 @@ export const Form = () => {
             importador,
             vehiculo,
             cliente: infoCliente,
-            items
+            items,
+            estado:"Abierta"
         }
 
         dispatch( startCreatingInput( {...params} ) )
@@ -338,6 +353,10 @@ export const Form = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="card">
                 <div className="card-body">
+                    <div className="col-12">
+                        <Link to="/inputs" className="btn btn-primary pull-right mt-4" title="Registrar nueva guía">
+                            <i className="fa fa-list"></i> Ir al listado                        </Link>
+                    </div>
                     <div className="row">
                         <div className="col-lg-3">
                             <div class="form-group">
@@ -410,19 +429,19 @@ export const Form = () => {
                         <div className="col-lg-4">
                             <div class="form-group">
                                 <label class="control-label">Representante - Comercio</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio_nombre } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.nombre } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div class="form-group">
                                 <label class="control-label">Cédula / Pasaporte</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio_rif } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.rif } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div class="form-group">
                                 <label class="control-label">Teléfono</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio_telefono } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.telefono } className="form-control"/>
                             </div>
                         </div>
                     </div>

@@ -5,23 +5,45 @@ import { types } from '../types/types'
 
 const table = "inputs"
 
+export const startLoadingItem = ( id ) => {
+    return async (dispatch) => {
+   
+        var docRef = db.collection("inputs").doc(id);
+
+        await docRef.get().then((doc) => {
+            let data = {}
+
+            if (doc.exists) {
+                data = { id: doc.id, ...doc.data() }
+                dispatch( inputs(data) )
+            } else {
+                Swal.fire('Error', 'No existe la entrada solicitada','error')
+
+            }
+        }).catch((error) => {
+            console.log('Error al cargar los datos de la entrada', error)
+        });
+    }
+}
+
 export const startLoadingInputs = ( company, workday) => {
     return async (dispatch) => {
         
         try {
-            
-            const inputsSnap = await db.collection(table)
+
+            let inputSnap = await db.collection(table)
             .where("jornadaId","==",workday)
-            .where("importadorId","==",company)
-            .get()
+            .where("importador.id","==",company).get()
+            
             const inputs = []
 
-            inputsSnap.forEach( snap => {
+            inputSnap.forEach( snap => {
                 inputs.push({
                     id: snap.id,
                     ...snap.data()
                 })
             })
+
             //Notifico al reducer, para que me almacene los datos en el state
             dispatch( inputsLoaded( inputs ) )
 
@@ -125,6 +147,11 @@ export const startCancelingInput = ( data ) => {
         })
     }
 }
+
+export const inputs = ( data ) => ({
+    type: types.inputs,
+    payload: data
+})
 
 export const inputsLoaded = ( data ) => ({
     type: types.inputsLoaded,

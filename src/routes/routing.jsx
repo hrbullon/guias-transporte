@@ -17,6 +17,7 @@ import { Outputs } from '../views/outputs/outputs.jsx';
 
 import { Form as FormInput } from '../views/inputs/form.jsx';
 import { Inputs } from '../views/inputs/inputs.jsx';
+import { View as ViewInput } from '../views/inputs/view.jsx';
 
 var ThemeRoutes = [
   { 
@@ -72,6 +73,14 @@ var ThemeRoutes = [
     menu: false,
     role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: FormInput
+  },
+  {
+    path:"/inputs/:id",
+    name:"Ver entrada",
+    icon: "mr-2 mdi mdi-arrow-left",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: ViewInput
   },
   {
     path:"/inputs",
