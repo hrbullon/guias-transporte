@@ -6,7 +6,7 @@ import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
-import { startLoadingInputs } from '../../actions/inputs'
+import { startCancelingInput, startLoadingInputs } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 
 export const Inputs = (props) => {
@@ -15,7 +15,7 @@ export const Inputs = (props) => {
 
     const { sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
-    const { loaded: inputs } = useSelector(state => state.inputs)
+    const { loaded: inputs, updated } = useSelector(state => state.inputs)
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
@@ -58,7 +58,7 @@ export const Inputs = (props) => {
                     { /****** Capturo el evento click en el botón ver detalle de cada fila******/ }
                     <i title="Ver" onClick={ (e) => handleShow(row)  } className="mdi mdi-eye pointer mr-2"></i>
                     { /****** Capturo el evento click en el botón eliminar de cada fila******/ }
-                    <i title="Eliminar" onClick={ (e) => handleRemove(row)  } className="mdi mdi-delete pointer"></i>
+                    <i title="Eliminar" onClick={ (e) => handleCancel(row)  } className="mdi mdi-delete pointer"></i>
                 </div>)    
         }
     ]
@@ -78,12 +78,22 @@ export const Inputs = (props) => {
 
     }, [])
 
+    
+    useEffect(() => {
+        
+        //Actualizo el listado de vehículos
+        if(updated){
+            dispatch( startLoadingInputs(sesionCompany.id, workday.id) )
+        }
+
+    }, [updated])
+
     const handleShow = (item) => {
         window.open(`/inputs/view/${item.id}`,"ventana1","width=1024,height=820,scrollbars=NO") 
     }
     
-    const handleRemove = (item) => {
-
+    const handleCancel = (input) => {
+        dispatch( startCancelingInput( input ) )
     }
 
     return (
