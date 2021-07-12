@@ -79,7 +79,7 @@ export const Inputs = (props) => {
     }, [])
 
     const handleShow = (item) => {
-        props.history.push(`/inputs/${item.id}`)
+        window.open(`/inputs/view/${item.id}`,"ventana1","width=1024,height=820,scrollbars=NO") 
     }
     
     const handleRemove = (item) => {

@@ -75,7 +75,7 @@ var ThemeRoutes = [
     component: FormInput
   },
   {
-    path:"/inputs/:id",
+    path:"/inputs/view/:id",
     name:"Ver entrada",
     icon: "mr-2 mdi mdi-arrow-left",
     menu: false,

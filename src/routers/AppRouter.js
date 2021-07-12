@@ -12,7 +12,7 @@ import Fulllayout from '../layouts/fulllayout.jsx';
 import { AuthRouter } from './AuthRouter'
 import { PublicRoute } from './PublicRoute'
 import { PrivateRoute } from './PrivateRoute'
-
+import { View } from '../views/inputs/view';
 
 export const AppRouter = () => {
 
@@ -55,11 +55,20 @@ export const AppRouter = () => {
                     component={ AuthRouter }
                 />
 
+                <PublicRoute
+                    exact
+                    path="/inputs/view/:id"
+                    isAuthenticated={ false }
+                    component={ View }
+                />
+                
                 <PrivateRoute
                     path="/"
                     isAuthenticated={ isLoggedIn }
                     component={ Fulllayout }
                 />
+
+
             </Switch>
         </Router>
     )

@@ -82,8 +82,6 @@ export const startUpdatingInput = ( data ) => {
             await db.doc(`${ table }/${ doc.id }`).update( updateInput )
             dispatch( inputUpdated( { id: data.id, ...updateInput } ) )
 
-            Swal.fire('Correcto', 'Entrada actualizada!!','success')
-
         } catch (error) {
             Swal.fire('Error', error.message,'error')
         }

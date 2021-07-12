@@ -9098,6 +9098,19 @@ User Profile
   }
 }
 
+#print .table-fit th, .table-fit td {
+    padding: 0px !important;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
 
 .btn-100 {
   width: 100%;

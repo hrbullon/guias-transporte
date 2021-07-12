@@ -4,14 +4,21 @@ export const Person = (props) => {
     return (
         <>
         <tr>
-            <th className="text-center" >{ props.titulo }</th>
-            <th className="text-center" >Cédula/Pasaporte</th>
-            <th className="text-center" colSpan="2">Dirección</th>
+            <th className="text-center table-secondary" colSpan="2">
+                { props.titulo}
+            </th>
         </tr>
         <tr>
-            <td className="text-center">{ props.model?.nombre }</td>
-            <td className="text-center">{ props.model?.rif }</td>
-            <td className="text-center">{ props.model?.telefono }</td>
+            <th>Nombre</th>
+            <td>{ props.model?.nombre }</td>
+        </tr>
+        <tr>
+            <th>Cédula/Pasaporte</th>
+            <td>{ props.model?.rif }</td>
+        </tr>
+        <tr>
+            <th>Teléfono</th>
+            <td>{ props.model?.telefono }</td>
         </tr>
         </>
     )

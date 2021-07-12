@@ -1,5 +1,13 @@
 import { db } from '../firebase/firebase-config'
 
+export const validateInput = async (id, token) => {
+    const snapshot = await db.collection(`inputs`).doc(id).get()
+    if(!snapshot.empty){
+        let data = snapshot.data()
+        return (data.token == token)? true : false
+    }
+}
+
 export const validatePlaca = async (placa) => {
     const snapshot = await db.collection(`vehicles`).where('placa','==',placa).get()
     return (snapshot.empty)? true : false
