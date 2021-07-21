@@ -71,22 +71,25 @@ export const View = () => {
                             { uid !== undefined &&
                                 <button className="btn btn-primary pull-right" onClick={window.print}>Imprimir</button>
                             }
+                            { uid == undefined &&
                             <button className="btn btn-primary pull-right" onClick={handleAcceptInput}>Marcar Entrada</button>
+                            }    
                         </div>
-                        <div id="print" className="col col-lg-6">
-                        <table>
-                            <tr>
-                                <td>
-                                    <img src={ urlQR }/>
-                                </td>
-                                <td width="" align="center">
-                                    <b>GUÍA DE MOVILIZACIÓN TERRESTRE <br />
-                                    PLAN ESPECIAL WAYUU DE ABASTECIMIENTO</b>
-                                </td>
-                                <td width="" align="right">
-                                    <b>Fecha de Emisión: <br/>07/11/2021</b>
-                                </td>
-                            </tr>
+                        <div id="print" className="col col-lg-12">
+                        <table className="table table-fit">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <img src={ urlQR }/>
+                                    </td>
+                                    <td align="left">
+                                        <b>GUÍA DE MOVILIZACIÓN TERRESTRE <br />
+                                        PLAN ESPECIAL WAYUU DE ABASTECIMIENTO</b>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                         <table className="table table-fit">
                             <tbody>
@@ -146,40 +149,28 @@ export const View = () => {
                             <table className="table table-fit">
                                 <tbody>
                                     <tr>
-                                        <th className="text-center table-secondary" colSpan="2">
+                                        <th className="text-center table-secondary" colSpan="6">
                                             Datos de la Carga
                                         </th>
+                                    </tr>
+                                    <tr>
+                                        <th>item</th>
+                                        <th>Producto</th>
+                                        <th>Presentación</th>
+                                        <th>Cont.</th>
+                                        <th>Unid.</th>
+                                        <th>Subtotal</th>
                                     </tr>
                                 { model?.items  &&
                                     Object.keys(model?.items).map( (index, value) => {
                                     return (
                                         <>
                                         <tr className="table-secondary" key={index}>
-                                            <th>Item</th>
                                             <td>{ model.items[index].i }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Producto</th>
                                             <td>{ model.items[index].producto.nombre  }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Presentación</th>
                                             <td>{ model.items[index].presentacion.presentacion  }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Contenido</th>
                                             <td>{ model.items[index].presentacion.contenido  }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Unidad de Medida</th>
                                             <td>{ model.items[index].presentacion.unidad_medida  }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Cantidad</th>
-                                            <td>{ model.items[index].cantidad }</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Total del Producto</th>
                                             <td>{ model.items[index].subtotal }</td>
                                         </tr>
                                         </>      
@@ -188,6 +179,43 @@ export const View = () => {
                                 </tbody>
                             </table>
                         </div>
+                        <table className="table table-fit">
+                            <tr>
+                                <th className="text-center">Sello Organización</th>
+                                <th className="text-center">Destacamento de la G.N.B</th>
+                                <th className="text-center">Aprobación ente Regulador</th>
+                            </tr>
+                            <tr>
+                                <td className="div-sello"></td>
+                                <td className="div-sello"></td>
+                                <td className="div-sello"></td>
+                            </tr>
+                        </table>
+                        <table id="table-notas">
+                            <tr>
+                                <th className="table-secondary">Notas:</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    1. SE LES AGRADECE A TODAS LAS AUTORIDADES CIVÍLES Y MILITARES PRESTAR LA MAYOR COLABORACIÓN PARA EL BUEN FUNCIONAMIENTO DEL PLAN DE ABASTECIMIENTO.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    2. ESTA GUÍA DE MOVILIZACIÓN SÓLO SERÁ VÁLIDA 48HS DESDE LA FECHA DE EMISION EN EL TRAYECTO ESTIPULADO. CUALQUIER VARIACIÓN DE ESTOS VALORES DEBERÁN SER NOTIFICADOS DE MANERA INMEDIATA AL ENTE RECTOR.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    3. LOS TRIPUPLANTES DE LOS VEHÍCULOS SE COMPROMETEN A CUMPLIR ESTRICTAMENTE TODO EL PROTOCOLO DE BIOSEGURIDAD ESTIPULADO POR LA OMS PARA EL COVID-19.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    4. QUEDA TOTALMENTE PROHÍBIDO EL TRÁFICO DE SUSTANCIAS Y/O INSUMOS PARA LA ELABORACIÓN DE ESTUPEFACIENTES. QUEDANDO LA RESPONSABILIDAD LEGAL SOBRE LA EMPRESA IMPORTADORA Y EL VEHÍCULO DE CARGA.
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     </div>
                 </div>

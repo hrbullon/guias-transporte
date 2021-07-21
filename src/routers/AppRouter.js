@@ -12,7 +12,8 @@ import Fulllayout from '../layouts/fulllayout.jsx';
 import { AuthRouter } from './AuthRouter'
 import { PublicRoute } from './PublicRoute'
 import { PrivateRoute } from './PrivateRoute'
-import { View } from '../views/inputs/view';
+import { View as ViewInput } from '../views/inputs/view';
+import { View as ViewOuput } from '../views/outputs/view';
 
 export const AppRouter = () => {
 
@@ -59,7 +60,14 @@ export const AppRouter = () => {
                     exact
                     path="/inputs/view/:id"
                     isAuthenticated={ false }
-                    component={ View }
+                    component={ ViewInput }
+                />
+                
+                <PublicRoute
+                    exact
+                    path="/outputs/view/:id"
+                    isAuthenticated={ false }
+                    component={ ViewOuput }
                 />
                 
                 <PrivateRoute

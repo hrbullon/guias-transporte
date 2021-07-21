@@ -5,7 +5,6 @@ import { Users } from '../views/users/users.jsx';
 import { Vehicles } from '../views/vehicles/vehicles.jsx';
 import { Companies } from '../views/companies/companies.jsx';
 import { Products } from '../views/products/products.jsx';
-import { Documents } from '../views/documents/documents.jsx';
 import { Form } from '../views/documents/form.jsx';
 import { Workdays } from '../views/workdays/workdays.jsx';
 import { People } from '../views/people/people';
@@ -14,6 +13,7 @@ import { Forms } from '../views/products/forms/forms.jsx';
 
 import { Form as FormOutput } from '../views/outputs/form.jsx';
 import { Outputs } from '../views/outputs/outputs.jsx';
+import { View as ViewOutput } from '../views/outputs/view.jsx';
 
 import { Form as FormInput } from '../views/inputs/form.jsx';
 import { Inputs } from '../views/inputs/inputs.jsx';
@@ -57,6 +57,14 @@ var ThemeRoutes = [
     menu: false,
     role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: FormOutput
+  },
+  {
+    path:"/outputs/view/:id",
+    name:"Ver salida",
+    icon: "mr-2 mdi mdi-arrow-left",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: ViewOutput
   },
   {
     path:"/outputs",

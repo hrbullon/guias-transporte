@@ -9100,8 +9100,18 @@ User Profile
 
 #print .table-fit th, .table-fit td {
     padding: 0px !important;
-    vertical-align: top;
+    vertical-align: middle;
     border-top: 1px solid #dee2e6;
+}
+
+.div-sello {
+  height: 200px;
+  width: 200px;
+  border: 1px black solid;
+}
+
+#table-notas {
+  font-size: 10px;
 }
 
 @media print

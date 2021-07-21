@@ -126,6 +126,7 @@ export const Form = (props) => {
     
     useEffect(() => {
         if(outputs){
+            console.log(outputs);
             let vehiculos = outputs.map( item => item.vehiculo )
             const options = prepareOptionsPlaca( vehiculos )
             setOptionsVehicles( options )

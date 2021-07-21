@@ -5,6 +5,28 @@ import { types } from '../types/types'
 
 const table = "outputs"
 
+export const startLoadingItem = ( id ) => {
+    return async (dispatch) => {
+   
+        var docRef = db.collection(table).doc(id);
+
+        await docRef.get().then((doc) => {
+            let data = {}
+            
+            if (doc.exists) {
+                let info = { ...doc.data() }
+                data = { id: doc.id, ...info }
+                dispatch( outputs(data) )
+            } else {
+                Swal.fire('Error', 'No existe la salida solicitada','error')
+
+            }
+        }).catch((error) => {
+            console.log('Error al cargar los datos de la salida', error)
+        });
+    }
+}
+
 export const startLoadingOutputs = ( company, workday) => {
     return async (dispatch) => {
         
@@ -125,6 +147,11 @@ export const startCancelingOutput = ( data ) => {
         })
     }
 }
+
+export const outputs = ( data ) => ({
+    type: types.outputs,
+    payload: data
+})
 
 export const outputsLoaded = ( data ) => ({
     type: types.outputsLoaded,
