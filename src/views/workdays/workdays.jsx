@@ -43,7 +43,7 @@ export const Workdays = () => {
         setWorkdays(list)
         //Limpio el formulario
         setData({})
-        setEntradas({ items:[]})
+        setEntradas([])
 
     }, [created])
 
@@ -94,6 +94,7 @@ export const Workdays = () => {
     //Llena el state data con los datos de la jornada a editar
     const handleEdit = (item) => {
         setData(item)
+        setEntradas(item.fecha_entradas)
     }
     
     //Dispara el evento que elimina un jornadas determinado

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
 import { useForm } from "react-hook-form"
+import moment from 'moment';
+import 'moment/locale/es';
 import DataTable from 'react-data-table-component'
 import 'react-data-table-component-extensions/dist/index.css'
 
@@ -13,6 +15,10 @@ export const Form = (props) => {
         setFechaEntrada("")
     }, [props.data])
     
+    useEffect(() => {
+        console.log(props.entradas);
+    }, [props.entradas])
+    
     const [fechaEntrada, setFechaEntrada] = useState()
 
     const columnsDays = [
@@ -23,6 +29,11 @@ export const Form = (props) => {
         {
             name: 'Día',
             selector: 'dia',
+            cell: row => (
+                <div>
+                    { moment(row.entrada).format("dddd") }
+                </div>
+            )
         },
         {
             name: 'Eliminar',
@@ -38,23 +49,24 @@ export const Form = (props) => {
 
     /***** Función para remover el día de entrada de la lista *****/
     const handleRemoveItem = (item) => {
-
+        console.log(item);
     }
 
     /***** Función para agregar en día de entrada a la lista *****/
     const handleAddItem = () => {
         
-        let items = [ ...props.entradas.items ]
+        let items = [...props?.entradas]
+        console.log(items);
+
         const item = {
             entrada: fechaEntrada
         }
-
-        items.push(item)
 
         props.setEntradas({
             ...props.entradas,
             items
         })
+
     } 
 
     return (
@@ -98,7 +110,7 @@ export const Form = (props) => {
                 <input type="date" name="fecha_entrada" value={ fechaEntrada } onChange={ (e) => setFechaEntrada( e.target.value ) }  class="form-control"/>
                 <button onClick={ handleAddItem } type="button" className="btn btn-primary btn-100">Agregar</button>
             </div>
-            { props.entradas.items.length == 0 &&
+            { props.entradas.length == 0 &&
                 <div className="alert alert-danger text-center mt-4">
                     Debe registrar al menos una fecha de entrada
                 </div> 
@@ -107,7 +119,7 @@ export const Form = (props) => {
                 noHeader
                 pagination={ false }
                 columns={columnsDays}
-                data={ props.entradas.items }/>
+                data={ props.entradas }/>
             <button type="button" className="btn btn-inverse pull-right">Cancelar</button>
             <button type="submit" className="btn btn-success pull-right mr-2"> <i className="fa fa-check"></i> Guardar</button>
         </form>
