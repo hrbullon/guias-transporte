@@ -7,13 +7,14 @@ import { Company } from '../../components/company/company';
 import { Person } from '../../components/person/person';
 import Swal from 'sweetalert2';
 import { validateInput } from '../../helpers/checking';
+import { url } from '../../config/config'
 
 export const View = () => {
     
     let { id } = useParams()
     let isMobile = false
     const dispatch = useDispatch()
-    const urlQR = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=http://192.168.2.123:3000/inputs/view/${id}`
+    const urlQR = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${url}inputs/view/${id}`
     
     const { model } = useSelector(state => state.inputs)
     const { uid } = useSelector(state => state.auth)
