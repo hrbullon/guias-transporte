@@ -345,7 +345,7 @@ export const Form = (props) => {
             vehiculo,
             cliente: infoCliente,
             items,
-            estado:"Abierta",
+            estado:"Pendiente",
 
         }
 

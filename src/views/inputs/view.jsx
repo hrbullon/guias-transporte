@@ -53,7 +53,7 @@ export const View = () => {
             
             if (result.isConfirmed) {
 
-              dispatch( startUpdatingInput({ ...model, estado:"Cerrada"})  )
+              dispatch( startUpdatingInput({ ...model, estado:"Completada"})  )
 
               Swal.fire({
                 icon: 'success',
@@ -74,7 +74,7 @@ export const View = () => {
                             { uid !== undefined &&
                                 <button className="btn btn-primary pull-right" onClick={window.print}>Imprimir</button>
                             }
-                            { uid == undefined &&
+                            { uid == undefined && model?.estado !== "Completada" &&
                             <button className="btn btn-primary pull-right" onClick={handleAcceptInput}>Marcar Entrada</button>
                             }    
                         </div>

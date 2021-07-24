@@ -48,7 +48,7 @@ export const Inputs = (props) => {
             name: 'Estado',
             sortable: true,
             cell: row => (
-                <span className={ (row.estado == "Pendiente")? "waiting" : "completed" }>{row.estado}</span>
+                <span className={ (row.estado == "Pendiente")? "waiting" : (row.estado == "Cancelada")? "closed" : "completed" }>{row.estado}</span>
             )
         },
         {
@@ -60,7 +60,7 @@ export const Inputs = (props) => {
                     { /****** Capturo el evento click en el botón ver detalle de cada fila******/ }
                     <i title="Ver" onClick={ (e) => handleShow(row)  } className="mdi mdi-eye pointer mr-2"></i>
                     { /****** Capturo el evento click en el botón eliminar de cada fila******/ }
-                    <i title="Eliminar" onClick={ (e) => handleCancel(row)  } className="mdi mdi-delete pointer"></i>
+                    <i title="Eliminar" onClick={ (e) => handleCancel(row)  } className="mdi mdi-lock pointer"></i>
                 </div>)    
         }
     ]
