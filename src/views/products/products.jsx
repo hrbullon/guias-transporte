@@ -20,7 +20,7 @@ export const Products = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de productos
-    const [products, setProducts] = useState({})
+    const [products, setProducts] = useState([])
     const [categories, setCategories] = useState({})
     //Aquí se almacena el listado de presentaciones de productos
     const [conversions, setConversions] = useState({})

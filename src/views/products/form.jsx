@@ -11,14 +11,14 @@ export const Form = (props) => {
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
-            <h4 class="card-title">Datos de Producto</h4>
+            <h4 className="card-title">Datos de Producto</h4>
             <hr/>
             <div className="alert alert-info">
                 <span>Los campos con el símbolo "*" son requeridos</span>
             </div>
-            <div class="form-group">
-                <label class="control-label">Categoría *</label>
-                <select name="categoria" {...register("categoria", { required: true } )} class="form-control custom-select">
+            <div className="form-group">
+                <label className="control-label">Categoría *</label>
+                <select name="categoria" {...register("categoria", { required: true } )} className="form-control custom-select">
                     <option value="">Seleccione una categoría</option>
                     { Object.keys(props.categories).map( (index, value) => {
                         let selected = (props.data.categoria == props.categories[index].nombre)? "selected" : "";
@@ -27,14 +27,14 @@ export const Form = (props) => {
                 </select>
                 { errors?.categoria?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
-            <div class="form-group">
-                <label class="control-label">Nombre *</label>
-                <input type="text" name="nombre" autoComplete="off" class="form-control" {...register("nombre", { required: true } )} placeholder="Ingrese Nombre/Razón Social"/>
+            <div className="form-group">
+                <label className="control-label">Nombre *</label>
+                <input type="text" name="nombre" autoComplete="off" className="form-control" {...register("nombre", { required: true } )} placeholder="Ingrese Nombre/Razón Social"/>
                 { errors?.nombre?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
-            <div class="form-group">
-                <label class="control-label">Presentación *</label>
-                <select name="presentacion" {...register("presentacion", { required: true } )} class="form-control custom-select">
+            <div className="form-group">
+                <label className="control-label">Presentación *</label>
+                <select name="presentacion" {...register("presentacion", { required: true } )} className="form-control custom-select">
                     <option value="">Seleccione una presentación</option>
                     { Object.keys(props.conversions).map( (index, value) => {
                         let selected = (props.data.presentacion == props.conversions[index].id)? "selected" : "";
@@ -52,7 +52,7 @@ export const Form = (props) => {
                     <option value="Inactivo">Inactivo</option>
                 </select>
             </div>
-            <button type="button" class="btn btn-inverse pull-right">Cancelar</button>
-            <button type="submit" class="btn btn-success pull-right mr-2"> <i class="fa fa-check"></i> Guardar</button>        </form>
+            <button type="button" className="btn btn-inverse pull-right">Cancelar</button>
+            <button type="submit" className="btn btn-success pull-right mr-2"> <i className="fa fa-check"></i> Guardar</button>        </form>
     )
 }
