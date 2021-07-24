@@ -20,10 +20,13 @@ export const View = () => {
 
     useEffect(() => {
         //Coloco un título a la página
-        document.title = "Guía de Entrada - IN0003"
         dispatch( startLoadingItem(id) )
-        
     }, [])
+
+    useEffect(() => {
+        document.title = `Guía de Entrada - ${model?.codigo}`
+    }, [model])
+
 
     const handleAcceptInput = () => {
 
@@ -95,19 +98,15 @@ export const View = () => {
                             <tbody>
                                 <tr>
                                     <th>Numero</th>
-                                    <td>IN0032</td>
-                                </tr>
-                                <tr>
-                                    <th>Origen</th>
-                                    <td>Pagaguachon</td>
+                                    <td>{ model?.codigo }</td>
                                 </tr>
                                 <tr>
                                     <th>Retorno</th>
-                                    <td>MARACAIBO</td>
+                                    <td>{ model?.retorno }</td>
                                 </tr>
                                 <tr>
                                     <th>Fecha</th>
-                                    <td>11/07/2021</td>
+                                    <td>{ model?.fecha }</td>
                                 </tr>
                                 <Company titulo="Datos del Importador" model={model?.importador} representante={model?.importador.representante} />    
                                 <Company titulo="Datos del Cliente/Receptor" model={model?.cliente} representante={model?.cliente.representante_comercio} />    

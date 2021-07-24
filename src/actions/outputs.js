@@ -1,7 +1,6 @@
 import Swal from 'sweetalert2'
 
 import { db } from '../firebase/firebase-config'
-import { getCodigo } from '../helpers/checking'
 import { types } from '../types/types'
 
 const table = "outputs"

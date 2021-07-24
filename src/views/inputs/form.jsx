@@ -337,13 +337,16 @@ export const Form = (props) => {
         delete vehiculo.importador
         
         let params = {
-            jornadaId: workday.id,
+            fecha: data.fecha,
+            retorno: data.retorno,
+            jornada: workday,
             token: workday.token,
             importador,
             vehiculo,
             cliente: infoCliente,
             items,
-            estado:"Abierta"
+            estado:"Abierta",
+
         }
 
         dispatch( startCreatingInput( {...params} ) )
@@ -360,21 +363,21 @@ export const Form = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Número</label>
+                            <div className="form-group">
+                                <label className="control-label">Número</label>
                                 <input type="text" disabled className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Fecha</label>
+                            <div className="form-group">
+                                <label className="control-label">Fecha</label>
                                 <input name="fecha" type="date" {...register("fecha", { required: true } )} className="form-control"/>
                                 { errors?.fecha?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Retorno</label>
+                            <div className="form-group">
+                                <label className="control-label">Retorno</label>
                                 <input name="retorno" type="text" {...register("retorno", { required: true } )} className="form-control" />
                                 { errors?.retorno?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
@@ -393,55 +396,55 @@ export const Form = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">RIF</label>
+                            <div className="form-group">
+                                <label className="control-label">RIF</label>
                                 <Select name="cliente" value={ idCustomer } {...register("cliente", { required: true } )} onChange={handleChangingCliente} options={ optionsCustomers } />
                                 { errors?.cliente?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
                         <div className="col-lg-8">
-                            <div class="form-group">
-                                <label class="control-label">Nombre/Razón Social</label>
+                            <div className="form-group">
+                                <label className="control-label">Nombre/Razón Social</label>
                                 <input type="text" disabled value={ infoCliente.nombre } className="form-control"/>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Municipio</label>
+                            <div className="form-group">
+                                <label className="control-label">Municipio</label>
                                 <input type="text" disabled value={ infoCliente.municipio } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Parroquia</label>
+                            <div className="form-group">
+                                <label className="control-label">Parroquia</label>
                                 <input type="text" disabled value={ infoCliente.parroquia } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Dirección</label>
+                            <div className="form-group">
+                                <label className="control-label">Dirección</label>
                                 <input type="text" disabled value={ infoCliente.direccion } className="form-control"/>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Representante - Comercio</label>
+                            <div className="form-group">
+                                <label className="control-label">Representante - Comercio</label>
                                 <input type="text" disabled value={ infoCliente.representante_comercio.nombre } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Cédula / Pasaporte</label>
+                            <div className="form-group">
+                                <label className="control-label">Cédula / Pasaporte</label>
                                 <input type="text" disabled value={ infoCliente.representante_comercio.rif } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Teléfono</label>
+                            <div className="form-group">
+                                <label className="control-label">Teléfono</label>
                                 <input type="text" disabled value={ infoCliente.representante_comercio.telefono } className="form-control"/>
                             </div>
                         </div>
@@ -459,67 +462,67 @@ export const Form = (props) => {
                     </div>
                     <div className="row">
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Placa</label>
+                            <div className="form-group">
+                                <label className="control-label">Placa</label>
                                 <Select name="cliente" value={ idVehiculo } {...register("vehiculo", { required: true } )} onChange={handleChangingPlaca} options={ optionsVehicles } />
                                 { errors?.vehiculo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>    
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Marca</label>
+                            <div className="form-group">
+                                <label className="control-label">Marca</label>
                                 <input type="text" disabled value={ infoVehiculo.marca } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Modelo</label>
+                            <div className="form-group">
+                                <label className="control-label">Modelo</label>
                                 <input type="text" disabled value={ infoVehiculo.modelo } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Color</label>
+                            <div className="form-group">
+                                <label className="control-label">Color</label>
                                 <input type="text" disabled value={ infoVehiculo.color } className="form-control"/>
                             </div>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Cédula/Pasaporte</label>
+                            <div className="form-group">
+                                <label className="control-label">Cédula/Pasaporte</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.rif } className="form-control"/>
                             </div>
                         </div>   
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Nombre del Conductor</label>
+                            <div className="form-group">
+                                <label className="control-label">Nombre del Conductor</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.nombre } className="form-control"/>
                             </div>
                         </div>   
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Teléfono</label>
+                            <div className="form-group">
+                                <label className="control-label">Teléfono</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.telefono } className="form-control"/>
                             </div>
                         </div>   
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Cédula/Pasaporte</label>
+                            <div className="form-group">
+                                <label className="control-label">Cédula/Pasaporte</label>
                                 <input type="text" disabled value={ infoVehiculo.ayudante.rif } className="form-control"/>
                             </div>
                         </div>   
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Nombre del Ayudante</label>
+                            <div className="form-group">
+                                <label className="control-label">Nombre del Ayudante</label>
                                 <input type="text" disabled value={ infoVehiculo.ayudante.nombre } className="form-control"/>
                             </div>
                         </div>   
                         <div className="col-lg-4">
-                            <div class="form-group">
-                                <label class="control-label">Teléfono</label>
+                            <div className="form-group">
+                                <label className="control-label">Teléfono</label>
                                 <input type="text" disabled value={ infoVehiculo.ayudante.telefono } className="form-control"/>
                             </div>
                         </div>   
@@ -531,27 +534,27 @@ export const Form = (props) => {
                 <div className="card-body">
                     <div className="row">
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Producto</label>
+                            <div className="form-group">
+                                <label className="control-label">Producto</label>
                                 <Select name="producto" onChange={handleChangingProducto} options={optionsProducts} />
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Presentación</label>
+                            <div className="form-group">
+                                <label className="control-label">Presentación</label>
                                 <Select name="presentacion" onChange={handleChangingPre} options={optionsConversions} />
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Cantidad</label>
-                                <input type="number" name="cantidad" value={ inputsItems.cantidad } onChange={ (e) => setInputsItems({...inputsItems, cantidad: e.target.value }) } class="form-control"/>
+                            <div className="form-group">
+                                <label className="control-label">Cantidad</label>
+                                <input type="number" name="cantidad" value={ inputsItems.cantidad } onChange={ (e) => setInputsItems({...inputsItems, cantidad: e.target.value }) } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
-                            <div class="form-group">
-                                <label class="control-label">Subtotal</label>
-                                <input type="number" name="subtotal" value={ inputsItems.subtotal } disabled class="form-control"/>
+                            <div className="form-group">
+                                <label className="control-label">Subtotal</label>
+                                <input type="number" name="subtotal" value={ inputsItems.subtotal } disabled className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-12 pt-4">

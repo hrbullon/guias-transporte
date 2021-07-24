@@ -13,7 +13,7 @@ export const Inputs = (props) => {
 
     const dispatch = useDispatch()
 
-    const { sesionCompany } = useSelector(state => state.auth)
+    const { role, sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: inputs, updated } = useSelector(state => state.inputs)
 
@@ -46,8 +46,10 @@ export const Inputs = (props) => {
         },
         {
             name: 'Estado',
-            selector: 'estado',
             sortable: true,
+            cell: row => (
+                <span className={ (row.estado == "Pendiente")? "waiting" : "completed" }>{row.estado}</span>
+            )
         },
         {
             name: 'Acciones',
@@ -65,9 +67,9 @@ export const Inputs = (props) => {
 
     /***** Effects *****/
     useEffect(() => {
-        /****Dispara la función para obtener las salidas ****/
+        /****Dispara la función para obtener las entradas ****/
         if(sesionCompany && workday){
-            dispatch( startLoadingInputs( sesionCompany.id, workday.id ) )
+            dispatch( startLoadingInputs( sesionCompany.id, workday.id, role ) )
         }
     }, [sesionCompany,workday])
 

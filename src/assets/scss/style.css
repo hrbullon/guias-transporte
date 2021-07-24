@@ -9130,7 +9130,7 @@ User Profile
   border-right: 1px solid #dee2e6
 }
 
-.open {
+.open, .completed {
   background-color: var(--success);
   padding: 10px;
   color: white;
@@ -9138,6 +9138,12 @@ User Profile
 
 .closed {
   background-color: var(--danger);
+  padding: 10px;
+  color: white;
+}
+
+.waiting {
+  background-color: var(--warning);
   padding: 10px;
   color: white;
 }
