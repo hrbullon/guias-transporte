@@ -467,8 +467,8 @@ export const Form = () => {
                     <div className="card-body">
                         <div className="row">
                             <div className="col-lg-4">
-                                <div class="form-group">
-                                    <label class="control-label">Origen</label>
+                                <div className="form-group">
+                                    <label className="control-label">Origen</label>
                                     <Select name="origen" value={idMunicipio} {...register("origen", { required: true } )} onChange={handleChangingMunicipio} options={municipios} />
                                     { errors.origen?.type === 'required' && <span className="text-danger"> Este campo es obligatorio</span>}
                                 </div>
@@ -485,20 +485,20 @@ export const Form = () => {
                                 <hr />
                                 <div className="row">
                                     <div className="col col-lg-3">
-                                        <label class="control-label">Placa</label>
+                                        <label className="control-label">Placa</label>
                                         <Select name="vehiculo" value={ idVehicle } {...register("vehiculo", { required: true } )} onChange={ handleChangingPlaca } options={itemsVehicles} />
                                         { errors?.vehiculo?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
                                     </div>
                                     <div className="col col-lg-3">
-                                        <label class="control-label">Marca</label>
+                                        <label className="control-label">Marca</label>
                                         <input type="text" value={ inputs.marca } disabled className="form-control"/>
                                     </div>
                                     <div className="col col-lg-3">
-                                        <label class="control-label">Modelo</label>
+                                        <label className="control-label">Modelo</label>
                                         <input value={ inputs.modelo } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col col-lg-3">
-                                        <label class="control-label">Color</label>
+                                        <label className="control-label">Color</label>
                                         <input value={ inputs.color } type="text" disabled className="form-control"/>
                                     </div>
                                 </div>
@@ -514,20 +514,20 @@ export const Form = () => {
                                 <hr />
                                 <div className="row">
                                     <div className="col-lg-3">
-                                        <label class="control-label">Cédula</label>
+                                        <label className="control-label">Cédula</label>
                                         <Select name="conductor" value={ idConductor } {...register("conductor", { required: true } )} onChange={ handleChangingConductor } options={ itemsPeople } />
                                         { errors?.conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Nombre</label>
+                                        <label className="control-label">Nombre</label>
                                         <input value={ conductor.nombre } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Apellido</label>
+                                        <label className="control-label">Apellido</label>
                                         <input value={ conductor.apellido } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                    <label class="control-label">Teléfono</label>
+                                    <label className="control-label">Teléfono</label>
                                     <input value={ conductor.telefono } type="text" disabled className="form-control"/>
                                 </div>
                                 </div>
@@ -543,20 +543,20 @@ export const Form = () => {
                                 <hr />
                                 <div className="row">
                                     <div className="col-lg-3">
-                                        <label class="control-label">Cédula</label>
+                                        <label className="control-label">Cédula</label>
                                         <Select name="ayudante" value={ idAyudante } {...register("ayudante", { required: true } )} onChange={ handleChangingAyudante } options={ itemsPeople } />
                                         { errors?.ayudante?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Nombre</label>
+                                        <label className="control-label">Nombre</label>
                                         <input value={ ayudante.nombre } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Apellido</label>
+                                        <label className="control-label">Apellido</label>
                                         <input value={ ayudante.apellido } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Teléfono</label>
+                                        <label className="control-label">Teléfono</label>
                                         <input value={ ayudante.telefono } type="text" disabled className="form-control"/>
                                     </div>
                                 </div>
@@ -572,20 +572,20 @@ export const Form = () => {
                                 <hr />
                                 <div className="row">
                                     <div className="col-lg-3">
-                                        <label class="control-label">Cédula</label>
+                                        <label className="control-label">Cédula</label>
                                         <Select name="responsable" value={ idResponsable } {...register("responsable", { required: true } )} onChange={ handleChangingResponsable } options={ itemsPeople } />
                                         { errors?.responsable?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Nombre</label>
+                                        <label className="control-label">Nombre</label>
                                         <input value={ responsable.nombre } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Apellido</label>
+                                        <label className="control-label">Apellido</label>
                                         <input value={ responsable.apellido } type="text" disabled className="form-control"/>
                                     </div>
                                     <div className="col-lg-3">
-                                        <label class="control-label">Teléfono</label>
+                                        <label className="control-label">Teléfono</label>
                                         <input value={ responsable.telefono } type="text" disabled className="form-control"/>
                                     </div>
                                 </div>

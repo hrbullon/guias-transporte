@@ -19,10 +19,12 @@ export const View = () => {
 
     useEffect(() => {
         //Coloco un título a la página
-        document.title = "Guía de Salida - IN0003"
-        dispatch( startLoadingItem(id) )
-        
+        dispatch( startLoadingItem(id) )        
     }, [])
+
+    useEffect(() => {
+        document.title = `Guía de Salida - ${model?.codigo }`
+    }, [model])    
     
     return (
         <>  
