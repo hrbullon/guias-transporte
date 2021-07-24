@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-
+import moment from 'moment';
+import 'moment/locale/es'
+;
 import { startLoadingItem } from '../../actions/outputs';
 import { Company } from '../../components/company/company';
 import { Person } from '../../components/person/person';
@@ -55,15 +57,15 @@ export const View = () => {
                                 <tbody>
                                     <tr>
                                         <th>Numero</th>
-                                        <td>IN0032</td>
+                                        <td>{ model?.codigo }</td>
                                     </tr>
                                     <tr>
                                         <th>Origen</th>
-                                        <td>Pagaguachon</td>
+                                        <td>{ model?.origen?.nombre }</td>
                                     </tr>
                                     <tr>
                                         <th>Fecha</th>
-                                        <td>11/07/2021</td>
+                                        <td>{ moment(new Date(model?.fecha?.seconds*1000)).format("L") }</td>
                                     </tr>
                                     <Company titulo="Datos del Importador" model={model?.importador} representante={model?.importador.representante} />    
                                 </tbody>
@@ -97,6 +99,7 @@ export const View = () => {
                                 <tbody>
                                     <Person titulo="Datos del Conductor" model={ model?.conductor} />
                                     <Person titulo="Datos del Ayudante" model={ model?.ayudante} />
+                                    <Person titulo="Datos del Responsable" model={ model?.responsable} />
                                 </tbody>
                             </table>
                             <table className="table table-fit">

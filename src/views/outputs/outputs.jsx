@@ -13,12 +13,17 @@ export const Outputs = (props) => {
 
     const dispatch = useDispatch()
 
-    const { sesionCompany } = useSelector(state => state.auth)
+    const { role, sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: outputs, updated } = useSelector(state => state.outputs)
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
+        {
+            name: 'Código',
+            selector: 'codigo',
+            sortable: true,
+        },
         {
             name: 'Placa',
             selector: 'vehiculo.placa',
@@ -36,33 +41,25 @@ export const Outputs = (props) => {
             sortable: true,
         },
         {
-            name: 'Conductor RIF',
+            name: 'Cédula',
             selector: 'conductor.rif',
             sortable: true,
         },
         {
-            name: 'Conductor Nombre',
-            selector: 'conductor.nombre',
+            name: 'Nombre',
+            sortable: true,
+            cell: row => {
+                return ( row.conductor.nombre + " " + row.conductor.apellido )
+            }
+        },
+        {
+            name: 'Teléfono',
+            selector: 'conductor.telefono',
             sortable: true,
         },
         {
-            name: 'Conductor Apellido',
-            selector: 'conductor.apellido',
-            sortable: true,
-        },
-        {
-            name: 'Ayudante RIF',
-            selector: 'ayudante.rif',
-            sortable: true,
-        },
-        {
-            name: 'Ayudante Nombre',
-            selector: 'ayudante.nombre',
-            sortable: true,
-        },
-        {
-            name: 'Ayudante Apellido',
-            selector: 'ayudante.apellido',
+            name: 'Importador',
+            selector: 'importador.nombre',
             sortable: true,
         },
         {
@@ -83,7 +80,7 @@ export const Outputs = (props) => {
     useEffect(() => {
         /****Dispara la función para obtener las salidas ****/
         if(sesionCompany && workday){
-            dispatch( startLoadingOutputs( sesionCompany.id, workday.id ) )
+            dispatch( startLoadingOutputs( sesionCompany.id, workday.id, role ) )
         }
     }, [sesionCompany,workday])
 
@@ -99,7 +96,7 @@ export const Outputs = (props) => {
         
         //Actualizo el listado de vehículos
         if(updated){
-            dispatch( startLoadingOutputs(sesionCompany.id, workday.id) )
+            dispatch( startLoadingOutputs(sesionCompany.id, workday.id, role) )
         }
 
     }, [updated])

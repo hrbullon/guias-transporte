@@ -314,6 +314,7 @@ export const Form = () => {
         setIdVehicle({ value:"", label:"Seleccione un vehiculo" })
         setIdConductor({ value:"", label:"Seleccione un conductor" })
         setIdAyudante({ value:"", label:"Seleccione un ayudante" })
+        setIdResponsable({ value:"", label:"Seleccione un responsable" })
         
         /****Limpia los campos de tipo text */
         setInputs({ 
@@ -329,6 +330,12 @@ export const Form = () => {
         })
         
         setAyudante({ 
+            nombre: "",
+            apellido: "",
+            telefono: ""
+        })
+        
+        setResponsable({ 
             nombre: "",
             apellido: "",
             telefono: ""
@@ -353,9 +360,6 @@ export const Form = () => {
 
         let date = anio +"-"+ month+"-"+day
         
-        console.log(workday.fecha_salida)
-        console.log(date)
-
         if(date <= workday.fecha_salida){
             //Validar que el  vehiculo no haya sido registrado
             //mas de 2 veces en esta jornada
@@ -368,11 +372,12 @@ export const Form = () => {
                     if(validated == "Success"){
             
                         let values = { 
-                            jornadaId: workday.id, 
+                            //jornadaId: workday.id, 
                             jornada: workday, 
-                            importadorId: sesionCompany.id, 
+                            //importadorId: sesionCompany.id, 
                             importador: sesionCompany,
-                            estado: "Activa", 
+                            estado: "Activa",
+                            fecha: new Date(),
                             ...data
                         }
             

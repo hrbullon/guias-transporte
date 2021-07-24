@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2'
 
 import { db } from '../firebase/firebase-config'
+import { getCodigo } from '../helpers/checking'
 import { types } from '../types/types'
 
 const table = "outputs"
@@ -27,15 +28,28 @@ export const startLoadingItem = ( id ) => {
     }
 }
 
-export const startLoadingOutputs = ( company, workday) => {
+export const startLoadingOutputs = ( company, workday, role ) => {
     return async (dispatch) => {
         
         try {
+
+            let outputsSnap = []
+
+            if(role === "Super_Role"){
+
+                outputsSnap = await db.collection(table)
+                .where("jornada.id","==",workday)
+                .get()
+                
+            }else{
+
+                outputsSnap = await db.collection(table)
+                .where("jornada.id","==",workday)
+                .where("importador.id","==",company)
+                .get()
+                
+            }
             
-            const outputsSnap = await db.collection(table)
-            .where("jornadaId","==",workday)
-            .where("importadorId","==",company)
-            .get()
             const outputs = []
 
             outputsSnap.forEach( snap => {
@@ -56,9 +70,42 @@ export const startLoadingOutputs = ( company, workday) => {
 export const startCreatingOutput = ( data ) => {
     return async (dispatch) => {
         try {
-            const doc = await db.collection(table).add(data)
-            dispatch( outputCreated( { id: doc.id, ...data } ) )
-            Swal.fire('Correcto', 'Salida registrada!!','success')
+
+            let docRef = db.collection("counters").doc("cod");
+    
+            docRef.get().then( (doc) => {
+
+                let codigo = ""
+            
+                if (doc.exists) {
+                    
+                    let prefx = "SA"    
+                    let numero = (doc.data().outputs)+1
+                
+                    if(numero < 10){
+                        codigo = `${prefx}000${numero}`
+                    } 
+                    
+                    if(numero > 10 && numero < 100){
+                        codigo = `${prefx}00${numero}`
+                    } 
+                    
+                    if(numero > 100 && numero < 1000){
+                        codigo = `${prefx}${numero}`
+                    } 
+
+                    let copy = { ...data }
+                    copy.codigo = codigo
+                    
+                    const newDoc =  db.collection(table).add(copy)
+                    dispatch( outputCreated( { id: newDoc.id, ...copy } ) )
+                    Swal.fire('Correcto', 'Salida registrada!!','success')
+ 
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+
         } catch (error) {
             Swal.fire('Error', error.message,'error')
         }
