@@ -19,7 +19,7 @@ export const Vehicles = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de vehículos
-    const [vehicles, setVehicles] = useState({})
+    const [vehicles, setVehicles] = useState([])
     //Aquí se almacena el listado de marcas de vehículos
     const [brands, setBrands] = useState({})
     //Aquí se almacena el listado de modelos de vehículos
