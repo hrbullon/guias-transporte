@@ -61,19 +61,19 @@ export const Form = (props) => {
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
-            <h4 class="card-title">Datos de la presentación</h4>
+            <h4 className="card-title">Datos de la presentación</h4>
             <hr/>
             <div className="alert alert-info">
                 <span>Los campos con el símbolo "*" son requeridos</span>
             </div>
-            <div class="form-group">
-                <label class="control-label">Presentación *</label>
-                <input type="text" name="presentacion" autoComplete="off" class="form-control" {...register("presentacion", { required: true } )} placeholder="Ingrese Nombre de la presentación"/>
+            <div className="form-group">
+                <label className="control-label">Presentación *</label>
+                <input type="text" name="presentacion" autoComplete="off" className="form-control" {...register("presentacion", { required: true } )} placeholder="Ingrese Nombre de la presentación"/>
                 { errors?.presentacion?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
-            <div class="form-group">
-                <label class="control-label">Contenido *</label>
-                <input type="number" name="contenido" autoComplete="off" class="form-control" {...register("contenido", { required: true } )} placeholder="Ingrese Contenido"/>
+            <div className="form-group">
+                <label className="control-label">Contenido *</label>
+                <input type="number" name="contenido" autoComplete="off" className="form-control" {...register("contenido", { required: true } )} placeholder="Ingrese Contenido"/>
                 { errors?.contenido?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">
@@ -81,7 +81,7 @@ export const Form = (props) => {
                 <Select name="unidad_medida" value={idUnidad} {...register("unidad_medida", { required: true } )} onChange={handleChangingUnidad} options={items} />
                 { errors?.unidad_medida?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
-            <button type="button" class="btn btn-inverse pull-right">Cancelar</button>
-            <button type="submit" class="btn btn-success pull-right mr-2"> <i class="fa fa-check"></i> Guardar</button>        </form>
+            <button type="button" className="btn btn-inverse pull-right">Cancelar</button>
+            <button type="submit" className="btn btn-success pull-right mr-2"> <i className="fa fa-check"></i> Guardar</button>        </form>
     )
 }

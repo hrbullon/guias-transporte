@@ -15,7 +15,7 @@ export const Forms = () => {
 
     const dispatch = useDispatch()
     //Aquí se almacena el listado de presentaciones de productos
-    const [items, setItems] = useState({})
+    const [items, setItems] = useState([])
     //Estas son las variables del state que se modifican
     //Cuando se crea, edita o elimina un 
     const { loaded, created, updated, deleted } = useSelector(state => state.conversions)
