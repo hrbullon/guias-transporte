@@ -94,11 +94,11 @@ export const startUpdatingWorkdays = ( data ) => {
 
 }
 
-export const startDeletingWorkdays = (data) => {
+export const startCloseWorkdays = (data) => {
     return (dispatch) => {
         
         Swal.fire({
-            title: 'Seguro quiere eliminarla?',
+            title: 'Seguro quiere finalizar la jornada?',
             text: "No podrá revertirlo!",
             icon: 'warning',
             showCancelButton: true,
@@ -107,9 +107,19 @@ export const startDeletingWorkdays = (data) => {
             confirmButtonText: 'Sí, eliminar'
         }).then( async (result) => {
             if (result.isConfirmed) {
-                let { id } = data
-                await db.doc(`${ table }/${ id }`).delete()
-                dispatch( workdaysDeleted( data ) )
+
+                const doc = await db.doc(`${ table }/${ data.id }`).get()
+                const copy = { ...data}
+                delete copy.id
+    
+                const updateworkdays = { 
+                    ...doc.data(),
+                    ...copy,
+                    estado:"Cerrada"
+                }
+    
+                await db.doc(`${ table }/${ doc.id }`).update( updateworkdays )
+                dispatch( workdaysClosed( copy ) )
                 Swal.fire('Correcto', 'Jornada eliminada!!','success')
             }
         })
@@ -141,7 +151,7 @@ export const workdaysUpdated = ( data ) => ({
     payload: data
 })
 
-export const workdaysDeleted = ( data ) => ({
-    type: types.workdaysDeleted,
+export const workdaysClosed = ( data ) => ({
+    type: types.workdaysClosed,
     payload: data
 })

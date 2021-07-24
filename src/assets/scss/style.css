@@ -9129,3 +9129,15 @@ User Profile
 .border-right {
   border-right: 1px solid #dee2e6
 }
+
+.open {
+  background-color: var(--success);
+  padding: 10px;
+  color: white;
+}
+
+.closed {
+  background-color: var(--danger);
+  padding: 10px;
+  color: white;
+}

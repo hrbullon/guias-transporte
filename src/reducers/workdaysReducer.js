@@ -5,7 +5,7 @@ const initialState = {
     loaded: [],
     created: null,
     updated: null,
-    deleted: null,
+    closed: null,
 }
 
 export const workdaysReducer = (state = initialState, action ) => {
@@ -35,10 +35,10 @@ export const workdaysReducer = (state = initialState, action ) => {
                 ...state,
                 updated: action.payload 
             }
-        case types.workdaysDeleted:
+        case types.workdaysClosed:
             return {
                 ...state,
-                deleted: action.payload 
+                closed: action.payload 
             }
         default:
             return state

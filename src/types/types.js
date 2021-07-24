@@ -47,7 +47,7 @@ export const types = {
     workdaysLoaded:  '[WORKDAYS] Loaded',
     workdaysCreated: '[WORKDAYS] Created',
     workdaysUpdated: '[WORKDAYS] Updated',
-    workdaysDeleted: '[WORKDAYS] Deleted',
+    workdaysClosed:  '[WORKDAYS] Closed',
 
     categoriesLoaded:  '[CATEGORIES] Loaded',
     categoryCreated: '[CATEGORIES] Created',
