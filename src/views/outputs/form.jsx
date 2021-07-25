@@ -452,7 +452,7 @@ export const Form = () => {
                                                 <td> Días de entrada</td>
                                                 <td>
                                                     { workday.fecha_entradas.map( item => {
-                                                        return moment(item.entrada).format("dddd") +","
+                                                        return moment(item).format("dddd") +","
                                                     }) }
                                                 </td>
                                             </tr>                            
