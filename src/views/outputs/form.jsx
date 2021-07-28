@@ -19,6 +19,7 @@ import {
     prepareOptionsPlaca, 
     prepareOptionsRif } from '../../helpers/dataArray'
 import { validatedVehiculo, validateOutputs } from '../../helpers/checking';
+import { ucFirstString } from '../../helpers/common';
 
 let municipioItems = data.municipios.map(item => item.municipio);
 
@@ -452,7 +453,7 @@ export const Form = () => {
                                                 <td> Días de entrada</td>
                                                 <td>
                                                     { workday.fecha_entradas.map( item => {
-                                                        return moment(item).format("dddd") +","
+                                                        return ucFirstString(moment(item).format("dddd")) +","
                                                     }) }
                                                 </td>
                                             </tr>                            
