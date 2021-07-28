@@ -38,7 +38,7 @@ export const View = () => {
     const handleAcceptInput = () => {
 
         Swal.fire({
-            title: 'Enviar Token de Entrada',
+            title: 'Confirmar Entrada',
             input: 'text',
             inputAttributes: {
               autocapitalize: 'off'
@@ -65,7 +65,7 @@ export const View = () => {
               Swal.fire({
                 icon: 'success',
                 title: `Listo`,
-                text: "Entrada Marcada. Usted ha confirmado la entrada del vehículo al país",
+                text: "Entrada Confirmada. Usted ha confirmado la entrada del vehículo al país",
               })
     
             }
@@ -82,7 +82,7 @@ export const View = () => {
                                 <button className="btn btn-primary pull-right" onClick={window.print}>Imprimir</button>
                             }
                             { uid == undefined && model?.estado !== "Completada" &&
-                            <button className="btn btn-primary pull-right" onClick={handleAcceptInput}>Marcar Entrada</button>
+                            <button className="btn btn-primary pull-right" onClick={handleAcceptInput}>Confirmar Entrada</button>
                             }    
                         </div>
                         <div id="print" className="col col-lg-12">

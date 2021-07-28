@@ -164,7 +164,7 @@ export const startCancelingOutput = ( data ) => {
     return async (dispatch) => {
         
         Swal.fire({
-            title: 'Seguro quiere cancelar esta salída?',
+            title: 'Seguro quiere eliminar esta salída?',
             text: "No podrá revertirlo!",
             icon: 'warning',
             showCancelButton: true,
