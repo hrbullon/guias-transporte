@@ -373,15 +373,12 @@ export const Form = () => {
                     if(validated == "Success"){
             
                         let values = { 
-                            //jornadaId: workday.id, 
                             jornada: workday, 
-                            //importadorId: sesionCompany.id, 
                             importador: sesionCompany,
                             estado: "Activa",
                             fecha: new Date(),
                             ...data
                         }
-            
                         dispatch( startCreatingOutput( {...values} ) )
                     }else{
 
