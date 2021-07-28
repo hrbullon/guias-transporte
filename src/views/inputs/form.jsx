@@ -385,72 +385,6 @@ export const Form = (props) => {
                     </div>
                 </div>
             </div>
-            {/*** Datos Cliente/Receptor */}
-            <div className="card">
-                <div className="card-body">
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <legend>Datos de Cliente/Receptor</legend>
-                            <hr />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">RIF</label>
-                                <Select name="cliente" value={ idCustomer } {...register("cliente", { required: true } )} onChange={handleChangingCliente} options={ optionsCustomers } />
-                                { errors?.cliente?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
-                            </div>
-                        </div>
-                        <div className="col-lg-8">
-                            <div className="form-group">
-                                <label className="control-label">Nombre/Razón Social</label>
-                                <input type="text" disabled value={ infoCliente.nombre } className="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Municipio</label>
-                                <input type="text" disabled value={ infoCliente.municipio } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Parroquia</label>
-                                <input type="text" disabled value={ infoCliente.parroquia } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Dirección</label>
-                                <input type="text" disabled value={ infoCliente.direccion } className="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Representante - Comercio</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.nombre } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Cédula / Pasaporte</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.rif } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Teléfono</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.telefono } className="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             {/*** Datos de vehículo/conductor/ayudante */}
             <div className="card">
                 <div className="card-body">
@@ -526,6 +460,72 @@ export const Form = (props) => {
                                 <input type="text" disabled value={ infoVehiculo.ayudante.telefono } className="form-control"/>
                             </div>
                         </div>   
+                    </div>
+                </div>
+            </div>
+            {/*** Datos Cliente/Receptor */}
+            <div className="card">
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <legend>Datos de Cliente/Receptor</legend>
+                            <hr />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">RIF</label>
+                                <Select name="cliente" value={ idCustomer } {...register("cliente", { required: true } )} onChange={handleChangingCliente} options={ optionsCustomers } />
+                                { errors?.cliente?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
+                            </div>
+                        </div>
+                        <div className="col-lg-8">
+                            <div className="form-group">
+                                <label className="control-label">Nombre/Razón Social</label>
+                                <input type="text" disabled value={ infoCliente.nombre } className="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Municipio</label>
+                                <input type="text" disabled value={ infoCliente.municipio } className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Parroquia</label>
+                                <input type="text" disabled value={ infoCliente.parroquia } className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Dirección</label>
+                                <input type="text" disabled value={ infoCliente.direccion } className="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Representante - Comercio</label>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.nombre } className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Cédula / Pasaporte</label>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.rif } className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-4">
+                            <div className="form-group">
+                                <label className="control-label">Teléfono</label>
+                                <input type="text" disabled value={ infoCliente.representante_comercio.telefono } className="form-control"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
