@@ -78,7 +78,7 @@ export const startCreatingOutput = ( data ) => {
             
                 if (doc.exists) {
                     
-                    let prefx = "SA"    
+                    let prefx = "EX"    
                     let numero = (doc.data().outputs)+1
                 
                     if(numero < 10){

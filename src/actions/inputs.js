@@ -77,7 +77,7 @@ export const startCreatingInput = ( data ) => {
             
                 if (doc.exists) {
                     
-                    let prefx = "EN"    
+                    let prefx = "IM"    
                     let numero = (doc.data().inputs)+1
                 
                     if(numero < 10){
