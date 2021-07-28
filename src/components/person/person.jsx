@@ -10,7 +10,7 @@ export const Person = (props) => {
         </tr>
         <tr>
             <th>Nombre</th>
-            <td>{ props.model?.nombre }</td>
+            <td>{ `${props?.model?.nombre} ${props?.model?.apellido}` }</td>
         </tr>
         <tr>
             <th>Cédula/Pasaporte</th>
