@@ -55,6 +55,31 @@ export const startUpdatingUser = ( data ) => {
 
 }
 
+export const startResetingPassword = (email) => {
+    return async (dispatch) => {
+    
+        Swal.fire({
+            title: 'Restablecer Contraseña',
+            text: "Enviar enlace para restablecer contraseña!",
+            icon: 'info',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Enviar'
+        }).then( async (result) => {
+            if (result.isConfirmed) {
+                firebase.auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    Swal.fire('Correcto', 'Enlace para restablecer contraseña enviado!','success')
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                });
+            }
+        })        
+    }
+}
+
 export const startDeletingUser = (data) => {
     return (dispatch) => {
         

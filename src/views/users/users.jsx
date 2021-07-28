@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
-import { startCreatingUser ,startUpdatingUser, startDeletingUser } from '../../actions/users'
+import { startCreatingUser ,startUpdatingUser, startResetingPassword, startDeletingUser } from '../../actions/users'
 
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
@@ -87,6 +87,11 @@ export const Users = () => {
         setPassword(false)
         setData(item)
     }
+
+    //Enviar link de restablecer contaseña
+    const handleResetPassword = (item) => {
+        dispatch( startResetingPassword(item.email) )
+    }
     
     //Dispara el evento que elimina un usuario determinado
     const handleRemove = (item) => {
@@ -120,7 +125,7 @@ export const Users = () => {
                 <div> 
                     { /****** Capturo el evento click en el botón editar de cada fila******/ }
                     <i title="Editar" onClick={ (e) => handleEdit(row)  } className="mdi mdi-grease-pencil pointer mr-2"></i>
-                    { /****** Capturo el evento click en el botón eliminar de cada fila******/ }
+                    <i title="Restablecer Contraseña" onClick={ (e) => handleResetPassword(row)  } className="mdi mdi-email pointer mr-2"></i>
                     <i title="Eliminar" onClick={ (e) => handleRemove(row)  } className="mdi mdi-delete pointer"></i>
                 </div>)    
         }
