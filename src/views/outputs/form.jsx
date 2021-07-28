@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
+import { useParams } from 'react-router-dom'
 import Select from 'react-select'
 import moment from 'moment';
 import 'moment/locale/es';
@@ -12,7 +13,7 @@ import data from '../../data/municipios.json'
 import { startLoadingVehicles } from '../../actions/vehicles'
 import { startLoadingPeople } from '../../actions/people'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
-import { startCreatingOutput, startLoadingOutputs, startCancelingOutput } from '../../actions/outputs'
+import { startCreatingOutput, startLoadingOutputs, startLoadingItem } from '../../actions/outputs'
 import { 
     getItem,
     prepareOptionsItems, 
@@ -25,13 +26,14 @@ let municipioItems = data.municipios.map(item => item.municipio);
 
 export const Form = () => {
     
+    let { id } = useParams()
     const dispatch = useDispatch()
 
     const { sesionCompany } = useSelector(state => state.auth)
     const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { loaded: people } = useSelector(state => state.people)
     const { model: workday } = useSelector(state => state.workdays)
-    const { loaded: outputs, created, updated } = useSelector(state => state.outputs)
+    const { model, loaded: outputs, created, updated } = useSelector(state => state.outputs)
 
     const [ itemsVehicles, setItemsVehicles] = useState([])
     const [ itemsPeople, setItemsPeople] = useState([])
@@ -98,6 +100,51 @@ export const Form = () => {
             dispatch( startLoadingOutputs( sesionCompany.id, workday.id ) )
         }
     }, [sesionCompany,workday])
+
+    useEffect(() => {
+        dispatch( startLoadingItem( id ) );
+    }, [id])
+    
+    useEffect(() => {
+
+        setIdMunicipio({ value: model?.origen?.id, label: model?.origen?.nombre})
+        
+        setIdVehicle({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
+
+        setInputs({ 
+            marca: model.vehiculo.marca.nombre,
+            modelo: model.vehiculo.modelo.nombre,
+            color: model.vehiculo.color
+        })
+
+        setIdConductor({ value: model?.conductor?.id, label: model?.conductor?.rif})
+
+        setConductor({ 
+            id: model.conductor.id,
+            nombre: model.conductor.nombre,
+            apellido: model.conductor.apellido,
+            telefono: model.conductor.telefono
+        })
+
+        setIdAyudante({ value: model?.ayudante?.id, label: model?.ayudante?.rif})
+
+        setAyudante({ 
+            id: model.ayudante.id,
+            nombre: model.ayudante.nombre,
+            apellido: model.ayudante.apellido,
+            telefono: model.ayudante.telefono
+        })
+
+        setIdResponsable({ value: model?.responsable?.id, label: model?.responsable?.rif})
+
+        setResponsable({ 
+            id: model.responsable.id,
+            nombre: model.responsable.nombre,
+            apellido: model.responsable.apellido,
+            telefono: model.responsable.telefono
+        })
+     
+    }, [model])
 
     useEffect(() => {
         

@@ -59,6 +59,14 @@ var ThemeRoutes = [
     component: FormOutput
   },
   {
+    path:"/outputs/update/:id",
+    name:"Editar Salida",
+    icon: "mr-2 mdi mdi-arrow-right",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: FormOutput
+  },
+  {
     path:"/outputs/view/:id",
     name:"Ver salida",
     icon: "mr-2 mdi mdi-arrow-left",
