@@ -100,50 +100,16 @@ export const Form = () => {
             dispatch( startLoadingOutputs( sesionCompany.id, workday.id ) )
         }
     }, [sesionCompany,workday])
-
-    useEffect(() => {
-        dispatch( startLoadingItem( id ) );
-    }, [id])
     
     useEffect(() => {
-
-        setIdMunicipio({ value: model?.origen?.id, label: model?.origen?.nombre})
         
-        setIdVehicle({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
-
-        setInputs({ 
-            marca: model.vehiculo.marca.nombre,
-            modelo: model.vehiculo.modelo.nombre,
-            color: model.vehiculo.color
-        })
-
-        setIdConductor({ value: model?.conductor?.id, label: model?.conductor?.rif})
-
-        setConductor({ 
-            id: model.conductor.id,
-            nombre: model.conductor.nombre,
-            apellido: model.conductor.apellido,
-            telefono: model.conductor.telefono
-        })
-
-        setIdAyudante({ value: model?.ayudante?.id, label: model?.ayudante?.rif})
-
-        setAyudante({ 
-            id: model.ayudante.id,
-            nombre: model.ayudante.nombre,
-            apellido: model.ayudante.apellido,
-            telefono: model.ayudante.telefono
-        })
-
-        setIdResponsable({ value: model?.responsable?.id, label: model?.responsable?.rif})
-
-        setResponsable({ 
-            id: model.responsable.id,
-            nombre: model.responsable.nombre,
-            apellido: model.responsable.apellido,
-            telefono: model.responsable.telefono
-        })
-     
+        if(model){
+            setIdMunicipio({ value: model?.origen?.id, label: model?.origen?.nombre})
+            setIdVehicle({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
+            setIdConductor({ value: model?.conductor?.id, label: model?.conductor?.rif})
+            setIdAyudante({ value: model?.ayudante?.id, label: model?.ayudante?.rif})
+            setIdResponsable({ value: model?.responsable?.id, label: model?.responsable?.rif})
+        }
     }, [model])
 
     useEffect(() => {
@@ -156,6 +122,10 @@ export const Form = () => {
 
         /****Dispara la función para obtener la jornada ****/
         dispatch( startLoadingSigleWorkdays() )
+
+        if(id){
+            dispatch( startLoadingItem( id ) );
+        }
 
     }, [])
 
@@ -194,9 +164,9 @@ export const Form = () => {
             const info = getItem(vehicles, idVehicle.value)    
             
             setInputs({ 
-                marca: info.marca.nombre, 
-                modelo: info.modelo.nombre,
-                color: info.color 
+                marca: info?.marca.nombre, 
+                modelo: info?.modelo.nombre,
+                color: info?.color 
             })
 
             setValue("vehiculo", {
@@ -215,10 +185,11 @@ export const Form = () => {
     useEffect(() => {
         
         if(idConductor.value){
-
-            const { rif, nombre, apellido, telefono } = getItem(people, idConductor.value)
             
+            const { rif, nombre, apellido, telefono } = getItem(people, idConductor.value)
+
             setConductor({ 
+                id: idConductor.value,
                 nombre, 
                 apellido,
                 telefono 
@@ -411,7 +382,7 @@ export const Form = () => {
         if(date <= workday.fecha_salida){
             //Validar que el  vehiculo no haya sido registrado
             //mas de 2 veces en esta jornada
-            const validated = await validatedVehiculo(workday.id, data.vehiculo.placa)
+            const validated = await validatedVehiculo(workday.id, data.vehiculo.placa, id)
             
             if(validated){
                 if(data.conductor.id !== data.ayudante.id){
@@ -426,16 +397,20 @@ export const Form = () => {
                             fecha: new Date(),
                             ...data
                         }
-                        dispatch( startCreatingOutput( {...values} ) )
+
+                        if(id){
+                            console.log("Actualizar")
+                        }else{
+                            dispatch( startCreatingOutput( {...values} ) )
+                        }
+
                     }else{
 
                         let msg = ""
                         if(validated == "Err 001"){
                             msg = "Su empresa ha alcanzado el limite de vehiculos permitidos"
-                        }
-
-                        if(validated == "Err 002"){
-                            msg = `Placa: <b>${data.vehiculo.placa}</b>, Conductor: <b>${data.conductor.rif}</b> o Ayudante:<b>${data.ayudante.rif}</b> ya fueron registrados`
+                        } else {
+                            msg = validated
                         }
 
                         Swal.fire({
