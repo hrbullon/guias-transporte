@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 
 import DataTable from 'react-data-table-component'
 import Select from 'react-select'
+import Swal from 'sweetalert2'
 
 import { startLoadingOutputs } from '../../actions/outputs'
 import { startCreatingInput } from '../../actions/inputs'
@@ -97,6 +98,12 @@ export const Form = (props) => {
         { name: 'Cantidad', selector: 'cantidad'},
         { name: 'Subtotal', selector: 'subtotal'},
         { name: 'Medida', selector: 'presentacion.unidad_medida'},
+        { 
+            name: 'Eliminar', cell: row => (
+                <i title="Eliminar" onClick={ (e) => handleDelete(row)  } className="mdi mdi-delete pointer"></i>
+            )
+        },
+
     ]
 
     /***** Effects *****/
@@ -276,23 +283,37 @@ export const Form = (props) => {
         const presentation = getItem(conversionsLoaded, inputsItems.presentacion)
         
         let rows = [ ...items ]
-        
-        const item = {
-            i: ( items.length + 1),
-            producto: {
-                id: inputsItems.producto,
-                nombre: product.nombre
-            },
-            presentacion: {
-                id: inputsItems.presentacion,
-                ...presentation
-            },
-            cantidad: inputsItems.cantidad,
-            subtotal: inputsItems.subtotal,
-        }
 
-        rows.push(item)
-        setItems(rows)
+        let filter = rows.filter( row => row.producto.id === inputsItems.producto)
+        
+        if(filter.length == 0){
+            const item = {
+                producto: {
+                    id: inputsItems.producto,
+                    nombre: product.nombre
+                },
+                presentacion: {
+                    id: inputsItems.presentacion,
+                    ...presentation
+                },
+                cantidad: inputsItems.cantidad,
+                subtotal: inputsItems.subtotal,
+            }
+    
+            rows.push(item)
+            setItems(rows)
+        }else{
+            Swal.fire('Error', 'No puede agregar un producto varias veces','warning')
+        }
+    }
+
+    const handleDelete = (item) => {
+        let rows = items
+        let copy = [...rows]
+        
+        let filter = copy.filter( row => row.id !== item.id )
+        setItems([])
+        setItems(filter)
     }
 
     /*****End Effects *****/
