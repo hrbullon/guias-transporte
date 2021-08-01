@@ -116,20 +116,25 @@ export const startUpdatingOutput = ( data ) => {
     return async (dispatch) => {
         
         try {
-            const doc = await db.doc(`${ table }/${ data.id }`).get()
-            let copy = { ...data }
-            delete copy.id
- 
-            const updateOutput = { 
-                ...doc.data(), 
-                ...copy
+            
+            if(role === "Super_Role"){
+                const doc = await db.doc(`${ table }/${ data.id }`).get()
+                let copy = { ...data }
+                delete copy.id
+    
+                const updateOutput = { 
+                    ...doc.data(), 
+                    ...copy
+                }
+
+                await db.doc(`${ table }/${ doc.id }`).update( updateOutput )
+                dispatch( outputUpdated( { id: data.id, ...updateOutput } ) )
+
+                Swal.fire('Correcto', 'Salida actualizada!!','success')
+            }else{
+                Swal.fire('Error', 'Salida no encontrada','error')
             }
-
-            await db.doc(`${ table }/${ doc.id }`).update( updateOutput )
-            dispatch( outputUpdated( { id: data.id, ...updateOutput } ) )
-
-            Swal.fire('Correcto', 'Salida actualizada!!','success')
-
+                
         } catch (error) {
             Swal.fire('Error', error.message,'error')
         }

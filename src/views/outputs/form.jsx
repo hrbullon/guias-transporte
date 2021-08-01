@@ -13,7 +13,7 @@ import data from '../../data/municipios.json'
 import { startLoadingVehicles } from '../../actions/vehicles'
 import { startLoadingPeople } from '../../actions/people'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
-import { startCreatingOutput, startLoadingOutputs, startLoadingItem } from '../../actions/outputs'
+import { startCreatingOutput, startLoadingOutputs, startLoadingItem, startUpdatingOutput } from '../../actions/outputs'
 import { 
     getItem,
     prepareOptionsItems, 
@@ -24,12 +24,12 @@ import { ucFirstString } from '../../helpers/common';
 
 let municipioItems = data.municipios.map(item => item.municipio);
 
-export const Form = () => {
+export const Form = (props) => {
     
     let { id } = useParams()
     const dispatch = useDispatch()
 
-    const { sesionCompany } = useSelector(state => state.auth)
+    const { role, sesionCompany } = useSelector(state => state.auth)
     const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { loaded: people } = useSelector(state => state.people)
     const { model: workday } = useSelector(state => state.workdays)
@@ -123,8 +123,12 @@ export const Form = () => {
         /****Dispara la función para obtener la jornada ****/
         dispatch( startLoadingSigleWorkdays() )
 
-        if(id){
+        if(id !== undefined && role == "Super_Role"){
+            console.log(role);
             dispatch( startLoadingItem( id ) );
+        }else if(id !== undefined){
+            Swal.fire('Error', 'Salida no encontrada','error')
+            props.history.push('/outputs')
         }
 
     }, [])
@@ -386,7 +390,7 @@ export const Form = () => {
             
             if(validated){
                 if(data.conductor.id !== data.ayudante.id){
-                    const validated = validateOutputs( outputs,sesionCompany,data )
+                    const validated = validateOutputs( outputs,sesionCompany,data, id )
                     
                     if(validated == "Success"){
             
@@ -395,11 +399,12 @@ export const Form = () => {
                             importador: sesionCompany,
                             estado: "Activa",
                             fecha: new Date(),
-                            ...data
+                            ...data,
+                            id
                         }
 
                         if(id){
-                            console.log("Actualizar")
+                            dispatch( startUpdatingOutput( {...values} ) )
                         }else{
                             dispatch( startCreatingOutput( {...values} ) )
                         }

@@ -38,30 +38,30 @@ export const validateLimit = ( outputs, company ) => {
     return ( items.length < limit )? true : false
 }
 
-export const validateDuplicated = ( outputs, data ) => {
+export const validateDuplicated = ( outputs, data, id ) => {
 
     let flag = true
     let error = ""
 
     outputs.map((item) => {
         
-        if( item.vehiculo.id === data.vehiculo.id ){
+        if( item.vehiculo.id === data.vehiculo.id && item.id !== id ){
             error += `El vehículo con placa <b>${data.vehiculo.placa}</b> ya fue registrado en la salída: <b>${item.codigo}</b><br>`
         }
         
-        if( item.conductor.id === data.conductor.id ){
+        if( item.conductor.id === data.conductor.id && item.id !== id){
             error += `El coductor: <b>${data.conductor.nombre} ${data.conductor.apellido}</b> con cédula: <b>${data.conductor.rif}</b> ya fue registrado en la salída: <b>${item.codigo}</b><br>`
         }
         
-        if( item.ayudante.id === data.conductor.id ){
+        if( item.ayudante.id === data.conductor.id && item.id !== id){
             error += `El coductor: <b>${data.conductor.nombre} ${data.conductor.apellido}</b> con cédula: <b>${data.conductor.rif}</b> fue registrado como ayudante en la salída: <b>${item.codigo}</b><br>`
         }
         
-        if( item.ayudante.id === data.ayudante.id ){
+        if( item.ayudante.id === data.ayudante.id && item.id !== id){
             error += `El ayudante: <b>${data.ayudante.nombre} ${data.ayudante.apellido}</b> con cédula: <b>${data.conductor.rif}</b> ya fue registrado en la salída: <b>${item.codigo}</b><br>`
         }
         
-        if( item.conductor.id === data.ayudante.id ){
+        if( item.conductor.id === data.ayudante.id && item.id !== id){
             error += `El ayudante: <b>${data.ayudante.nombre} ${data.ayudante.apellido}</b> con cédula: <b>${data.conductor.rif}</b> fue registrado como conductor en la salída: <b>${item.codigo}</b><br>`
         }
     });
@@ -69,13 +69,12 @@ export const validateDuplicated = ( outputs, data ) => {
     return error
 }
 
-export const validateOutputs = ( outputs, company, data) => {
+export const validateOutputs = ( outputs, company, data, id) => {
     if(!validateLimit( outputs, company )){
         return "Err 001"
     } 
 
-    let error = validateDuplicated( outputs, data )
-    console.log("error",error)
+    let error = validateDuplicated( outputs, data, id )
 
     if(error !== ""){
         return error
