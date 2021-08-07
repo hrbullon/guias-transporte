@@ -8,13 +8,14 @@ const table = "inputs"
 export const startLoadingItem = ( id ) => {
     return async (dispatch) => {
    
-        var docRef = db.collection("inputs").doc(id);
+        var docRef = db.collection(table).doc(id);
 
         await docRef.get().then((doc) => {
             let data = {}
-
+            
             if (doc.exists) {
-                data = { id: doc.id, ...doc.data() }
+                let info = { ...doc.data() }
+                data = { id: doc.id, ...info }
                 dispatch( inputs(data) )
             } else {
                 Swal.fire('Error', 'No existe la entrada solicitada','error')

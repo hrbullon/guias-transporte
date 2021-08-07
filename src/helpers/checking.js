@@ -32,9 +32,9 @@ export const validatedVehiculo = async (jornadaId, placa, id) => {
     return ( contador < 2 )
 }
 
-export const validateLimit = ( outputs, company ) => {
-    const items = outputs.filter( item => item.estado == "Activa" )
-    const limit = parseInt(company.limite_vehiculos)
+export const validateLimit = ( outputs, company, id ) => {
+    const items = outputs.filter( item => item.estado == "Activa" && item.id !== id )
+    const limit = parseInt(outputs[0].importador.limite_vehiculos)
     return ( items.length < limit )? true : false
 }
 
@@ -70,7 +70,7 @@ export const validateDuplicated = ( outputs, data, id ) => {
 }
 
 export const validateOutputs = ( outputs, company, data, id) => {
-    if(!validateLimit( outputs, company )){
+    if(!validateLimit( outputs, company, id )){
         return "Err 001"
     } 
 

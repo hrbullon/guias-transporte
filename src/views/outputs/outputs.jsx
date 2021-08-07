@@ -106,6 +106,7 @@ export const Outputs = (props) => {
     }, [updated])
 
     const handleShow = (item) => {
+        console.log(item);
         window.open(`/outputs/view/${item.id}`,"ventana1","width=1024,height=820,scrollbars=NO") 
     }
     

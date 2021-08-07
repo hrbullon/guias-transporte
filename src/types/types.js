@@ -67,7 +67,7 @@ export const types = {
  
     inputs:       '[INPUTS] Get',
     inputsLoaded: '[INPUTS] Loaded',
-    inputCreated: '[INPUT] Created',
-    inputUpdated: '[INPUT] Updated',
-    inputDeleted: '[INPUT] Deleted',
+    inputCreated: '[INPUTS] Created',
+    inputUpdated: '[INPUTS] Updated',
+    inputDeleted: '[INPUTS] Deleted',
 }

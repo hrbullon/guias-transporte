@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
+import { useParams, Link } from 'react-router-dom'
 
 import DataTable from 'react-data-table-component'
 import Select from 'react-select'
 import Swal from 'sweetalert2'
 
 import { startLoadingOutputs } from '../../actions/outputs'
-import { startCreatingInput } from '../../actions/inputs'
+import { startCreatingInput, startLoadingItem } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingProducts } from '../../actions/products'
@@ -25,13 +25,14 @@ import {
 
 export const Form = (props) => {
 
+    let { id } = useParams()
     const dispatch = useDispatch()
     const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
     
     const [items, setItems] = useState([])
-    const { created, updated } = useSelector(state => state.inputs)
+    const { model, created, updated } = useSelector(state => state.inputs)
 
-    const { sesionCompany } = useSelector(state => state.auth)
+    const { role, sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: outputs } = useSelector(state => state.outputs)
     const { loaded: companies } = useSelector(state => state.companies)
@@ -47,12 +48,13 @@ export const Form = (props) => {
     })
 
     const [ infoCliente, setInfoCliente] = useState({
+        id:"",
         rif:"",
         nombre:"",
         municipio:"",
         parroquia:"",
         direccion:"",
-        representante_comercio:{
+        representante:{
             rif:"",
             nombre:"",
             telefono:""
@@ -60,6 +62,7 @@ export const Form = (props) => {
     })
 
     const [ infoVehiculo, setInfoVehiculo] = useState({
+        id:"",
         marca:"",
         modelo:"",
         color:"",
@@ -92,28 +95,21 @@ export const Form = (props) => {
 
     //Inicializo estructura de culumnas de la tabla de productos
     const columns = [
-        { name: '#', selector: 'i'},
+        { name: '#', cell: (row, index) => index+1 },
         { name: 'Producto', selector: 'producto.nombre'},
         { name: 'Presentación', selector: 'presentacion.presentacion'},
         { name: 'Cantidad', selector: 'cantidad'},
         { name: 'Subtotal', selector: 'subtotal'},
         { name: 'Medida', selector: 'presentacion.unidad_medida'},
         { 
-            name: 'Eliminar', cell: row => (
-                <i title="Eliminar" onClick={ (e) => handleDelete(row)  } className="mdi mdi-delete pointer"></i>
+            name: 'Eliminar', cell: (row, index) => (
+                <i title="Eliminar" onClick={ (e) => handleDelete(row,index)  } className="mdi mdi-delete pointer"></i>
             )
         },
 
     ]
 
     /***** Effects *****/
-    useEffect(() => {
-        /****Dispara la función para obtener las salidas ****/
-        if(sesionCompany && workday){
-            dispatch( startLoadingOutputs( sesionCompany.id, workday.id ) )
-        }
-    }, [sesionCompany,workday])
-
     useEffect(() => {
         
         /****Dispara la función para obtener la jornada ****/
@@ -127,18 +123,44 @@ export const Form = (props) => {
         
         //Obtengo los datos de las presentaciones de los productos
         dispatch( startLoadingConversions() )
-
-
+            
     }, [])
-    
+
     useEffect(() => {
-        if(outputs){
-            console.log(outputs);
+        /****Dispara la función para obtener las salidas ****/
+        if(sesionCompany && workday){
+            dispatch( startLoadingOutputs( sesionCompany?.id, workday.id, role ) )
+        }
+    }, [sesionCompany,workday])
+
+    useEffect(() => {
+        if(id !== undefined && role == "Super_Role"){
+            dispatch( startLoadingItem( id ) );
+        }else if(id !== undefined){
+            //Swal.fire('Error', 'Entrada no encontrada','error')
+            //props.history.push('/inputs')
+        }
+
+    }, [id,role])
+ 
+    useEffect(() => {
+        if(outputs.length > 0){
             let vehiculos = outputs.map( item => item.vehiculo )
             const options = prepareOptionsPlaca( vehiculos )
             setOptionsVehicles( options )
         }
     }, [outputs])
+
+    
+    useEffect(() => {
+        
+        if(model !== null && outputs.length > 0){
+            reset({ fecha: model.fecha, retorno: model.retorno })
+            setIdCustomer({ value: model?.cliente?.id, label: `${model?.cliente?.rif} ${model?.cliente?.nombre}` })
+            setIdVehiculo({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
+            setItems(model.items)
+        }        
+    }, [model, outputs])
     
     //Está pendiente si cambia el valor de created o updated
     //En caso de cambiar es porque se creó o editó correctamente la entrada
@@ -192,15 +214,16 @@ export const Form = (props) => {
         if(idCustomer.value !== ""){
             
             const item = getItem( companies, idCustomer.value )
-
+            
             setInfoCliente({
                 ...infoCliente,
+                id: idCustomer.value,
                 rif: item.rif,
                 nombre: item.nombre,
                 municipio: item.municipio,
                 parroquia: item.parroquia,
                 direccion: item.direccion,
-                representante_comercio: { 
+                representante: { 
                     nombre:item.representante.nombre,
                     rif: item.representante.rif,
                     telefono: item.representante.telefono
@@ -232,40 +255,44 @@ export const Form = (props) => {
         
         let vehiculo = {}
 
-        if(idVehiculo.value !== ""){
+        if(idVehiculo.value){
             
             const item = getInfoVehiculo( outputs, idVehiculo.label )
             
-            setInfoVehiculo({
-                ...infoVehiculo,
-                placa: item[0].vehiculo.placa,
-                marca: item[0].vehiculo.marca.nombre,
-                modelo: item[0].vehiculo.modelo.nombre, 
-                color: item[0].vehiculo.color,
-                importador: item[0].importador,
-                conductor: {
-                    rif: item[0].conductor.rif,
-                    nombre: item[0].conductor.nombre + " " + item[0].conductor.apellido,
-                    telefono: item[0].conductor.telefono,
-                },
-                ayudante: {
-                    rif: item[0].ayudante.rif,
-                    nombre: item[0].ayudante.nombre + " " + item[0].ayudante.apellido,
-                    telefono: item[0].ayudante.telefono,
+            if(item){
+
+                setInfoVehiculo({
+                    ...infoVehiculo,
+                    id: idVehiculo.value,
+                    placa: item[0]?.vehiculo?.placa,
+                    marca: item[0]?.vehiculo?.marca?.nombre,
+                    modelo: item[0]?.vehiculo?.modelo?.nombre, 
+                    color: item[0]?.vehiculo?.color,
+                    importador: item[0]?.importador,
+                    conductor: {
+                        rif: item[0]?.conductor?.rif,
+                        nombre: item[0]?.conductor?.nombre + " " + item[0]?.conductor?.apellido,
+                        telefono: item[0]?.conductor?.telefono,
+                    },
+                    ayudante: {
+                        rif: item[0]?.ayudante?.rif,
+                        nombre: item[0]?.ayudante?.nombre + " " + item[0]?.ayudante?.apellido,
+                        telefono: item[0]?.ayudante?.telefono,
+                    }
+                })
+    
+                vehiculo = {
+                    id: item[0]?.vehiculo?.id,
+                    placa: item[0]?.vehiculo?.placa,
                 }
-            }) 
-
-            vehiculo = {
-                id: item[0].vehiculo.id,
-                placa: item[0].vehiculo.placa,
-            } 
-
-            //Para que no me muestre error 
-            //aún cuando haya seleccionado un vehiculo
-            //este problema es debido al paquete que se está 
-            //usando para generar los campos de tipo select 
-            setValue("vehiculo", vehiculo)
-            setError("vehiculo", "")
+    
+                //Para que no me muestre error 
+                //aún cuando haya seleccionado un vehiculo
+                //este problema es debido al paquete que se está 
+                //usando para generar los campos de tipo select 
+               // setValue("vehiculo", vehiculo)
+                setError("vehiculo", "")
+            }
 
         }else{
             vehiculo = {
@@ -307,17 +334,17 @@ export const Form = (props) => {
         }
     }
 
-    const handleDelete = (item) => {
+    const handleDelete = (item, index) => {
         let rows = items
         let copy = [...rows]
-        
-        let filter = copy.filter( row => row.id !== item.id )
         setItems([])
-        setItems(filter)
+        copy.splice(index, 1);
+        setItems(copy)
     }
 
     /*****End Effects *****/
     const handleChangingCliente = (input) => {
+        
         if(input){
             setIdCustomer(input)
         }else{
@@ -367,9 +394,8 @@ export const Form = (props) => {
             cliente: infoCliente,
             items,
             estado:"Pendiente",
-
         }
-
+        //console.log(params);
         dispatch( startCreatingInput( {...params} ) )
 
     }
@@ -386,7 +412,7 @@ export const Form = (props) => {
                         <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Número</label>
-                                <input type="text" disabled className="form-control"/>
+                                <input type="text" value={ model?.codigo } disabled className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-3">
@@ -419,7 +445,7 @@ export const Form = (props) => {
                         <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Placa</label>
-                                <Select name="cliente" value={ idVehiculo } {...register("vehiculo", { required: true } )} onChange={handleChangingPlaca} options={ optionsVehicles } />
+                                <Select name="vehiculo" value={ idVehiculo } {...register("vehiculo", { required: true } )} onChange={handleChangingPlaca} options={ optionsVehicles } />
                                 { errors?.vehiculo?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>    
@@ -504,7 +530,7 @@ export const Form = (props) => {
                         <div className="col-lg-8">
                             <div className="form-group">
                                 <label className="control-label">Nombre/Razón Social</label>
-                                <input type="text" disabled value={ infoCliente.nombre } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.nombre } className="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -512,19 +538,19 @@ export const Form = (props) => {
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Municipio</label>
-                                <input type="text" disabled value={ infoCliente.municipio } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.municipio } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Parroquia</label>
-                                <input type="text" disabled value={ infoCliente.parroquia } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.parroquia } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Dirección</label>
-                                <input type="text" disabled value={ infoCliente.direccion } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.direccion } className="form-control"/>
                             </div>
                         </div>
                     </div>
@@ -532,19 +558,19 @@ export const Form = (props) => {
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Representante - Comercio</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.nombre } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.representante?.nombre } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Cédula / Pasaporte</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.rif } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.representante?.rif } className="form-control"/>
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="form-group">
                                 <label className="control-label">Teléfono</label>
-                                <input type="text" disabled value={ infoCliente.representante_comercio.telefono } className="form-control"/>
+                                <input type="text" disabled value={ infoCliente?.representante?.telefono } className="form-control"/>
                             </div>
                         </div>
                     </div>

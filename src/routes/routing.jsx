@@ -37,20 +37,6 @@ var ThemeRoutes = [
     component: Users
   },
   {
-    path:"/documents/create/",
-    name:"Gestión de Guías",
-    icon: "",
-    menu: false,
-    component: Form
-  },
-  {
-    path:"/documents/update/:id",
-    name:"Gestión de Guías",
-    icon: "",
-    menu: false,
-    component: Form
-  },
-  {
     path:"/outputs/create",
     name:"Registrar salida",
     icon: "mr-2 mdi mdi-arrow-right",
@@ -86,6 +72,14 @@ var ThemeRoutes = [
     path:"/inputs/create",
     name:"Registrar entrada",
     icon: "mr-2 mdi mdi-arrow-left",
+    menu: false,
+    role: ["Administrador_Role","Super_Role","Usuario_Role"],
+    component: FormInput
+  },
+  {
+    path:"/inputs/update/:id",
+    name:"Editar Entrada",
+    icon: "mr-2 mdi mdi-arrow-right",
     menu: false,
     role: ["Administrador_Role","Super_Role","Usuario_Role"],
     component: FormInput

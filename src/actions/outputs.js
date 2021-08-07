@@ -31,10 +31,10 @@ export const startLoadingOutputs = ( company, workday, role ) => {
     return async (dispatch) => {
         
         try {
-
+            
             let outputsSnap = []
 
-            if(role === "Super_Role"){
+            if(role === "Super_Role" && company == undefined){
 
                 outputsSnap = await db.collection(table)
                 .where("jornada.id","==",workday)
@@ -94,6 +94,7 @@ export const startCreatingOutput = ( data ) => {
                     } 
 
                     let copy = { ...data }
+                    delete copy.id
                     copy.codigo = codigo
                     
                     const newDoc =  db.collection(table).add(copy)

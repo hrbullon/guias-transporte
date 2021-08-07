@@ -124,7 +124,7 @@ export const prepareOptionsConversion = (data) => {
 }
 
 export const getInfoVehiculo = (outputs, placa) => {
-    return outputs.filter( item => item.vehiculo.placa == placa )
+    return outputs.filter( item => item.vehiculo.placa === placa )
 }
 
 

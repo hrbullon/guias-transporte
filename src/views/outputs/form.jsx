@@ -124,7 +124,6 @@ export const Form = (props) => {
         dispatch( startLoadingSigleWorkdays() )
 
         if(id !== undefined && role == "Super_Role"){
-            console.log(role);
             dispatch( startLoadingItem( id ) );
         }else if(id !== undefined){
             Swal.fire('Error', 'Salida no encontrada','error')
@@ -380,6 +379,7 @@ export const Form = (props) => {
         let day = today.getDate()
 
         month = (month < 10)? "0"+month:month
+        day = (day < 10)? "0"+day:day
 
         let date = anio +"-"+ month+"-"+day
         
@@ -400,11 +400,11 @@ export const Form = (props) => {
                             estado: "Activa",
                             fecha: new Date(),
                             ...data,
-                            id
+                            id:(id)?id:""
                         }
 
                         if(id){
-                            dispatch( startUpdatingOutput( {...values} ) )
+                            dispatch( startUpdatingOutput( {...values}, role ) )
                         }else{
                             dispatch( startCreatingOutput( {...values} ) )
                         }
