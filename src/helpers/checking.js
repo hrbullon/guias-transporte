@@ -32,9 +32,9 @@ export const validatedVehiculo = async (jornadaId, placa, id) => {
     return ( contador < 2 )
 }
 
-export const validateLimit = ( outputs, company, id ) => {
+export const validateLimit = ( outputs, company, id = false ) => {
     const items = outputs.filter( item => item.estado == "Activa" && item.id !== id )
-    const limit = parseInt(outputs[0].importador.limite_vehiculos)
+    const limit = parseInt(company.limite_vehiculos)
     return ( items.length < limit )? true : false
 }
 

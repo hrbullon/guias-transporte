@@ -22,10 +22,20 @@ export const startLoadingCompany = (user) => {
         
         const snapshot = await db.collection(`users`).where("login","==", user.uid).get()
         snapshot.forEach(doc => {
-            data = { rol: doc.data().rol , empresa : doc.data().empresa }
+            
+            const company = db.collection(`companies`).doc(doc.data().empresa.id)
+            company.get().then( (docx) => { 
+                let empresa = docx.data()
+                if(empresa?.id){
+                    empresa.id = doc.data().empresa.id
+                }
+                data = { rol: doc.data().rol , empresa }
+                dispatch( sesionCompany( data ) )
+            })
+
         });
 
-        dispatch( sesionCompany( data ) )
+
     }
 }
 

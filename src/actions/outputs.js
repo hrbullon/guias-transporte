@@ -71,7 +71,7 @@ export const startCreatingOutput = ( data ) => {
         try {
 
             let docRef = db.collection("counters").doc("cod");
-    
+            
             docRef.get().then( (doc) => {
 
                 let codigo = ""
@@ -112,7 +112,7 @@ export const startCreatingOutput = ( data ) => {
     }
 }
 
-export const startUpdatingOutput = ( data ) => {
+export const startUpdatingOutput = ( data, role ) => {
 
     return async (dispatch) => {
         

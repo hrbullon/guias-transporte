@@ -94,6 +94,7 @@ export const startCreatingInput = ( data ) => {
                     } 
 
                     let copy = { ...data }
+                    delete copy.id
                     copy.codigo = codigo
                     
                     const newDoc =  db.collection(table).add(copy)
@@ -124,23 +125,30 @@ export const startCreatingInput = ( data ) => {
     }
 }
 
-export const startUpdatingInput = ( data ) => {
+export const startUpdatingInput = ( data, role ) => {
 
     return async (dispatch) => {
         
         try {
-            const doc = await db.doc(`${ table }/${ data.id }`).get()
-            let copy = { ...data }
-            delete copy.id
- 
-            const updateInput = { 
-                ...doc.data(), 
-                ...copy
+            
+            if(role === "Super_Role"){
+                const doc = await db.doc(`${ table }/${ data.id }`).get()
+                let copy = { ...data }
+                delete copy.id
+                delete copy.role
+    
+                const updateInput = { 
+                    ...doc.data(), 
+                    ...copy
+                }
+
+                await db.doc(`${ table }/${ doc.id }`).update( updateInput )
+                dispatch( inputUpdated( { id: data.id, ...updateInput } ) )
+
+                Swal.fire('Correcto', 'Entrada actualizada!!','success')
+            }else{
+                Swal.fire('Error', 'Entrada no encontrada','error')
             }
-
-            await db.doc(`${ table }/${ doc.id }`).update( updateInput )
-            dispatch( inputUpdated( { id: data.id, ...updateInput } ) )
-
         } catch (error) {
             Swal.fire('Error', error.message,'error')
         }

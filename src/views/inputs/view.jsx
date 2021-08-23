@@ -1,20 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import Swal from 'sweetalert2';
 
 import { startLoadingItem, startUpdatingInput } from '../../actions/inputs';
-import { Company } from '../../components/company/company';
-import { Person } from '../../components/person/person';
 import { validateInput } from '../../helpers/checking';
 import { url } from '../../config/config'
 
-import { Info } from '../../components/guias/info';
-import { Cabecera } from '../../components/guias/cabecera';
-import { Firmas } from '../../components/guias/firmas';
-import { Notas } from '../../components/guias/notas';
-import { Vehiculo } from '../../components/guias/vehiculos';
 import { Productos } from '../../components/guias/productos';
 
 export const View = () => {
@@ -26,9 +19,23 @@ export const View = () => {
     const { model } = useSelector(state => state.inputs)
     const { uid } = useSelector(state => state.auth)
 
+    const [device, setDevice] = useState("desktop")
+    const [limit, setLimit] = useState(20)
+
     useEffect(() => {
         //Coloco un título a la página
         dispatch( startLoadingItem(id) )
+
+        if( navigator.userAgent.match(/Android/i)
+            || navigator.userAgent.match(/webOS/i)
+            || navigator.userAgent.match(/iPhone/i)
+            || navigator.userAgent.match(/iPad/i)
+            || navigator.userAgent.match(/iPod/i)
+            || navigator.userAgent.match(/BlackBerry/i)
+            || navigator.userAgent.match(/Windows Phone/i)){
+                setDevice("mobile")
+                setLimit(25)
+            }
     }, [])
 
     useEffect(() => {
@@ -78,7 +85,7 @@ export const View = () => {
                 <div className="card-body">
                     <div className="row">
                         <div className="no-print col-lg-12 mb-4">
-                            { uid !== undefined &&
+                            { uid !== undefined && device == "desktop" &&
                                 <button className="btn btn-primary pull-right" onClick={window.print}>Imprimir</button>
                             }
                             { uid == undefined && model?.estado !== "Completada" &&
@@ -86,27 +93,10 @@ export const View = () => {
                             }    
                         </div>
                         <div id="print" className="col col-lg-12">
-                            <Cabecera></Cabecera>
-                            <table className="table table-fit">
-                                <tbody>
-                                    <Info model={model}></Info>
-                                    <Company titulo="Datos del Importador" model={model?.importador} representante={model?.importador.representante} />    
-                                    <Company titulo="Datos del Cliente/Receptor" model={model?.cliente} representante={model?.cliente.representante_comercio} />    
-                                </tbody>
-                            </table>
-                            <Vehiculo vehiculo={model?.vehiculo}></Vehiculo>
-                            <table className="table table-fit">
-                                <tbody>
-                                    <Person titulo="Datos del Conductor" model={ model?.vehiculo.conductor} />
-                                    <Person titulo="Datos del Ayudante" model={ model?.vehiculo.ayudante} />
-                                </tbody>
-                            </table>
-                            <hr />
-                            <div className="table-responsive">
-                                <Productos items={model?.items}></Productos>
-                            </div>
-                            <Firmas></Firmas>
-                            <Notas></Notas>
+                            {/** Esta linea puede generar hasta 10 páginas del formato de entrada*/}
+                            { [1,2,3,4,5,6,7,8,9,10].map( item =>  {
+                                return <Productos model={model} limit={limit} device={device} items={model?.items} page={item} end={ item*limit }/>
+                            })}    
                         </div>
                     </div>
                 </div>

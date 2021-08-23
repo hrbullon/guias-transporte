@@ -9,18 +9,21 @@ import Select from 'react-select'
 import Swal from 'sweetalert2'
 
 import { startLoadingOutputs } from '../../actions/outputs'
-import { startCreatingInput, startLoadingItem } from '../../actions/inputs'
+import { startCreatingInput, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingProducts } from '../../actions/products'
+import { startLoadingPeople } from '../../actions/people'
 import { startLoadingConversions } from '../../actions/conversion'
+import { startLoadingVehicles } from '../../actions/vehicles'
 
 import { 
     getItem, 
     getInfoVehiculo, 
     prepareOptionsPlaca, 
     prepareOptionsSelect, 
-    prepareOptionsConversion 
+    prepareOptionsConversion, 
+    prepareOptionsRif
     } from '../../helpers/dataArray'
 
 export const Form = (props) => {
@@ -29,16 +32,27 @@ export const Form = (props) => {
     const dispatch = useDispatch()
     const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm();
     
-    const [items, setItems] = useState([])
     const { model, created, updated } = useSelector(state => state.inputs)
 
     const { role, sesionCompany } = useSelector(state => state.auth)
+    const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { model: workday } = useSelector(state => state.workdays)
+    const { loaded: people } = useSelector(state => state.people)
     const { loaded: outputs } = useSelector(state => state.outputs)
     const { loaded: companies } = useSelector(state => state.companies)
     const { loaded: productsLoaded } = useSelector(state => state.products);
     const { loaded: conversionsLoaded } = useSelector(state => state.conversions);
-    
+
+    const [items, setItems] = useState([])
+    const [ itemsPeople, setItemsPeople] = useState([])
+
+    const [ conductor, setConductor ] = useState({
+        id:'',
+        nombre:'',
+        apellido:'',
+        telefono:''
+    })
+
     /*****States */
     const [ inputsItems, setInputsItems ] = useState({
         producto:"",
@@ -69,16 +83,26 @@ export const Form = (props) => {
         conductor: {
             rif:"",
             nombre:"",
+            apellido:"",
             telefono:""
         },
         ayudante: {
             rif:"",
             nombre:"",
+            apellido:"",
             telefono:""
         }
     })
+    
+    const [ infoVehiculoTras, setInfoVehiculoTras] = useState({
+        id:"",
+        marca:"",
+        modelo:"",
+        color:""
+    })
 
     const [ optionsVehicles, setOptionsVehicles] = useState({})
+    const [ optionsVehiclesTras, setOptionsVehiclesTras] = useState({})
     const [ optionsCustomers, setOptionsCustomers] = useState({})
     const [ optionsProducts, setOptionsProducts] = useState({})
     const [ optionsConversions, setOptionsConversions] = useState({})
@@ -91,6 +115,16 @@ export const Form = (props) => {
     const [ idVehiculo, setIdVehiculo] = useState({
         value:'',
         label:'Seleccione un vehiculo'
+    })
+
+    const [ idVehiculoTras, setIdVehiculoTras] = useState({
+        value:'',
+        label:'Seleccione un vehículo'
+    })
+    
+    const [ idConductor, setIdConductor] = useState({
+        value:'',
+        label:'Seleccione un conductor'
     })
 
     //Inicializo estructura de culumnas de la tabla de productos
@@ -112,6 +146,9 @@ export const Form = (props) => {
     /***** Effects *****/
     useEffect(() => {
         
+        /****Dispara la función para obtener listado de vehículos ****/
+        dispatch( startLoadingVehicles() )
+
         /****Dispara la función para obtener la jornada ****/
         dispatch( startLoadingSigleWorkdays() )
 
@@ -120,6 +157,9 @@ export const Form = (props) => {
 
         //Obtengo los datos de los conductores y productos
         dispatch( startLoadingProducts() )
+
+        /****Dispara la función para obtener listado de personas ****/
+        dispatch( startLoadingPeople() )
         
         //Obtengo los datos de las presentaciones de los productos
         dispatch( startLoadingConversions() )
@@ -136,11 +176,7 @@ export const Form = (props) => {
     useEffect(() => {
         if(id !== undefined && role == "Super_Role"){
             dispatch( startLoadingItem( id ) );
-        }else if(id !== undefined){
-            //Swal.fire('Error', 'Entrada no encontrada','error')
-            //props.history.push('/inputs')
         }
-
     }, [id,role])
  
     useEffect(() => {
@@ -151,13 +187,29 @@ export const Form = (props) => {
         }
     }, [outputs])
 
-    
+    /***** Cuando ya se tienen los vehículos cargados *****/
+    useEffect(() => {
+        
+        const options = prepareOptionsPlaca( vehicles )
+        setOptionsVehiclesTras( options )
+
+    }, [vehicles])
+
+    useEffect(() => {
+        
+        const options = prepareOptionsRif( people )
+        setItemsPeople( options )
+
+    }, [people])
+
     useEffect(() => {
         
         if(model !== null && outputs.length > 0){
             reset({ fecha: model.fecha, retorno: model.retorno })
             setIdCustomer({ value: model?.cliente?.id, label: `${model?.cliente?.rif} ${model?.cliente?.nombre}` })
             setIdVehiculo({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
+            setIdVehiculoTras({ value: model?.trasbordo?.vehiculo?.id, label: model?.trasbordo?.vehiculo?.placa})
+            setIdConductor({ value: model?.trasbordo?.conductor.id, label: model?.trasbordo?.conductor?.rif })
             setItems(model.items)
         }        
     }, [model, outputs])
@@ -271,12 +323,14 @@ export const Form = (props) => {
                     importador: item[0]?.importador,
                     conductor: {
                         rif: item[0]?.conductor?.rif,
-                        nombre: item[0]?.conductor?.nombre + " " + item[0]?.conductor?.apellido,
+                        nombre: item[0]?.conductor?.nombre,
+                        apellido: item[0]?.conductor?.apellido,
                         telefono: item[0]?.conductor?.telefono,
                     },
                     ayudante: {
                         rif: item[0]?.ayudante?.rif,
-                        nombre: item[0]?.ayudante?.nombre + " " + item[0]?.ayudante?.apellido,
+                        nombre: item[0]?.ayudante?.nombre,
+                        apellido:item[0]?.ayudante?.apellido,
                         telefono: item[0]?.ayudante?.telefono,
                     }
                 })
@@ -290,7 +344,7 @@ export const Form = (props) => {
                 //aún cuando haya seleccionado un vehiculo
                 //este problema es debido al paquete que se está 
                 //usando para generar los campos de tipo select 
-               // setValue("vehiculo", vehiculo)
+                setValue("vehiculo", vehiculo)
                 setError("vehiculo", "")
             }
 
@@ -303,6 +357,75 @@ export const Form = (props) => {
 
     }, [idVehiculo])
 
+    useEffect(() => {
+        
+        let vehiculo = {}
+
+        if(idVehiculoTras.value){
+            
+            const item = getItem( vehicles, idVehiculoTras.value )
+            
+            if(item){
+
+                setInfoVehiculoTras({
+                    ...infoVehiculoTras,
+                    id: idVehiculoTras.value,
+                    placa: item.placa,
+                    marca: item.marca?.nombre,
+                    modelo: item.modelo?.nombre, 
+                    color: item.color
+                })
+    
+                vehiculo = {
+                    id: idVehiculoTras.value,
+                    placa: item.placa,
+                }
+    
+                //Para que no me muestre error 
+                //aún cuando haya seleccionado un vehiculo
+                //este problema es debido al paquete que se está 
+                //usando para generar los campos de tipo select 
+                setValue("trasbordo_vehiculo", vehiculo)
+                //setError("trasbordo_vehiculo", "")
+            }
+
+            
+
+        }else{
+            vehiculo = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+    }, [idVehiculoTras])
+
+    useEffect(() => {
+        
+        if(idConductor.value){
+            
+            const { rif, nombre, apellido, telefono } = getItem(people, idConductor.value)
+
+            setConductor({ 
+                id: idConductor.value,
+                rif,
+                nombre, 
+                apellido,
+                telefono 
+            })
+
+
+            setValue("trasbordo_conductor", {
+                id: idConductor.value,
+                rif,
+                nombre,
+                apellido,
+                telefono 
+            })
+        }
+
+    }, [idConductor])
+
     const handleAddItem = () => {
 
         //Obtengo el  objeto con la información del productp
@@ -311,9 +434,9 @@ export const Form = (props) => {
         
         let rows = [ ...items ]
 
-        let filter = rows.filter( row => row.producto.id === inputsItems.producto)
+        //let filter = rows.filter( row => row.producto.id === inputsItems.producto)
         
-        if(filter.length == 0){
+        //if(filter.length == 0){
             const item = {
                 producto: {
                     id: inputsItems.producto,
@@ -329,9 +452,9 @@ export const Form = (props) => {
     
             rows.push(item)
             setItems(rows)
-        }else{
+        /* }else{
             Swal.fire('Error', 'No puede agregar un producto varias veces','warning')
-        }
+        } */
     }
 
     const handleDelete = (item, index) => {
@@ -340,6 +463,15 @@ export const Form = (props) => {
         setItems([])
         copy.splice(index, 1);
         setItems(copy)
+    }
+
+    /***** Cuando cambia el select de conductor *****/
+    const handleChangingConductor = (input) => {
+        if(input){
+            setIdConductor(input)
+        } else {
+            setIdConductor({value:"", label: "Seleccione un conductor"})
+        }
     }
 
     /*****End Effects *****/
@@ -357,6 +489,15 @@ export const Form = (props) => {
             setIdVehiculo(input)
         }else{
             setIdVehiculo({ value:"", label:"Seleccione un vehículo"})
+        }
+    }
+    
+    const handleChangingPlacaTras = (input) => {
+        if(input){
+            console.log(input);
+            setIdVehiculoTras(input)
+        }else{
+            setIdVehiculoTras({ value:"", label:"Seleccione un vehículo"})
         }
     }
 
@@ -382,9 +523,14 @@ export const Form = (props) => {
 
         let { importador } = infoVehiculo
         let vehiculo = infoVehiculo
+        let trasbordo = {
+            vehiculo: infoVehiculoTras,
+            conductor
+        }
+
         delete vehiculo.importador
         
-        let params = {
+        let values = {
             fecha: data.fecha,
             retorno: data.retorno,
             jornada: workday,
@@ -392,11 +538,19 @@ export const Form = (props) => {
             importador,
             vehiculo,
             cliente: infoCliente,
+            trasbordo,
             items,
             estado:"Pendiente",
+            id:(id)?id:""
         }
-        //console.log(params);
-        dispatch( startCreatingInput( {...params} ) )
+
+        console.log(id);
+
+        if(id){
+            dispatch( startUpdatingInput( {...values}, role ) )
+        }else{
+            dispatch( startCreatingInput( {...values} ) )
+        }
 
     }
 
@@ -469,19 +623,25 @@ export const Form = (props) => {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-lg-4">
+                        <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Cédula/Pasaporte</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.rif } className="form-control"/>
                             </div>
                         </div>   
-                        <div className="col-lg-4">
+                        <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Nombre del Conductor</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.nombre } className="form-control"/>
                             </div>
                         </div>   
-                        <div className="col-lg-4">
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Apellido del Conductor</label>
+                                <input type="text" disabled value={ infoVehiculo.conductor.apellido } className="form-control"/>
+                            </div>
+                        </div>   
+                        <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Teléfono</label>
                                 <input type="text" disabled value={ infoVehiculo.conductor.telefono } className="form-control"/>
@@ -489,19 +649,23 @@ export const Form = (props) => {
                         </div>   
                     </div>
                     <div className="row">
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Cédula/Pasaporte</label>
-                                <input type="text" disabled value={ infoVehiculo.ayudante.rif } className="form-control"/>
-                            </div>
-                        </div>   
-                        <div className="col-lg-4">
+                        <div className="col-lg-3">
+                            <label className="control-label">Cédula</label>
+                            <input type="text" disabled value={ infoVehiculo.ayudante.rif } className="form-control"/>
+                        </div>
+                        <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Nombre del Ayudante</label>
                                 <input type="text" disabled value={ infoVehiculo.ayudante.nombre } className="form-control"/>
                             </div>
                         </div>   
-                        <div className="col-lg-4">
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Apellido del Ayudante</label>
+                                <input type="text" disabled value={ infoVehiculo.ayudante.apellido } className="form-control"/>
+                            </div>
+                        </div>   
+                        <div className="col-lg-3">
                             <div className="form-group">
                                 <label className="control-label">Teléfono</label>
                                 <input type="text" disabled value={ infoVehiculo.ayudante.telefono } className="form-control"/>
@@ -573,6 +737,69 @@ export const Form = (props) => {
                                 <input type="text" disabled value={ infoCliente?.representante?.telefono } className="form-control"/>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            {/*** Datos de vehículo/conductor/ayudante Trasbordo*/}
+            <div className="card">
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <legend>Datos de Vehículo/Conductor (Trasbordo)</legend>
+                            <hr />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Placa</label>
+                                <Select name="trasbordo_vehiculo" value={ idVehiculoTras } {...register("trasbordo_vehiculo" )} onChange={ handleChangingPlacaTras } options={ optionsVehiclesTras } />
+                                { errors?.trasbordo_vehiculo &&  (<span className="text-danger">Este campo es requerido { console.log(errors.trasbordo_vehiculo) }</span>) }                             
+                            </div>
+                        </div>    
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Marca</label>
+                                <input type="text" value={ infoVehiculoTras.marca } disabled className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Modelo</label>
+                                <input type="text" value={ infoVehiculoTras.modelo } disabled className="form-control"/>
+                            </div>
+                        </div>
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Color</label>
+                                <input type="text" value={ infoVehiculoTras.color } disabled className="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-3">
+                            <label className="control-label">Cédula</label>
+                            <Select name="trasbordo_conductor" value={ idConductor } {...register("trasbordo_conductor" )} onChange={ handleChangingConductor } options={ itemsPeople } />
+                            { errors?.trasbordo_conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
+                        </div>   
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Nombre del Conductor</label>
+                                <input value={ conductor.nombre } type="text" disabled className="form-control"/>
+                            </div>
+                        </div>   
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Apellido del Conductor</label>
+                                <input value={ conductor.apellido } type="text" disabled className="form-control"/>
+                            </div>
+                        </div>   
+                        <div className="col-lg-3">
+                            <div className="form-group">
+                                <label className="control-label">Teléfono</label>
+                                <input value={ conductor.telefono } type="text" disabled className="form-control"/>
+                            </div>
+                        </div>   
                     </div>
                 </div>
             </div>

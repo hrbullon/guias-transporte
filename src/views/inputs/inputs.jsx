@@ -65,7 +65,7 @@ export const Inputs = (props) => {
                     <i title="Ver" onClick={ (e) => handleShow(row)  } className="mdi mdi-eye pointer mr-2"></i>
                     { role == "Super_Role" &&
                         <>
-                            <Link to={`/inputs/update/${row.id}`}><i title="Editar" className="mdi mdi-pencil pointer mr-2"></i></Link>
+                            <Link to={`inputs/update/${row.id}`}><i title="Editar" className="mdi mdi-pencil pointer mr-2"></i></Link>
                             <i title="Eliminar" onClick={ (e) => handleCancel(row)  } className="mdi mdi-delete pointer"></i>
                         </>
                     }

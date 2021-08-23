@@ -192,14 +192,12 @@ export const Form = (props) => {
             const { rif, nombre, apellido, telefono } = getItem(people, idConductor.value)
 
             setConductor({ 
-                id: idConductor.value,
                 nombre, 
                 apellido,
                 telefono 
             })
 
             setValue("conductor", {
-                id: idConductor.value,
                 rif,
                 nombre,
                 apellido,
@@ -390,25 +388,24 @@ export const Form = (props) => {
             
             if(validated){
                 if(data.conductor.id !== data.ayudante.id){
-                    const validated = validateOutputs( outputs,sesionCompany,data, id )
+                    
+                    let values = { 
+                        jornada: workday,
+                        importador: sesionCompany,
+                        estado: "Activa",
+                        fecha: new Date(),
+                        ...data,
+                        id:(id)?id:""
+                    }
+                    
+                    const validated = validateOutputs( outputs, sesionCompany, data, id )
                     
                     if(validated == "Success"){
-            
-                        let values = { 
-                            jornada: workday, 
-                            importador: sesionCompany,
-                            estado: "Activa",
-                            fecha: new Date(),
-                            ...data,
-                            id:(id)?id:""
-                        }
-
                         if(id){
                             dispatch( startUpdatingOutput( {...values}, role ) )
                         }else{
                             dispatch( startCreatingOutput( {...values} ) )
                         }
-
                     }else{
 
                         let msg = ""
