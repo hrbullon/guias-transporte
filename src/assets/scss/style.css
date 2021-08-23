@@ -8476,7 +8476,10 @@ Preloader
   #main-wrapper[data-layout='vertical'] .topbar .top-navbar .navbar-header[data-logobg='skin6'], #main-wrapper[data-layout='horizontal'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] {
     background: #fff; }
     #main-wrapper[data-layout='vertical'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] .navbar-brand .dark-logo, #main-wrapper[data-layout='horizontal'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] .navbar-brand .dark-logo {
-      display: inline; }
+      display: inline; 
+      width: 100px;
+      margin-left:50px;
+    }
     #main-wrapper[data-layout='vertical'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] .navbar-brand .light-logo, #main-wrapper[data-layout='horizontal'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] .navbar-brand .light-logo {
       display: none; }
     #main-wrapper[data-layout='vertical'] .topbar .top-navbar .navbar-header[data-logobg='skin6'] .nav-toggler,

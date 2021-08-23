@@ -19,7 +19,7 @@ import profilephoto from '../../assets/images/users/1.jpg';
 /*--------------------------------------------------------------------------------*/
 /* Import images which are need for the HEADER                                    */
 /*--------------------------------------------------------------------------------*/
-import logodarkicon from '../../assets/images/logo-icon.png';
+import logodarkicon from '../../assets/images/logo.png';
 import logolighticon from '../../assets/images/logo-light-icon.png';
 import logodarktext from '../../assets/images/logo-text.png';
 import logolighttext from '../../assets/images/logo-light-text.png';
@@ -62,14 +62,14 @@ const Header = () => {
                                 className="light-logo"
                             />
                         </b>
-                        <span className="logo-text">
+                        {/* <span className="logo-text">
                             <img src={logodarktext} alt="homepage" className="dark-logo" />
                             <img
                                 src={logolighttext}
                                 className="light-logo"
                                 alt="homepage"
                             />
-                        </span>
+                        </span> */}
                     </NavbarBrand>
                     {/*--------------------------------------------------------------------------------*/}
                     {/* Mobile View Toggler  [visible only after 768px screen]                         */}
