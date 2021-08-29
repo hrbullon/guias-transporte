@@ -9150,3 +9150,7 @@ User Profile
   padding: 10px;
   color: white;
 }
+
+.pointer {
+  cursor: pointer;
+}

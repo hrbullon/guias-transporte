@@ -8,12 +8,14 @@ import { startCreatingVehicle,
          startDeletingVehicle, 
          startLoadingVehicles} from '../../actions/vehicles'
 
+import Swal from "sweetalert2"
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
 import { addItem, updateItem, deleteItem, prepareOptionsSelect } from "../../helpers/dataArray"
+import { validatePlaca } from "../../helpers/checking"
 
 export const Vehicles = () => {
 
@@ -94,7 +96,10 @@ export const Vehicles = () => {
     
     //Limpia el formualrio
     const clearForm = () => {
-        setData({})
+        setData({
+            placa:"",
+            color:""
+        })
         setCustomSelect({
             marca:  { id:'', nombre:'' },
             modelo: { id:'', nombre:'' }
@@ -102,14 +107,24 @@ export const Vehicles = () => {
     }
 
     //Envia los datos del formularioe
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         
         const values = { ...data, ...customSelect }
+        
+        const validated = await validatePlaca(data.placa, data.id)
 
-        if( data.id ) {
-            dispatch( startUpdatingVehicle( {...values} ) )
+        if(validated){
+            if( data.id ) {
+                dispatch( startUpdatingVehicle( {...values} ) )
+            }else{
+                dispatch( startCreatingVehicle( {...values} ) )
+            }    
         }else{
-            dispatch( startCreatingVehicle( {...values} ) )
+            Swal.fire({
+                title: 'Datos inválidos',
+                html: `La placa <b>${data.placa}</b>, ya se encuentra registrada`,
+                icon: 'warning'
+            })
         }
     };
     

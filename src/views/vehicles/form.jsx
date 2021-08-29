@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
 
-import Swal from 'sweetalert2'
 import Select from 'react-select'
 
-import { validatePlaca } from "../../helpers/checking"
 import { getItemSelect, prepareOptionsSelect } from '../../helpers/dataArray'
 
 export const Form = (props) => {
@@ -162,25 +160,6 @@ export const Form = (props) => {
         }
     } 
 
-    /***** 
-     * Activa la llamada para verificar que la placa sea única
-     * Se activa cuando el usuario saca el cursor del campo placa
-     * Es decir captura el evento onBlur en placa
-     * *****/
-    const handleCheckingPlaca = async (placa) => {
-        const validated = await validatePlaca(placa)
-        
-        if(!validated){
-            reset({...props.data, placa:""})
-            
-            Swal.fire({
-                title: 'Datos inválidos',
-                html: `La placa <b>${placa}</b>, ya se encuentra registrada`,
-                icon: 'warning'
-            })
-        }
-    }
-
     return (
         <form onSubmit={handleSubmit(props.onSubmit)}>
             <h4 className="card-title">Datos de Vehículo</h4>
@@ -200,7 +179,7 @@ export const Form = (props) => {
             </div>
             <div className="form-group">
                 <label className="control-label">Placa *</label>
-                <input type="text" name="placa" onBlurCapture={ (e) => handleCheckingPlaca(e.target.value) } autoComplete="off" className="form-control" {...register("placa", { required: true } )} placeholder="Ingrese una placa"/>
+                <input type="text" name="placa" autoComplete="off" className="form-control" {...register("placa", { required: true } )} placeholder="Ingrese una placa"/>
                 { errors?.placa?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
             </div>
             <div className="form-group">

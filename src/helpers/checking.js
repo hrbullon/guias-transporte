@@ -8,9 +8,25 @@ export const validateInput = async (id, token) => {
     }
 }
 
-export const validatePlaca = async (placa) => {
-    const snapshot = await db.collection(`vehicles`).where('placa','==',placa).get()
-    return (snapshot.empty)? true : false
+export const validatePlaca = async (placa, id) => {
+    
+    const snapshot = await db.collection(`vehicles`)
+    .where('placa','==',placa)
+    .get()
+
+    let contador = 0
+
+    snapshot.forEach( snap => {
+        
+        let item = snap.data()
+        
+        if(item.placa == placa && id == undefined || 
+            item.placa == placa && id !== snap.id){
+            contador++
+        }
+    })
+
+    return ( contador > 0 )? false : true
 }
 
 export const validatedVehiculo = async (jornadaId, placa, id) => {
