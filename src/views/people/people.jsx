@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react"
 
 import { useSelector, useDispatch } from "react-redux"
 
+import Swal from "sweetalert2"
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
@@ -10,6 +11,7 @@ import { startCreatingPeople, startDeletingPeople, startLoadingPeople, startUpda
 import { addItem, deleteItem, updateItem } from "../../helpers/dataArray"
 
 import { Form } from "./form"
+import { validatedPeople } from "../../helpers/checking"
 
 const tipos = ["","Acompañante","Ayudante","Conductor"]
 
@@ -76,13 +78,24 @@ export const People = () => {
     
 
     //Envia los datos del formularioe
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
 
-        if( data.id ) {
-            dispatch( startUpdatingPeople( {...data} ) )
+        const validated = await validatedPeople( data.rif, data.id)
+        
+        if(validated){
+            if( data.id ) {
+                dispatch( startUpdatingPeople( {...data} ) )
+            }else{
+                dispatch( startCreatingPeople( {...data} ) )
+            }
         }else{
-            dispatch( startCreatingPeople( {...data} ) )
+            Swal.fire({
+                title: 'Error Cédula',
+                html: `La cédula: <b>${ data.rif }</b> ya se encuentra registrada `,
+                icon: 'warning'
+            }) 
         }
+
     };
     
     //Llena el state data con los datos del persona a editar

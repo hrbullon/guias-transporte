@@ -2,11 +2,13 @@ import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { startCreatingCompany ,startUpdatingCompany, startDeletingCompany, startLoadingCompanies } from '../../actions/companies'
 
+import Swal from "sweetalert2"
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
 import { Form } from "./form"
+import { validatedCompany } from "../../helpers/checking"
 
 export const Companies = () => {
 
@@ -80,7 +82,7 @@ export const Companies = () => {
     }, [deleted])
     
     //Envia los datos del formularioe
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         let { id, rif, nombre, direccion, estado, limite_vehiculos, municipio, parroquia } = data
 
         let values = { 
@@ -97,10 +99,20 @@ export const Companies = () => {
             } 
         }
 
-        if( data.id ) {
-            dispatch( startUpdatingCompany( {type: type,...values} ) )
+        const validate = await validatedCompany( data.rif, data.id )
+
+        if(validate){
+            if( data.id ) {
+                dispatch( startUpdatingCompany( {type: type,...values} ) )
+            }else{
+                dispatch( startCreatingCompany( {type: type,...values} ) )
+            }
         }else{
-            dispatch( startCreatingCompany( {type: type,...values} ) )
+            Swal.fire({
+                title: 'Error RIF/Cédula',
+                html: `La Cédula/RIF: <b>${ data.rif }</b> ya se encuentra registrada `,
+                icon: 'warning'
+            }) 
         }
     };
     

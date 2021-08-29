@@ -8,7 +8,7 @@ import DataTable from 'react-data-table-component'
 import Select from 'react-select'
 
 import { startLoadingOutputs } from '../../actions/outputs'
-import { startCreatingInput, startLoadingInputs, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
+import { startCreatingInput, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingProducts } from '../../actions/products'
@@ -41,7 +41,6 @@ export const Form = (props) => {
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: people } = useSelector(state => state.people)
     const { loaded: outputs } = useSelector(state => state.outputs)
-    const { loaded: inputs } = useSelector(state => state.inputs)
     const { loaded: companies } = useSelector(state => state.companies)
     const { loaded: productsLoaded } = useSelector(state => state.products);
     const { loaded: conversionsLoaded } = useSelector(state => state.conversions);
@@ -173,7 +172,6 @@ export const Form = (props) => {
         /****Dispara la función para obtener las salidas ****/
         if(sesionCompany && workday){
             dispatch( startLoadingOutputs( sesionCompany?.id, workday.id, role ) )
-            dispatch( startLoadingInputs( sesionCompany?.id, workday.id, role ) )
         }
     }, [sesionCompany,workday])
 

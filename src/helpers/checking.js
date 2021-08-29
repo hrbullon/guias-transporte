@@ -50,11 +50,51 @@ export const validatedVehiculoInputs = async (jornadaId, placa, id) => {
         
         if(item.vehiculo.placa == placa && id == undefined || 
             item.vehiculo.placa == placa && id !== doc.id){
-                console.log(item)
             contador++
         }
     });
-    console.log(contador)
+    return contador > 0 ? false : true
+}
+
+export const validatedPeople = async (rif, id) => {
+   
+    const snapshot = await db.collection('people')
+    .where("rif","==",rif)
+    .get()
+    
+    let contador = 0
+
+    snapshot.docs.map(doc => {
+
+        let item = doc.data()
+        
+        if(item.rif == rif && id == undefined || 
+            item.rif == rif && id !== doc.id){
+            contador++
+        }
+    })
+
+    return contador > 0 ? false : true
+}
+
+export const validatedCompany = async (rif, id) => {
+   
+    const snapshot = await db.collection('companies')
+    .where("rif","==",rif)
+    .get()
+    
+    let contador = 0
+
+    snapshot.docs.map(doc => {
+
+        let item = doc.data()
+        
+        if(item.rif == rif && id == undefined || 
+            item.rif == rif && id !== doc.id){
+            contador++
+        }
+    })
+
     return contador > 0 ? false : true
 }
 
