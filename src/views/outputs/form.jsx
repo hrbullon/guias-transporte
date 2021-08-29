@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from "react-hook-form"
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Select from 'react-select'
 import moment from 'moment';
 import 'moment/locale/es';
@@ -103,12 +103,12 @@ export const Form = (props) => {
     
     useEffect(() => {
         
-        if(model){
+        if(model !== null){
             setIdMunicipio({ value: model?.origen?.id, label: model?.origen?.nombre})
-            setIdVehicle({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
             setIdConductor({ value: model?.conductor?.id, label: model?.conductor?.rif})
             setIdAyudante({ value: model?.ayudante?.id, label: model?.ayudante?.rif})
             setIdResponsable({ value: model?.responsable?.id, label: model?.responsable?.rif})
+            setIdVehicle({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
         }
     }, [model])
 
@@ -165,18 +165,17 @@ export const Form = (props) => {
         if(idVehicle.value !== ""){
 
             const info = getItem(vehicles, idVehicle.value)    
-            
             setInputs({ 
-                marca: info?.marca.nombre, 
-                modelo: info?.modelo.nombre,
+                marca: info?.marca?.nombre, 
+                modelo: info?.modelo?.nombre,
                 color: info?.color 
             })
 
             setValue("vehiculo", {
                 id: info.id,
                 placa: info.placa,
-                marca: { id: info.marca.id, nombre: info.marca.nombre }, 
-                modelo: { id: info.modelo.id, nombre: info.modelo.nombre }, 
+                marca: { id: info?.marca?.id, nombre: info.marca?.nombre }, 
+                modelo: { id: info?.modelo?.id, nombre: info.modelo?.nombre }, 
                 color: info.color 
             })
 
@@ -452,6 +451,10 @@ export const Form = (props) => {
                     <div className="col-lg-12">
                         <div className="card">
                             <div className="card-body">
+                                <Link to="/outputs" className="btn btn-primary pull-right mt-4" title="Ir al listado de guias">
+                                    <i className="fa fa-list"></i> Ir al listado                        
+                                </Link>
+                    
                                 <legend>Datos de Jornada</legend>
                                 <div className="table-responsive">
                                     <table className="table">
