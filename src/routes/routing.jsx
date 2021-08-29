@@ -5,7 +5,6 @@ import { Users } from '../views/users/users.jsx';
 import { Vehicles } from '../views/vehicles/vehicles.jsx';
 import { Companies } from '../views/companies/companies.jsx';
 import { Products } from '../views/products/products.jsx';
-import { Form } from '../views/documents/form.jsx';
 import { Workdays } from '../views/workdays/workdays.jsx';
 import { People } from '../views/people/people';
 import { Categories } from '../views/categories/categories.jsx';
