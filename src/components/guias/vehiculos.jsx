@@ -8,7 +8,7 @@ export const Vehiculo = (props) => {
                     <tbody>
                         <tr>
                             <th className="text-center table-secondary" colSpan="2">
-                                Datos del Vehículo
+                                { props.titulo }
                             </th>
                         </tr>
                         <tr>
@@ -35,7 +35,7 @@ export const Vehiculo = (props) => {
                     <tbody>
                         <tr>
                             <th className="text-center table-secondary" colSpan="4">
-                                Datos del Vehículo
+                                { props.titulo }
                             </th>
                         </tr>
                         <tr>

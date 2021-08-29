@@ -6,16 +6,17 @@ import { useParams, Link } from 'react-router-dom'
 
 import DataTable from 'react-data-table-component'
 import Select from 'react-select'
-import Swal from 'sweetalert2'
 
 import { startLoadingOutputs } from '../../actions/outputs'
-import { startCreatingInput, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
+import { startCreatingInput, startLoadingInputs, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingProducts } from '../../actions/products'
 import { startLoadingPeople } from '../../actions/people'
 import { startLoadingConversions } from '../../actions/conversion'
 import { startLoadingVehicles } from '../../actions/vehicles'
+
+import { validatedVehiculoInputs } from '../../helpers/checking'
 
 import { 
     getItem, 
@@ -24,7 +25,8 @@ import {
     prepareOptionsSelect, 
     prepareOptionsConversion, 
     prepareOptionsRif
-    } from '../../helpers/dataArray'
+} from '../../helpers/dataArray'
+import Swal from 'sweetalert2'
 
 export const Form = (props) => {
 
@@ -39,6 +41,7 @@ export const Form = (props) => {
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: people } = useSelector(state => state.people)
     const { loaded: outputs } = useSelector(state => state.outputs)
+    const { loaded: inputs } = useSelector(state => state.inputs)
     const { loaded: companies } = useSelector(state => state.companies)
     const { loaded: productsLoaded } = useSelector(state => state.products);
     const { loaded: conversionsLoaded } = useSelector(state => state.conversions);
@@ -170,6 +173,7 @@ export const Form = (props) => {
         /****Dispara la función para obtener las salidas ****/
         if(sesionCompany && workday){
             dispatch( startLoadingOutputs( sesionCompany?.id, workday.id, role ) )
+            dispatch( startLoadingInputs( sesionCompany?.id, workday.id, role ) )
         }
     }, [sesionCompany,workday])
 
@@ -181,9 +185,14 @@ export const Form = (props) => {
  
     useEffect(() => {
         if(outputs.length > 0){
-            let vehiculos = outputs.map( item => item.vehiculo )
-            const options = prepareOptionsPlaca( vehiculos )
-            setOptionsVehicles( options )
+ 
+            let vehiculos = outputs.map( item => item.vehiculo)
+
+            if( vehiculos.length > 0){
+                const options = prepareOptionsPlaca( vehiculos )
+                setOptionsVehicles( options )
+            }
+
         }
     }, [outputs])
 
@@ -434,27 +443,21 @@ export const Form = (props) => {
         
         let rows = [ ...items ]
 
-        //let filter = rows.filter( row => row.producto.id === inputsItems.producto)
-        
-        //if(filter.length == 0){
-            const item = {
-                producto: {
-                    id: inputsItems.producto,
-                    nombre: product.nombre
-                },
-                presentacion: {
-                    id: inputsItems.presentacion,
-                    ...presentation
-                },
-                cantidad: inputsItems.cantidad,
-                subtotal: inputsItems.subtotal,
-            }
-    
-            rows.push(item)
-            setItems(rows)
-        /* }else{
-            Swal.fire('Error', 'No puede agregar un producto varias veces','warning')
-        } */
+        const item = {
+            producto: {
+                id: inputsItems.producto,
+                nombre: product.nombre
+            },
+            presentacion: {
+                id: inputsItems.presentacion,
+                ...presentation
+            },
+            cantidad: inputsItems.cantidad,
+            subtotal: inputsItems.subtotal,
+        }
+
+        rows.push(item)
+        setItems(rows)
     }
 
     const handleDelete = (item, index) => {
@@ -494,7 +497,6 @@ export const Form = (props) => {
     
     const handleChangingPlacaTras = (input) => {
         if(input){
-            console.log(input);
             setIdVehiculoTras(input)
         }else{
             setIdVehiculoTras({ value:"", label:"Seleccione un vehículo"})
@@ -519,7 +521,7 @@ export const Form = (props) => {
         }
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
 
         let { importador } = infoVehiculo
         let vehiculo = infoVehiculo
@@ -529,29 +531,54 @@ export const Form = (props) => {
         }
 
         delete vehiculo.importador
-        
-        let values = {
-            fecha: data.fecha,
-            retorno: data.retorno,
-            jornada: workday,
-            token: workday.token,
-            importador,
-            vehiculo,
-            cliente: infoCliente,
-            trasbordo,
-            items,
-            estado:"Pendiente",
-            id:(id)?id:""
+
+        let validateTras = true
+        const validated = await validatedVehiculoInputs(workday.id, vehiculo.placa, id)
+        //Si hay un vehículo de trasbordo
+        if(trasbordo.vehiculo.id !== ""){
+            validateTras = await validatedVehiculoInputs(workday.id, trasbordo.vehiculo.placa, id)
         }
 
-        console.log(id);
+        if(validated && validateTras){
 
-        if(id){
-            dispatch( startUpdatingInput( {...values}, role ) )
+            let values = {
+                fecha: data.fecha,
+                retorno: data.retorno,
+                jornada: workday,
+                token: workday.token,
+                importador,
+                vehiculo,
+                cliente: infoCliente,
+                trasbordo,
+                items,
+                estado:"Pendiente",
+                id:(id)?id:""
+            }
+    
+            if(id){
+                dispatch( startUpdatingInput( {...values}, role ) )
+            }else{
+                dispatch( startCreatingInput( {...values} ) )
+            }   
+
         }else{
-            dispatch( startCreatingInput( {...values} ) )
+            
+            if(!validated){
+                Swal.fire({
+                    title: 'Error vehículo',
+                    html: `El vehículo con placa: <b>${ data.vehiculo.placa }</b> fue registrados con otras empresas, elija otro vehículo`,
+                    icon: 'warning'
+                }) 
+            }
+            
+            if(!validateTras){
+                Swal.fire({
+                    title: 'Error vehículo trasbordo',
+                    html: `El vehículo con placa: <b>${ data.trasbordo_vehiculo.placa }</b> fue registrados en otras entradas, elija otro vehículo`,
+                    icon: 'warning'
+                }) 
+            }
         }
-
     }
 
     return (
@@ -741,68 +768,70 @@ export const Form = (props) => {
                 </div>
             </div>
             {/*** Datos de vehículo/conductor/ayudante Trasbordo*/}
-            <div className="card">
-                <div className="card-body">
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <legend>Datos de Vehículo/Conductor (Trasbordo)</legend>
-                            <hr />
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Placa</label>
-                                <Select name="trasbordo_vehiculo" value={ idVehiculoTras } {...register("trasbordo_vehiculo" )} onChange={ handleChangingPlacaTras } options={ optionsVehiclesTras } />
-                                { errors?.trasbordo_vehiculo &&  (<span className="text-danger">Este campo es requerido { console.log(errors.trasbordo_vehiculo) }</span>) }                             
-                            </div>
-                        </div>    
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Marca</label>
-                                <input type="text" value={ infoVehiculoTras.marca } disabled className="form-control"/>
+            { model?.id &&
+                <div className="card">
+                    <div className="card-body">
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <legend>Datos de Vehículo/Conductor (Trasbordo)</legend>
+                                <hr />
                             </div>
                         </div>
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Modelo</label>
-                                <input type="text" value={ infoVehiculoTras.modelo } disabled className="form-control"/>
+                        <div className="row">
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Placa</label>
+                                    <Select name="trasbordo_vehiculo" value={ idVehiculoTras } {...register("trasbordo_vehiculo" )} onChange={ handleChangingPlacaTras } options={ optionsVehiclesTras } />
+                                    { errors?.trasbordo_vehiculo &&  (<span className="text-danger">Este campo es requerido { console.log(errors.trasbordo_vehiculo) }</span>) }                             
+                                </div>
+                            </div>    
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Marca</label>
+                                    <input type="text" value={ infoVehiculoTras.marca } disabled className="form-control"/>
+                                </div>
+                            </div>
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Modelo</label>
+                                    <input type="text" value={ infoVehiculoTras.modelo } disabled className="form-control"/>
+                                </div>
+                            </div>
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Color</label>
+                                    <input type="text" value={ infoVehiculoTras.color } disabled className="form-control"/>
+                                </div>
                             </div>
                         </div>
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Color</label>
-                                <input type="text" value={ infoVehiculoTras.color } disabled className="form-control"/>
-                            </div>
+                        <div className="row">
+                            <div className="col-lg-3">
+                                <label className="control-label">Cédula</label>
+                                <Select name="trasbordo_conductor" value={ idConductor } {...register("trasbordo_conductor" )} onChange={ handleChangingConductor } options={ itemsPeople } />
+                                { errors?.trasbordo_conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
+                            </div>   
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Nombre del Conductor</label>
+                                    <input value={ conductor.nombre } type="text" disabled className="form-control"/>
+                                </div>
+                            </div>   
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Apellido del Conductor</label>
+                                    <input value={ conductor.apellido } type="text" disabled className="form-control"/>
+                                </div>
+                            </div>   
+                            <div className="col-lg-3">
+                                <div className="form-group">
+                                    <label className="control-label">Teléfono</label>
+                                    <input value={ conductor.telefono } type="text" disabled className="form-control"/>
+                                </div>
+                            </div>   
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-3">
-                            <label className="control-label">Cédula</label>
-                            <Select name="trasbordo_conductor" value={ idConductor } {...register("trasbordo_conductor" )} onChange={ handleChangingConductor } options={ itemsPeople } />
-                            { errors?.trasbordo_conductor?.type === 'required' &&  (<span className="text-danger">Este campo es requerido</span>) }
-                        </div>   
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Nombre del Conductor</label>
-                                <input value={ conductor.nombre } type="text" disabled className="form-control"/>
-                            </div>
-                        </div>   
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Apellido del Conductor</label>
-                                <input value={ conductor.apellido } type="text" disabled className="form-control"/>
-                            </div>
-                        </div>   
-                        <div className="col-lg-3">
-                            <div className="form-group">
-                                <label className="control-label">Teléfono</label>
-                                <input value={ conductor.telefono } type="text" disabled className="form-control"/>
-                            </div>
-                        </div>   
                     </div>
                 </div>
-            </div>
+            }
             {/**** Datos de Carga */}
             <div className="card">
                 <div className="card-body">

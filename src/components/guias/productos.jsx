@@ -23,10 +23,26 @@ export const Productos = (props) => {
                 }
             </tbody>
         </table>
-        <Vehiculo vehiculo={props.model?.vehiculo} type={props.device}></Vehiculo>
+        { props?.model?.trasbordo?.vehiculo &&
+            <>
+            <Vehiculo titulo="Datos vehículo anterior" vehiculo={props.model?.vehiculo} type={props.device}></Vehiculo>
+            <Vehiculo titulo="Datos vehículo actual" vehiculo={props.model?.trasbordo?.vehiculo} type={props.device}></Vehiculo>
+            </>
+        }
+        { !props?.model?.trasbordo?.vehiculo &&
+            <Vehiculo titulo="Datos vehículo" vehiculo={props.model?.vehiculo} type={props.device}></Vehiculo>
+        }
         <table className="table table-fit">
             <tbody>
-                <Person titulo="Datos del Conductor" type={props.device} model={ props.model?.vehiculo.conductor} />
+                { props?.model?.trasbordo?.conductor &&
+                    <>
+                        <Person titulo="Datos del Conductor anterior" type={props.device} model={ props.model?.vehiculo.conductor} />
+                        <Person titulo="Datos del Conductor actual" type={props.device} model={ props.model?.trasbordo?.conductor} />
+                    </>
+                }  
+                { !props?.model?.trasbordo?.vehiculo &&
+                    <Person titulo="Datos del Conductor" type={props.device} model={ props.model?.vehiculo.conductor} />
+                }
                 <Person titulo="Datos del Ayudante" type={props.device} model={ props.model?.vehiculo.ayudante} />
             </tbody>
         </table>

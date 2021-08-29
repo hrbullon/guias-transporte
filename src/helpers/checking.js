@@ -16,20 +16,46 @@ export const validatePlaca = async (placa) => {
 export const validatedVehiculo = async (jornadaId, placa, id) => {
 
     const outputsSnap = await db.collection('outputs')
-    .where("jornadaId","==",jornadaId)
+    .where("jornada.id","==",jornadaId)
     .where("estado","==","Activa")
     .get()
     
     let contador = 0
    
     outputsSnap.forEach( snap => {
+        
         let item = snap.data()
-        if(item.vehiculo.placa == placa && item.id !== id){
+        
+        if(item.vehiculo.placa == placa && id == undefined || 
+            item.vehiculo.placa == placa && id !== snap.id){
             contador++
         }
     })
 
-    return ( contador < 2 )
+    return ( contador < 2 )? true : false
+}
+
+export const validatedVehiculoInputs = async (jornadaId, placa, id) => {
+   
+    const snapshot = await db.collection('inputs')
+    .where("jornada.id","==",jornadaId)
+    .where("estado","==","Pendiente")
+    .get()
+    
+    let contador = 0
+
+    snapshot.docs.map(doc => {
+
+        let item = doc.data()
+        
+        if(item.vehiculo.placa == placa && id == undefined || 
+            item.vehiculo.placa == placa && id !== doc.id){
+                console.log(item)
+            contador++
+        }
+    });
+    console.log(contador)
+    return contador > 0 ? false : true
 }
 
 export const validateLimit = ( outputs, company, id = false ) => {

@@ -36,6 +36,11 @@ export const View = () => {
                 setDevice("mobile")
                 setLimit(25)
             }
+
+        if(model?.trasbordo?.vehiculo || model?.trasbordo?.conductor){
+            setLimit(10)
+        }
+
     }, [])
 
     useEffect(() => {
