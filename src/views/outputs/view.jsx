@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment';
@@ -11,6 +11,7 @@ import { Notas } from '../../components/guias/notas';
 import { Firmas } from '../../components/guias/firmas';
 import { Cabecera } from '../../components/guias/cabecera';
 import { Vehiculo } from '../../components/guias/vehiculos';
+import { Info } from '../../components/guias/info';
 
 export const View = () => {
     
@@ -19,6 +20,8 @@ export const View = () => {
     
     const { model } = useSelector(state => state.outputs)
     const { uid } = useSelector(state => state.auth)
+
+    const [device, setDevice] = useState("desktop")
 
     useEffect(() => {
         //Coloco un título a la página
@@ -48,25 +51,23 @@ export const View = () => {
                                 <tbody>
                                     <tr>
                                         <th>Numero</th>
-                                        <td>{ model?.codigo }</td>
-                                    </tr>
-                                    <tr>
                                         <th>Origen</th>
-                                        <td>{ model?.origen?.nombre }</td>
+                                        <th>Fecha</th>
                                     </tr>
                                     <tr>
-                                        <th>Fecha</th>
+                                        <td>{ model?.codigo }</td>
+                                        <td>{ model?.origen?.nombre }</td>
                                         <td>{ moment(new Date(model?.fecha?.seconds*1000)).format("L") }</td>
                                     </tr>
-                                    <Company titulo="Datos del Importador" model={model?.importador} representante={model?.importador.representante} />    
+                                    <Company titulo="Datos del Importador" type={device} model={model?.importador} representante={model?.importador.representante} />    
                                 </tbody>
                             </table>
-                            <Vehiculo vehiculo={model?.vehiculo}></Vehiculo>
-                            <table className="table table-fit">
+                                <Vehiculo titulo="Datos del Vehículo" type="otro" vehiculo={model?.vehiculo}></Vehiculo>
+                                <table className="table table-fit">
                                 <tbody>
-                                    <Person titulo="Datos del Conductor" model={ model?.conductor} />
-                                    <Person titulo="Datos del Ayudante" model={ model?.ayudante} />
-                                    <Person titulo="Datos del Responsable" model={ model?.responsable} />
+                                    <Person type={device} titulo="Datos del Conductor" model={ model?.conductor} />
+                                    <Person type={device} titulo="Datos del Ayudante" model={ model?.ayudante} />
+                                    <Person type={device} titulo="Datos del Responsable" model={ model?.responsable} />
                                 </tbody>
                             </table>
                             <Firmas></Firmas>
