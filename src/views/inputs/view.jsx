@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 
 import { startLoadingItem, startUpdatingInput } from '../../actions/inputs';
 import { validateInput } from '../../helpers/checking';
-import { url } from '../../config/config'
 
 import { Productos } from '../../components/guias/productos';
 
@@ -14,13 +13,12 @@ export const View = () => {
     
     let { id } = useParams()
     const dispatch = useDispatch()
-    const urlQR = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${url}inputs/view/${id}`
     
     const { model } = useSelector(state => state.inputs)
     const { uid } = useSelector(state => state.auth)
 
     const [device, setDevice] = useState("desktop")
-    const [limit, setLimit] = useState(20)
+    const [limit, setLimit] = useState(15)
 
     useEffect(() => {
         //Coloco un título a la página
@@ -45,6 +43,7 @@ export const View = () => {
 
     useEffect(() => {
         document.title = `Guía de Entrada - ${model?.codigo}`
+        console.log(model);
     }, [model])
 
     const handleAcceptInput = () => {

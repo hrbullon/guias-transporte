@@ -1,8 +1,11 @@
 import React from 'react'
 
 export const Vehiculo = (props) => {
+
+
     return (
         <>
+        { console.log(props) }
             {  props.type == "mobile" &&
                 <table className="table table-fit">
                     <tbody>
@@ -13,11 +16,11 @@ export const Vehiculo = (props) => {
                         </tr>
                         <tr>
                             <th>Marca</th>
-                            <td>{ props?.vehiculo?.marca?.nombre }</td>
+                            <td>{ props?.vehiculo?.marca }</td>
                         </tr>
                         <tr>
                             <th>Modelo</th>
-                            <td>{ props?.vehiculo?.modelo?.nombre }</td>
+                            <td>{ props?.vehiculo?.modelo }</td>
                         </tr>
                         <tr>
                             <th>Placa</th>
@@ -46,8 +49,8 @@ export const Vehiculo = (props) => {
                         </tr>
                         <tr>
                             <td>{ props?.vehiculo?.placa }</td>
-                            <td>{ props?.vehiculo?.marca?.nombre }</td>
-                            <td>{ props?.vehiculo?.modelo?.nombre }</td>
+                            <td>{ props?.vehiculo?.marca }</td>
+                            <td>{ props?.vehiculo?.modelo }</td>
                             <td>{ props?.vehiculo?.color }</td>
                         </tr>
                     </tbody>

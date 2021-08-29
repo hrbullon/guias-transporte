@@ -9,10 +9,14 @@ import { Vehiculo } from './vehiculos'
 
 export const Productos = (props) => {
 
+    let calc = (Math.round((props?.items?.length)/props.limit) == 0)? 1 : Math.round((props?.items?.length)/props.limit)
     return (
         <>
-        { props?.items && props.page <= Math.round((props?.items.length)/props.limit) &&
+        { /** props.page <= Math.round((props?.items.length)/props.limit) */}
+        
+        { props?.items && props?.items.length > 0 && props.page <= calc  &&
         <>
+        
         <Cabecera></Cabecera>
         <table className="table table-fit">
             <tbody>
@@ -23,24 +27,24 @@ export const Productos = (props) => {
                 }
             </tbody>
         </table>
-        { props?.model?.trasbordo?.vehiculo &&
+        { props?.model?.trasbordo?.vehiculo.id !== "" &&
             <>
             <Vehiculo titulo="Datos vehículo anterior" vehiculo={props.model?.vehiculo} type={props.device}></Vehiculo>
             <Vehiculo titulo="Datos vehículo actual" vehiculo={props.model?.trasbordo?.vehiculo} type={props.device}></Vehiculo>
             </>
         }
-        { !props?.model?.trasbordo?.vehiculo &&
+        { !props?.model?.vehiculo.id !== "" && props?.model?.trasbordo?.vehiculo.id == "" &&
             <Vehiculo titulo="Datos vehículo" vehiculo={props.model?.vehiculo} type={props.device}></Vehiculo>
         }
         <table className="table table-fit">
             <tbody>
-                { props?.model?.trasbordo?.conductor &&
+                { props?.model?.trasbordo?.conductor.id !== "" &&
                     <>
                         <Person titulo="Datos del Conductor anterior" type={props.device} model={ props.model?.vehiculo.conductor} />
                         <Person titulo="Datos del Conductor actual" type={props.device} model={ props.model?.trasbordo?.conductor} />
                     </>
                 }  
-                { !props?.model?.trasbordo?.vehiculo &&
+                { props?.model?.vehiculo?.conductor.rif !== "" && props?.model?.trasbordo?.conductor?.id == "" &&
                     <Person titulo="Datos del Conductor" type={props.device} model={ props.model?.vehiculo.conductor} />
                 }
                 <Person titulo="Datos del Ayudante" type={props.device} model={ props.model?.vehiculo.ayudante} />
