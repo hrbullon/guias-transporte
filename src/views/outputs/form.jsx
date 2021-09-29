@@ -469,9 +469,7 @@ export const Form = (props) => {
                                             </tr>
                                             <tr>
                                                 <td> Días de salida</td>
-                                                <td>
-                                                    Lunes
-                                                </td>
+                                                <td> { ucFirstString(moment(workday.fecha_salida).format("dddd")) } </td>
                                             </tr>                            
                                             <tr>
                                                 <td> Días de entrada</td>
