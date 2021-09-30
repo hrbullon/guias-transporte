@@ -115,9 +115,15 @@ export const validatedCompany = async (rif, id) => {
 }
 
 export const validateLimit = ( outputs, company, id = false ) => {
+    
     const items = outputs.filter( item => item.estado == "Activa" && item.id !== id )
-    const limit = parseInt(company.limite_vehiculos)
-    return ( items.length < limit )? true : false
+    //Es probable que si el usuario es admin no tenga un empresa definida
+    if(company){
+        const limit = parseInt(company.limite_vehiculos)
+        return ( items.length < limit )? true : false
+    }else{
+        return true
+    }
 }
 
 export const validateDuplicated = ( outputs, data, id ) => {

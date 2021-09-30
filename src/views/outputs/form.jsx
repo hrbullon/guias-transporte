@@ -191,12 +191,14 @@ export const Form = (props) => {
             const { rif, nombre, apellido, telefono } = getItem(people, idConductor.value)
 
             setConductor({ 
+                id: idConductor.value,
                 nombre, 
                 apellido,
                 telefono 
             })
 
             setValue("conductor", {
+                id: idConductor.value,
                 rif,
                 nombre,
                 apellido,

@@ -26,7 +26,8 @@ export const startLoadingCompany = (user) => {
             const company = db.collection(`companies`).doc(doc.data().empresa.id)
             company.get().then( (docx) => { 
                 let empresa = docx.data()
-                if(empresa?.id){
+                
+                if(empresa){
                     empresa.id = doc.data().empresa.id
                 }
                 data = { rol: doc.data().rol , empresa }
