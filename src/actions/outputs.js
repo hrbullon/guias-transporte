@@ -122,6 +122,7 @@ export const startUpdatingOutput = ( data, role ) => {
                 const doc = await db.doc(`${ table }/${ data.id }`).get()
                 let copy = { ...data }
                 delete copy.id
+                delete copy.importador
     
                 const updateOutput = { 
                     ...doc.data(), 
@@ -176,7 +177,7 @@ export const startCancelingOutput = ( data ) => {
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonText: 'Cancelar',
-            confirmButtonText: 'Sí, cancelar'
+            confirmButtonText: 'Sí, eliminar'
         }).then( async (result) => {
             if (result.isConfirmed) {
 
@@ -193,7 +194,7 @@ export const startCancelingOutput = ( data ) => {
                 await db.doc(`${ table }/${ doc.id }`).update( updateOutput )
                 dispatch( outputUpdated( { id: data.id, ...updateOutput } ) )
     
-                Swal.fire('Correcto', 'Salida cancelada!!','success')
+                Swal.fire('Correcto', 'Salida eliminada!!','success')
 
             }
         })
