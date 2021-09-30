@@ -117,8 +117,9 @@ export const validatedCompany = async (rif, id) => {
 export const validateLimit = ( outputs, company, id = false ) => {
     
     const items = outputs.filter( item => item.estado == "Activa" && item.id !== id )
+    
     //Es probable que si el usuario es admin no tenga un empresa definida
-    if(company){
+    if(company.length > 0){
         const limit = parseInt(company.limite_vehiculos)
         return ( items.length < limit )? true : false
     }else{

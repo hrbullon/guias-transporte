@@ -122,15 +122,14 @@ export const Form = (props) => {
 
         /****Dispara la función para obtener la jornada ****/
         dispatch( startLoadingSigleWorkdays() )
-
-        if(id !== undefined && role == "Super_Role"){
-            dispatch( startLoadingItem( id ) );
-        }else if(id !== undefined){
-            Swal.fire('Error', 'Salida no encontrada','error')
-            props.history.push('/outputs')
-        }
-
+        
     }, [])
+
+    useEffect(() => {
+        if(id !== undefined && role !== undefined && role == "Super_Role"){
+            dispatch( startLoadingItem( id ) );
+        }
+    }, [id, role])
 
     /***** Cuando ya se tienen los vehículos cargados *****/
     useEffect(() => {
