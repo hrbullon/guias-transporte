@@ -1,5 +1,6 @@
 import React from 'react'
 import { Company } from '../company/company'
+import { Customer } from '../company/customer'
 import { Person } from '../person/person'
 import { Cabecera } from './cabecera'
 import { Firmas } from './firmas'
@@ -22,8 +23,28 @@ export const Productos = (props) => {
             <tbody>
                 <Info model={props.model} type={props.device}></Info>
                 <Company titulo="Datos del Importador" type={props.device} model={props.model?.importador} representante={props.model?.importador.representante} />    
-                {  props.device == "desktop" &&
-                    <Company titulo="Datos del Cliente/Receptor" type={props.device}  model={props.model?.cliente} representante={props.model?.cliente.representante_comercio} />    
+                {  props.device == "desktop" && props.model?.cliente.id !== "" &&
+                    <>
+                        <tr>
+                            <th className="text-center table-secondary" colSpan="3">Datos de Clientes</th>
+                        </tr>
+                        <tr>
+                            <th>Nombre o Razón Social</th>
+                            <th>RIF</th>
+                            <th>Dirección</th>
+                        </tr>
+                        <Customer type={props.device}  model={props.model?.cliente}/>        
+                    </>
+                }
+                {  props.device == "desktop" && props.model?.cliente_dos.id !== "" &&
+                    <>
+                        <Customer type={props.device}  model={props.model?.cliente_dos}/>    
+                    </>
+                }
+                {  props.device == "desktop" && props.model?.cliente_tres.id !== "" &&
+                    <>
+                        <Customer type={props.device}  model={props.model?.cliente_tres}/>
+                    </>
                 }
             </tbody>
         </table>

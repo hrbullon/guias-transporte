@@ -51,24 +51,22 @@ export const validatedVehiculo = async (jornadaId, placa, id) => {
     return ( contador < 2 )? true : false
 }
 
-export const validatedVehiculoInputs = async (jornadaId, placa, id) => {
-   
-    const snapshot = await db.collection('inputs')
+export const validatedVehiculoInputs = async (jornadaId, placa, importador) => {
+
+    const inputs = await db.collection('inputs')
     .where("jornada.id","==",jornadaId)
     .where("estado","==","Pendiente")
     .get()
     
     let contador = 0
 
-    snapshot.docs.map(doc => {
-
+    inputs.docs.map(doc => {
         let item = doc.data()
-        
-        if(item.vehiculo.placa == placa && id == undefined || 
-            item.vehiculo.placa == placa && id !== doc.id){
+        if(item.vehiculo.placa == placa && item.importador.id !== importador.id){
             contador++
         }
     });
+
     return contador > 0 ? false : true
 }
 

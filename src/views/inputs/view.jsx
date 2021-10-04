@@ -18,7 +18,7 @@ export const View = () => {
     const { uid } = useSelector(state => state.auth)
 
     const [device, setDevice] = useState("desktop")
-    const [limit, setLimit] = useState(15)
+    const [limit, setLimit] = useState(10)
 
     useEffect(() => {
         //Coloco un título a la página

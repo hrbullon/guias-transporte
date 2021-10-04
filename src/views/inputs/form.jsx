@@ -242,17 +242,7 @@ export const Form = (props) => {
             setItems(model.items)
         }        
     }, [model, outputs])
-    
-    //Está pendiente si cambia el valor de created o updated
-    //En caso de cambiar es porque se creó o editó correctamente la entrada
-    useEffect(() => {
 
-        if(created !== null || updated !== null){
-            window.location.href = '/inputs'
-        }
-
-    }, [created, updated])
-    
     useEffect(() => {
         if(companies){
             let items = []
@@ -628,11 +618,11 @@ export const Form = (props) => {
         delete vehiculo.importador
 
         let validateTras = true
-        const validated = await validatedVehiculoInputs(workday.id, vehiculo.placa, id)
+        const validated = await validatedVehiculoInputs(workday.id, vehiculo.placa, importador)
         //Si hay un vehículo de trasbordo
-        if(trasbordo.vehiculo.id !== ""){
-            validateTras = await validatedVehiculoInputs(workday.id, trasbordo.vehiculo.placa, id)
-        }
+        /*if(trasbordo.vehiculo.id !== ""){
+            validateTras = await validatedVehiculoInputs(workday.id, trasbordo.vehiculo.placa, importador)
+        }*/
 
         if(validated && validateTras){
 

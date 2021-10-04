@@ -110,8 +110,8 @@ export const startCreatingInput = ( data ) => {
                     }
         
                     db.doc('counters/cod').update( updateInput )
-                    Swal.fire('Correcto', 'Entrada registrada!!','success')
                     dispatch( inputCreated( { id: newDoc.id, ...copy } ) )
+                    Swal.fire('Correcto', 'Entrada registrada!!','success')
  
                 }
             }).catch((error) => {
