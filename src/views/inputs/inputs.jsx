@@ -93,7 +93,7 @@ export const Inputs = (props) => {
         
         //Actualizo el listado de vehículos
         if(updated){
-            dispatch( startLoadingInputs(sesionCompany.id, workday.id) )
+            dispatch( startLoadingInputs( sesionCompany.id, workday.id, role ) )
         }
 
     }, [updated])
