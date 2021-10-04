@@ -8,7 +8,10 @@ import DataTable from 'react-data-table-component'
 import Select from 'react-select'
 
 import { startLoadingOutputs } from '../../actions/outputs'
-import { startCreatingInput, startLoadingItem, startUpdatingInput } from '../../actions/inputs'
+import { 
+    startCreatingInput, 
+    startLoadingItem, 
+    startUpdatingInput } from '../../actions/inputs'
 import { startLoadingSigleWorkdays } from '../../actions/workdays'
 import { startLoadingCompanies } from '../../actions/companies'
 import { startLoadingProducts } from '../../actions/products'
@@ -21,6 +24,7 @@ import { validatedVehiculoInputs } from '../../helpers/checking'
 import { 
     getItem, 
     getInfoVehiculo, 
+    getCompanyInfo,
     prepareOptionsPlaca, 
     prepareOptionsSelect, 
     prepareOptionsConversion, 
@@ -37,33 +41,21 @@ export const Form = (props) => {
     const { model, created, updated } = useSelector(state => state.inputs)
 
     const { role, sesionCompany } = useSelector(state => state.auth)
-    const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { model: workday } = useSelector(state => state.workdays)
+    const { loaded: vehicles } = useSelector(state => state.vehicles)
     const { loaded: people } = useSelector(state => state.people)
     const { loaded: outputs } = useSelector(state => state.outputs)
     const { loaded: companies } = useSelector(state => state.companies)
     const { loaded: productsLoaded } = useSelector(state => state.products);
     const { loaded: conversionsLoaded } = useSelector(state => state.conversions);
 
-    const [items, setItems] = useState([])
-    const [ itemsPeople, setItemsPeople] = useState([])
+    /****** Default Values *****/
+    const defaultCustomer = {
+        value:'',
+        label:'Seleccione un cliente'
+    }
 
-    const [ conductor, setConductor ] = useState({
-        id:'',
-        nombre:'',
-        apellido:'',
-        telefono:''
-    })
-
-    /*****States */
-    const [ inputsItems, setInputsItems ] = useState({
-        producto:"",
-        presentacion:"",
-        cantidad:"",
-        subtotal:""
-    })
-
-    const [ infoCliente, setInfoCliente] = useState({
+    const customerStructure = {
         id:"",
         rif:"",
         nombre:"",
@@ -75,7 +67,36 @@ export const Form = (props) => {
             nombre:"",
             telefono:""
         }
+    }
+
+    const defaultVehicle = {
+        value:'',
+        label:'Seleccione un vehiculo'
+    }
+
+    /******End Default Values ******/
+
+    /*****States */
+    const [items, setItems] = useState([])
+    const [ itemsPeople, setItemsPeople] = useState([])
+
+    const [ conductor, setConductor ] = useState({
+        id:'',
+        nombre:'',
+        apellido:'',
+        telefono:''
     })
+
+    const [ inputsItems, setInputsItems ] = useState({
+        producto:"",
+        presentacion:"",
+        cantidad:"",
+        subtotal:""
+    })
+
+    const [ infoCliente, setInfoCliente] = useState(customerStructure)
+    const [ infoClienteTwo, setInfoClienteTwo] = useState(customerStructure)
+    const [ infoClienteThree, setInfoClienteThree] = useState(customerStructure)
 
     const [ infoVehiculo, setInfoVehiculo] = useState({
         id:"",
@@ -109,20 +130,12 @@ export const Form = (props) => {
     const [ optionsProducts, setOptionsProducts] = useState({})
     const [ optionsConversions, setOptionsConversions] = useState({})
 
-    const [ idCustomer, setIdCustomer] = useState({
-        value:'',
-        label:'Seleccione un cliente'
-    })
+    const [ idCustomer, setIdCustomer] = useState(defaultCustomer)
+    const [ idCustomerTwo, setIdCustomerTwo] = useState(defaultCustomer)
+    const [ idCustomerThree, setIdCustomerThree] = useState(defaultCustomer)
     
-    const [ idVehiculo, setIdVehiculo] = useState({
-        value:'',
-        label:'Seleccione un vehiculo'
-    })
-
-    const [ idVehiculoTras, setIdVehiculoTras] = useState({
-        value:'',
-        label:'Seleccione un vehículo'
-    })
+    const [ idVehiculo, setIdVehiculo] = useState(defaultVehicle)
+    const [ idVehiculoTras, setIdVehiculoTras] = useState(defaultVehicle)
     
     const [ idConductor, setIdConductor] = useState({
         value:'',
@@ -214,6 +227,15 @@ export const Form = (props) => {
         if(model !== null && outputs.length > 0){
             reset({ fecha: model.fecha, retorno: model.retorno })
             setIdCustomer({ value: model?.cliente?.id, label: `${model?.cliente?.rif} ${model?.cliente?.nombre}` })
+            
+            if(model?.cliente_dos?.id !== ""){
+                setIdCustomerTwo({ value: model?.cliente_dos?.id, label: `${model?.cliente_dos?.rif} ${model?.cliente_dos?.nombre}` })
+            }
+            
+            if(model?.cliente_tres?.id !== ""){
+                setIdCustomerThree({ value: model?.cliente_tres?.id, label: `${model?.cliente_tres?.rif} ${model?.cliente_tres?.nombre}` })
+            }
+
             setIdVehiculo({ value: model?.vehiculo?.id, label: model?.vehiculo?.placa})
             setIdVehiculoTras({ value: model?.trasbordo?.vehiculo?.id, label: model?.trasbordo?.vehiculo?.placa})
             setIdConductor({ value: model?.trasbordo?.conductor.id, label: model?.trasbordo?.conductor?.rif })
@@ -226,11 +248,11 @@ export const Form = (props) => {
     useEffect(() => {
 
         if(created !== null || updated !== null){
-            props.history.push('/inputs')
+            window.location.href = '/inputs'
         }
 
-    }, [created,updated])
-
+    }, [created, updated])
+    
     useEffect(() => {
         if(companies){
             let items = []
@@ -273,31 +295,20 @@ export const Form = (props) => {
         if(idCustomer.value !== ""){
             
             const item = getItem( companies, idCustomer.value )
-            
-            setInfoCliente({
-                ...infoCliente,
-                id: idCustomer.value,
-                rif: item.rif,
-                nombre: item.nombre,
-                municipio: item.municipio,
-                parroquia: item.parroquia,
-                direccion: item.direccion,
-                representante: { 
-                    nombre:item.representante.nombre,
-                    rif: item.representante.rif,
-                    telefono: item.representante.telefono
-                }
-            })
+            const info = getCompanyInfo(item)
+
+            if (idCustomer.value !== "") {
+                setInfoCliente({
+                    ...info,
+                    id: idCustomer.value
+                })
+            }
 
             cliente = {
                 id: idCustomer.value, 
                 nombre: idCustomer.label 
             }
 
-            //Para que no me muestre error 
-            //aún cuando haya seleccionado un cliente
-            //este problema es debido al paquete que se está 
-            //usando para generar los campos de tipo select 
             setValue("cliente", cliente)
             setError("cliente", "")
 
@@ -309,6 +320,70 @@ export const Form = (props) => {
         }
 
     }, [idCustomer])
+
+    useEffect(() => {
+
+        let cliente = {}
+
+        if(idCustomerTwo.value !== ""){
+            
+            const item = getItem( companies, idCustomerTwo.value )
+            const info = getCompanyInfo(item)
+
+            if (idCustomerTwo.value !== "") {
+                setInfoClienteTwo({
+                    ...info,
+                    id: idCustomerTwo.value
+                })
+            }
+
+            cliente = {
+                id: idCustomerTwo.value, 
+                nombre: idCustomerTwo.label 
+            }
+
+            setValue("cliente_dos", cliente)
+
+        }else{
+            cliente = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+    }, [idCustomerTwo])
+
+    useEffect(() => {
+
+        let cliente = {}
+
+        if(idCustomerThree.value !== ""){
+            
+            const item = getItem( companies, idCustomerThree.value )
+            const info = getCompanyInfo(item)
+
+            if (idCustomerThree.value !== "") {
+                setInfoClienteThree({
+                    ...info,
+                    id: idCustomerThree.value
+                })
+            }
+
+            cliente = {
+                id: idCustomerThree.value, 
+                nombre: idCustomerThree.label 
+            }
+
+            setValue("cliente_tres", cliente)
+
+        }else{
+            cliente = {
+                id: "", 
+                nombre: "" 
+            }
+        }
+
+    }, [idCustomerThree])
 
     useEffect(() => {
         
@@ -476,15 +551,37 @@ export const Form = (props) => {
     }
 
     /*****End Effects *****/
-    const handleChangingCliente = (input) => {
+    const handleChangingCliente = (input,e) => {
         
-        if(input){
-            setIdCustomer(input)
-        }else{
-            setIdCustomer({value:'',label:'Seleccione un cliente'})
+        var inputName = e.name
+
+        switch (inputName) {
+            case "cliente":
+                    if(input){
+                        setIdCustomer(input)
+                    }else{
+                        setIdCustomer(defaultCustomer)
+                    }
+                break;
+            case "cliente_dos":
+                    if(input){
+                        setIdCustomerTwo(input)
+                    }else{
+                        setIdCustomerTwo(defaultCustomer)
+                    }
+                break;
+            case "cliente_tres":
+                    if(input){
+                        setIdCustomerThree(input)
+                    }else{
+                        setIdCustomerThree(defaultCustomer)
+                    }                
+            break;
+            default:
+                break;
         }
     }
-
+    
     const handleChangingPlaca = (input) => {
         if(input){
             setIdVehiculo(input)
@@ -547,6 +644,8 @@ export const Form = (props) => {
                 importador,
                 vehiculo,
                 cliente: infoCliente,
+                cliente_dos: infoClienteTwo,
+                cliente_tres: infoClienteThree,
                 trasbordo,
                 items,
                 estado:"Pendiente",
@@ -704,64 +803,31 @@ export const Form = (props) => {
                 <div className="card-body">
                     <div className="row">
                         <div className="col-lg-12">
-                            <legend>Datos de Cliente/Receptor</legend>
+                            <legend>Datos de Cliente(s)/Receptor(es)</legend>
                             <hr />
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
                             <div className="form-group">
-                                <label className="control-label">RIF</label>
+                                <label className="control-label">Cliente #1</label>
                                 <Select name="cliente" value={ idCustomer } {...register("cliente", { required: true } )} onChange={handleChangingCliente} options={ optionsCustomers } />
                                 { errors?.cliente?.type &&  (<span className="text-danger">Este campo es requerido</span>) }
                             </div>
                         </div>
-                        <div className="col-lg-8">
-                            <div className="form-group">
-                                <label className="control-label">Nombre/Razón Social</label>
-                                <input type="text" disabled value={ infoCliente?.nombre } className="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
                         <div className="col-lg-4">
                             <div className="form-group">
-                                <label className="control-label">Municipio</label>
-                                <input type="text" disabled value={ infoCliente?.municipio } className="form-control"/>
+                                <label className="control-label">Cliente #2</label>
+                                <Select name="cliente_dos" value={ idCustomerTwo } {...register("cliente_dos")} onChange={handleChangingCliente} options={ optionsCustomers } />
                             </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="form-group">
-                                <label className="control-label">Parroquia</label>
-                                <input type="text" disabled value={ infoCliente?.parroquia } className="form-control"/>
+                                <label className="control-label">Cliente #3</label>
+                                <Select name="cliente_tres" value={ idCustomerThree } {...register("cliente_tres")} onChange={handleChangingCliente} options={ optionsCustomers } />
                             </div>
                         </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Dirección</label>
-                                <input type="text" disabled value={ infoCliente?.direccion } className="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Representante - Comercio</label>
-                                <input type="text" disabled value={ infoCliente?.representante?.nombre } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Cédula / Pasaporte</label>
-                                <input type="text" disabled value={ infoCliente?.representante?.rif } className="form-control"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="form-group">
-                                <label className="control-label">Teléfono</label>
-                                <input type="text" disabled value={ infoCliente?.representante?.telefono } className="form-control"/>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

@@ -110,9 +110,8 @@ export const startCreatingInput = ( data ) => {
                     }
         
                     db.doc('counters/cod').update( updateInput )
-
-                    dispatch( inputCreated( { id: newDoc.id, ...copy } ) )
                     Swal.fire('Correcto', 'Entrada registrada!!','success')
+                    dispatch( inputCreated( { id: newDoc.id, ...copy } ) )
  
                 }
             }).catch((error) => {
@@ -143,9 +142,8 @@ export const startUpdatingInput = ( data, role ) => {
                 }
 
                 await db.doc(`${ table }/${ doc.id }`).update( updateInput )
-                dispatch( inputUpdated( { id: data.id, ...updateInput } ) )
-
                 Swal.fire('Correcto', 'Entrada actualizada!!','success')
+                dispatch( inputUpdated( { id: data.id, ...updateInput } ) )
             }else{
                 Swal.fire('Error', 'Entrada no encontrada','error')
             }

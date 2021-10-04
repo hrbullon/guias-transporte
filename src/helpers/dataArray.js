@@ -61,6 +61,22 @@ export const prepareOptionsRif = (data) => {
     return items
 }
 
+export const getCompanyInfo = (data) => {
+    
+    return {
+        rif: data.rif,
+        nombre: data.nombre,
+        municipio: data.municipio,
+        parroquia: data.parroquia,
+        direccion: data.direccion,
+        representante: { 
+            nombre:data?.representante?.nombre,
+            rif: data?.representante?.rif,
+            telefono: data?.representante?.telefono
+        }
+    }
+}
+
 export const prepareOptionsPlaca = (data) => {
     let items = []
     
