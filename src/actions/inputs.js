@@ -34,7 +34,7 @@ export const startLoadingInputs = ( company, workday, role) => {
 
             let inputSnap = []
 
-            if(role === "Super_Role"){
+            if(role === "Super_Role" || role == "Administrador_Role"){
 
                 inputSnap = await db.collection(table)
                 .where("jornada.id","==",workday)
@@ -130,7 +130,7 @@ export const startUpdatingInput = ( data, role ) => {
         
         try {
             
-            if(role === "Super_Role"){
+            if(role === "Super_Role" || role=== "Administrador_Role"){
                 const doc = await db.doc(`${ table }/${ data.id }`).get()
                 let copy = { ...data }
                 delete copy.id

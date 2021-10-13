@@ -3,14 +3,13 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCnAD0JTKvx8LL6-RGVNw7wy25tEBucfjM",
-    authDomain: "reactbase-ae5c2.firebaseapp.com",
-    databaseURL: "https://reactbase-default-rtdb.firebaseio.com",
-    projectId: "reactbase",
-    storageBucket: "reactbase.appspot.com",
-    messagingSenderId: "1098123849794",
-    appId: "1:1098123849794:web:af9c4de0509674a0737ddb"
-  };
+    apiKey: "AIzaSyAi-dKZ1oWvVvd2hSHoOdei_Z9AGBpQM38",
+    authDomain: "guias-transporte-b39c1.firebaseapp.com",
+    projectId: "guias-transporte-b39c1",
+    storageBucket: "guias-transporte-b39c1.appspot.com",
+    messagingSenderId: "28525567414",
+    appId: "1:28525567414:web:457659200f27503dd8b517"
+};
 
 firebase.initializeApp(firebaseConfig);
 

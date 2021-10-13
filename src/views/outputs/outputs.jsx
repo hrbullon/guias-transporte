@@ -70,7 +70,7 @@ export const Outputs = (props) => {
                 <div> 
                     { /****** Capturo el evento click en el botón ver detalle de cada fila******/ }
                     <i title="Ver" onClick={ (e) => handleShow(row)  } className="mdi mdi-eye pointer mr-2"></i>
-                    { role == "Super_Role" &&
+                    { role == "Super_Role" || role == "Administrador_Role" &&
                         <>
                         <Link to={`/outputs/update/${row.id}`}><i title="Editar" className="mdi mdi-pencil pointer mr-2"></i></Link>
                         <i title="Eliminar" onClick={ (e) => handleCancel(row)  } className="mdi mdi-delete pointer"></i>

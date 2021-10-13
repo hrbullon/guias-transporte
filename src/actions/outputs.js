@@ -34,7 +34,7 @@ export const startLoadingOutputs = ( company, workday, role ) => {
             
             let outputsSnap = []
 
-            if(role === "Super_Role" && company == undefined){
+            if((role === "Super_Role" || role === "Administrador_Role") && company == undefined){
 
                 outputsSnap = await db.collection(table)
                 .where("jornada.id","==",workday)
@@ -46,7 +46,6 @@ export const startLoadingOutputs = ( company, workday, role ) => {
                 .where("jornada.id","==",workday)
                 .where("importador.id","==",company)
                 .get()
-                
             }
             
             const outputs = []
@@ -98,6 +97,20 @@ export const startCreatingOutput = ( data ) => {
                     copy.codigo = codigo
                     
                     const newDoc =  db.collection(table).add(copy)
+
+                    //Actualizo el contador de salidas
+                    const docInputs = db.doc('counters/cod').get()
+                    let copyInputs = { ...docInputs }
+                    delete copyInputs.id
+         
+                    const updateInput = { 
+                        ...copyInputs,
+                        outputs: numero
+                    }
+        
+                    db.doc('counters/cod').update( updateInput )
+
+
                     dispatch( outputCreated( { id: newDoc.id, ...copy } ) )
                     Swal.fire('Correcto', 'Salida registrada!!','success')
  
@@ -118,7 +131,7 @@ export const startUpdatingOutput = ( data, role ) => {
         
         try {
             
-            if(role === "Super_Role"){
+            if(role === "Super_Role" || role == "Administrador_Role"){
                 const doc = await db.doc(`${ table }/${ data.id }`).get()
                 let copy = { ...data }
                 delete copy.id
