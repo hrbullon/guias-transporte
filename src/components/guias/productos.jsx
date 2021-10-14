@@ -76,7 +76,7 @@ export const Productos = (props) => {
             <table className="table table-fit">
                 <tbody>
                     <tr>
-                        <th className="text-center table-secondary" colSpan="6">
+                        <th className="text-center table-secondary" colSpan="7">
                             Datos de la Carga
                         </th>
                     </tr>
@@ -86,6 +86,7 @@ export const Productos = (props) => {
                         <th>Presentación</th>
                         <th>Cont.</th>
                         <th>Unid.</th>
+                        <th>Cant.</th>
                         <th>Subtotal</th>
                     </tr>
                 { props?.items  &&
@@ -99,6 +100,7 @@ export const Productos = (props) => {
                             <td>{ props.items[index].presentacion.presentacion  }</td>
                             <td>{ props.items[index].presentacion.contenido  }</td>
                             <td>{ props.items[index].presentacion.unidad_medida  }</td>
+                            <td>{ props.items[index].cantidad  }</td>
                             <td>{ props.items[index].subtotal }</td>
                         </tr>
                         }
