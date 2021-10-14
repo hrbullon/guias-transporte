@@ -38,8 +38,8 @@ export const Person = (props) => {
                 </tr>
                 <tr>
                     <td>{ `${props?.model?.nombre} ${props?.model?.apellido}` }</td>
-                    <td>{ props.model?.telefono }</td>
                     <td>{ props.model?.rif }</td>
+                    <td>{ props.model?.telefono }</td>
                 </tr>
             </>
         }
