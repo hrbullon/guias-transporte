@@ -189,7 +189,7 @@ export const Form = (props) => {
     }, [sesionCompany,workday])
 
     useEffect(() => {
-        if(id !== undefined && role == "Super_Role"){
+        if(id !== undefined && role == "Super_Role" || role == "Administrador_Role"){
             dispatch( startLoadingItem( id ) );
         }
     }, [id,role])

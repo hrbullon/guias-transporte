@@ -126,7 +126,7 @@ export const Form = (props) => {
     }, [])
 
     useEffect(() => {
-        if(id !== undefined && role !== undefined && role == "Super_Role"){
+        if(id !== undefined && role !== undefined && role == "Super_Role" || role == "Administrador_Role"){
             dispatch( startLoadingItem( id ) );
         }
     }, [id, role])
