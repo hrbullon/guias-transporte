@@ -10,12 +10,10 @@ import { Vehiculo } from './vehiculos'
 
 export const Productos = (props) => {
 
-    let calc = (Math.round((props?.items?.length)/props.limit) == 0)? 1 : Math.round((props?.items?.length)/props.limit)
+    let calc = (Math.round((props?.items?.length)/props.limit) == 0)? 1 : Math.ceil((props?.items?.length)/props.limit)
     return (
         <>
-        { /** props.page <= Math.round((props?.items.length)/props.limit) */}
-        
-        { props?.items && props?.items.length > 0 && props.page <= calc  &&
+        { props?.items && props?.items?.length > 0 && props.page <= calc  &&
         <>
         
         <Cabecera></Cabecera>
