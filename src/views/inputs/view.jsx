@@ -98,7 +98,7 @@ export const View = () => {
                         </div>
                         <div id="print" className="col col-lg-12">
                             {/** Esta linea puede generar hasta 10 páginas del formato de entrada*/}
-                            { [1,2,3,4,5,6,7,8,9,10].map( item =>  {
+                            { [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30].map( item =>  {
                                 return <Productos model={model} limit={limit} device={device} items={model?.items} page={item} end={ item*limit }/>
                             })}    
                         </div>

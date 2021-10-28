@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "reactbase"
-  }
+    "default": "reactbase",
+    "guias-transporte": "guias-transporte-b39c1"
+  },
+  "targets": {}
 }
