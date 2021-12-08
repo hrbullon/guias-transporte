@@ -82,9 +82,9 @@ export const Productos = (props) => {
                         <th>item</th>
                         <th>Producto</th>
                         <th>Presentación</th>
+                        <th>Cant.</th>
                         <th>Cont.</th>
                         <th>Unid.</th>
-                        <th>Cant.</th>
                         <th>Subtotal</th>
                     </tr>
                 { props?.items  &&
@@ -96,9 +96,9 @@ export const Productos = (props) => {
                             <td>{ (parseInt(index)+1) }</td>
                             <td>{ props.items[index].producto.nombre  }</td>
                             <td>{ props.items[index].presentacion.presentacion  }</td>
+                            <td>{ props.items[index].cantidad  }</td>
                             <td>{ props.items[index].presentacion.contenido  }</td>
                             <td>{ props.items[index].presentacion.unidad_medida  }</td>
-                            <td>{ props.items[index].cantidad  }</td>
                             <td>{ props.items[index].subtotal }</td>
                         </tr>
                         }
