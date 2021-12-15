@@ -59,6 +59,7 @@ export const startLoadingInputs = ( company, workday, role) => {
             })
 
             //Notifico al reducer, para que me almacene los datos en el state
+            //return inputs
             dispatch( inputsLoaded( inputs ) )
 
         } catch (error) {

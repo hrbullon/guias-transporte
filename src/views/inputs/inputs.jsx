@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 import DataTable from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
@@ -16,6 +16,7 @@ export const Inputs = (props) => {
     const { role, sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: inputs, updated } = useSelector(state => state.inputs)
+    const [ workDayId, setWorkDayId] = useState(null)
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
@@ -75,28 +76,32 @@ export const Inputs = (props) => {
 
     /***** Effects *****/
     useEffect(() => {
-        /****Dispara la función para obtener las entradas ****/
-        if(sesionCompany && workday){
-            dispatch( startLoadingInputs( sesionCompany.id, workday.id, role ) )
+        //Capturando manualmente el id de la url        
+        var pathname = props.location.pathname
+        var split = pathname.split("/")
+        var workdayId = ""
+
+        //Si es mayor a 2 es porque recibió el parámetro
+        if(split.length > 2){
+            workdayId = split[2]
+            setWorkDayId(workdayId)
+        }else{
+            dispatch( startLoadingSigleWorkdays() )
         }
-    }, [sesionCompany,workday])
-
-    useEffect(() => {
-        
-        /****Dispara la función para obtener la jornada ****/
-        dispatch( startLoadingSigleWorkdays() )
-
     }, [])
 
-    
     useEffect(() => {
-        
-        //Actualizo el listado de vehículos
-        if(updated){
-            dispatch( startLoadingInputs( sesionCompany.id, workday.id, role ) )
+        if(workday){
+            setWorkDayId(workday?.id)
         }
+    }, [workday])
 
-    }, [updated])
+    useEffect(() => {
+        if(workDayId && role){
+            /****Dispara la función para obtener las entradas ****/
+            dispatch( startLoadingInputs( sesionCompany?.id, workDayId, role ))
+        }
+    }, [workDayId, role])
 
     const handleShow = (item) => {
         window.open(`/inputs/view/${item.id}`,"ventana1","width=1024,height=820,scrollbars=NO") 
@@ -122,7 +127,6 @@ export const Inputs = (props) => {
                             columns={columns}
                             data={ inputs }>
                             <DataTable
-                                noHeader
                                 pagination={ true }
                                 filter={true}
                                 noDataComponent="No hay datos para mostrar"/>

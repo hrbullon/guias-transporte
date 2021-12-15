@@ -1,6 +1,8 @@
 import { Fragment, useState, useEffect } from "react"
 import { useSelector, useDispatch } from 'react-redux'
-import { startUpdatingWorkdays, startCreatingWorkdays, startCloseWorkdays , startLoadingWorkdays } from '../../actions/workdays'
+
+import { startUpdatingWorkdays, startCreatingWorkdays, startCloseWorkdays , startLoadingWorkdays } 
+from '../../actions/workdays'
 
 import { useForm } from "react-hook-form"
 import moment from 'moment';
@@ -127,6 +129,28 @@ export const Workdays = () => {
         }
     } 
 
+    const handleViewContext = (row) => {
+        Swal.fire({
+            title: 'Qué desea visualizar?',
+            showDenyButton: true,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Entradas',
+            denyButtonText: `Salidas`,
+            cancelButtonText: `Cancelar`,
+          }).then((result) => {
+            //console.log(window.location.host)
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location.href = window.location.origin + "/inputs/"+row;                
+            } 
+            
+            if (result.isDenied) {
+                window.location.href = window.location.origin + "/outputs/"+row;                
+            }
+        })
+    }
+
     //Inicializo estructura de culumnas de la tabla
     const columns = [
         {
@@ -157,6 +181,8 @@ export const Workdays = () => {
             right: true,
             cell: row => (
                 <div> 
+                    { /****** Capturo el evento click en el botón editar de cada fila******/ }
+                    <i title="Ver" onClick={ (e) => handleViewContext(row.id)  } className="mdi mdi-eye pointer mr-2"></i>
                     { /****** Capturo el evento click en el botón editar de cada fila******/ }
                     <i title="Editar" onClick={ (e) => handleEdit(row)  } className="mdi mdi-grease-pencil pointer mr-2"></i>
                     { /****** Capturo el evento click en el botón eliminar de cada fila******/ }

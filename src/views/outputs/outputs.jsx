@@ -16,6 +16,7 @@ export const Outputs = (props) => {
     const { role, sesionCompany } = useSelector(state => state.auth)
     const { model: workday } = useSelector(state => state.workdays)
     const { loaded: outputs, updated } = useSelector(state => state.outputs)
+    const [ workDayId, setWorkDayId] = useState(null)
 
     //Inicializo estructura de culumnas de la tabla
     const columns = [
@@ -82,27 +83,32 @@ export const Outputs = (props) => {
 
     /***** Effects *****/
     useEffect(() => {
-        /****Dispara la función para obtener las salidas ****/
-        if(sesionCompany && workday){
-            dispatch( startLoadingOutputs( sesionCompany.id, workday.id, role ) )
+        //Capturando manualmente el id de la url        
+        var pathname = props.location.pathname
+        var split = pathname.split("/")
+        var workdayId = ""
+
+        //Si es mayor a 2 es porque recibió el parámetro
+        if(split.length > 2){
+            workdayId = split[2]
+            setWorkDayId(workdayId)
+        }else{
+            dispatch( startLoadingSigleWorkdays() )
         }
-    }, [sesionCompany,workday])
-
-    useEffect(() => {
-        
-        /****Dispara la función para obtener la jornada ****/
-        dispatch( startLoadingSigleWorkdays() )
-
     }, [])
 
     useEffect(() => {
-        
-        //Actualizo el listado de vehículos
-        if(updated){
-            dispatch( startLoadingOutputs(sesionCompany.id, workday.id, role) )
+        if(workday){
+            setWorkDayId(workday?.id)
         }
+    }, [workday])
 
-    }, [updated])
+    useEffect(() => {
+        if(workDayId && role){
+            /****Dispara la función para obtener las salídas ****/
+            dispatch( startLoadingOutputs( sesionCompany?.id, workDayId, role ))
+        }
+    }, [workDayId, role])
 
     const handleShow = (item) => {
         window.open(`/outputs/view/${item.id}`,"ventana1","width=1024,height=820,scrollbars=NO") 
